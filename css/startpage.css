@@ -1,0 +1,79 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Flexbox layout for the entire page */
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container that holds header, main and pushes footer to the bottom */
+.page-container {
+    flex: 1; /* This makes the main content stretch to take up the available space */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header styling */
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo img {
+    width: 200px; /* Adjust based on the actual logo size */
+}
+
+header .login a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Main content area styling */
+main {
+    flex: 1; /* This ensures the main section takes the remaining space */
+    padding: 20px;
+    text-align: center;
+}
+
+.welcome, .highlights {
+    background-color: #e0e0e0;
+    margin: 20px 0;
+    padding: 40px;
+    border-radius: 8px;
+}
+
+.welcome {
+    height: 300px;
+}
+
+.highlights {
+    height: 200px;
+}
+
+/* Footer always stays at the bottom */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+}

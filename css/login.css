@@ -1,0 +1,129 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    background-image: url('../pics/ocbcbackground.jpg'); /* Replace with your image path */
+    background-size: cover; /* Ensure the image covers the entire page */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+/* Header styling */
+header {
+    background-color: #333;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+}
+
+header .logo img {
+    width: 200px; /* Adjust based on the actual logo size */
+}
+
+/* Centering the login form to the left */
+main {
+    display: flex;
+    justify-content: flex-start; /* Aligns the form to the left */
+    align-items: center;
+    height: calc(100vh - 50px); /* Adjust height to fill viewport */
+    padding-left: 50px; /* Creates spacing from the left edge */
+}
+
+.login-container {
+    background-color: #e0e0e0;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 400px; /* Increase the width of the form */
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 30px;
+    font-size: 1.8rem; /* Make the heading slightly larger */
+    font-weight: bold;
+}
+
+/* Input field styles */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.remember-me input {
+    margin-right: 10px;
+}
+
+.forgot-password {
+    display: block;
+    font-size: 0.9rem;
+    color: #007bff;
+    text-decoration: none;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Button styles */
+.login-btn, .singpass-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    background-color: red;
+    color: white;
+    border: none;
+}
+
+.singpass-btn {
+    background-color: white;
+    color: black;
+    border: 2px solid #ccc;
+}
+
+.or {
+    margin: 10px 0;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+/* Additional Styling */
+body {
+    background-color: #f4f4f4;
+}
