@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCBC Login Page</title>
+    <title>OCBC Login Page with Voice Control</title>
     <link rel="stylesheet" href="../css/login.css">
     <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
 </head>
+
 <body>
     <!-- Header Section -->
     <header>
@@ -43,7 +45,17 @@
 
                 <button type="button" class="singpass-btn">Login with Singpass</button>
             </form>
+
+            <!-- Voice Control Instructions -->
+            <div class="voice-instructions">
+                <p>Speak letter by letter or number by number for User ID. Say "done" to move to PIN.</p>
+                <p>Say "password" anytime to jump to the password field.</p>
+            </div>
         </div>
     </main>
+
+    <!-- Link to JavaScript file -->
+    <script src="../js/login.js"></script>
 </body>
+
 </html>
