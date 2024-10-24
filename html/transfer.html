@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer and Payments</title>
+    <link rel="stylesheet" href="../css/transfer.css">
+    <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+            </div>
+            <!-- Navigation Buttons in Header Right Side -->
+            <nav class="account-navigation">
+                <button class="nav-btn">View Accounts</button>
+                <button class="nav-btn active">Transfer and Payments</button>
+                <button class="nav-btn">Investments</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        <div class="transfer-container">
+            <h2>Transfer and Payments</h2>
+            <form>
+                <!-- Make a transfer from -->
+                <div class="form-group">
+                    <label for="transfer-from">1. Make a transfer from</label>
+                    <select id="transfer-from">
+                        <option value="" disabled selected>Select an account</option>
+                        <option value="account1">My Account (123-456789-001)</option>
+                        <option value="account2">My Savings Account (123-456789-002)</option>
+                    </select>
+                </div>
+
+                <!-- Transferring money to -->
+                <div class="form-group">
+                    <label>2. Transferring money to</label>
+                    <div class="transfer-input-group">
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="transfer-to" value="mobile">
+                                Mobile number
+                            </label>
+                            <label>
+                                <input type="radio" name="transfer-to" value="nric">
+                                NRIC
+                            </label>
+                        </div>
+                        <input type="text" class="input-box" placeholder="Enter number or NRIC">
+                        <button type="button" class="enter-btn">Enter</button>
+                    </div>
+                </div>
+
+                <!-- Amount and Description -->
+                <div class="form-group">
+                    <label for="amount">3. Amount transferring</label>
+                    <div class="amount-transfer">
+                        <input type="text" id="amount" placeholder="Amount (SGD)">
+                        <input type="text" id="description" placeholder="Description (optional)">
+                    </div>
+                </div>
+
+                <!-- Purpose of transfer -->
+                <div class="form-group">
+                    <label for="purpose">Purpose of transfer</label>
+                    <select id="purpose">
+                        <option value="" disabled selected>Select purpose</option>
+                        <option value="bills">Bill Payment</option>
+                        <option value="gift">Gift</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <!-- Transfer button -->
+                <div class="form-group">
+                    <button type="submit" class="transfer-btn">Transfer</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        Footer
+    </footer>
+</body>
+</html>
