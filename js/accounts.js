@@ -1,11 +1,7 @@
-
-// ------------------------------ start of account speech recognition ------------------------------
-
-// ------------------------------ start of account speech recognition ------------------------------
-
 // Initialize the Speech Recognition API
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.continuous = true; // Enable continuous listening mode
+recognition.interimResults = false; // Finalize the result only when the user stops speaking
 
 // Start recognition automatically when the page loads
 window.onload = function() {
@@ -15,7 +11,7 @@ window.onload = function() {
 // Start recognition and set status to listening
 function startRecognition() {
     recognition.start();
-    document.getElementById('result').textContent = "Listening...";
+    document.getElementById('result').textContent = "Listening..."; // Optional: Visual cue that it's listening
 }
 
 // Handle the speech recognition result
@@ -49,6 +45,7 @@ function navigateBasedOnCommand(command) {
 // Restart recognition when it stops (for continuous listening)
 recognition.onend = function() {
     recognition.start(); // Restart recognition after it ends
+    document.getElementById('result').textContent = "Listening again..."; // Optional: Update status
 };
 
 // Handle recognition errors
@@ -57,9 +54,3 @@ recognition.onerror = function(event) {
     document.getElementById('result').textContent = "Error occurred, please try again.";
     recognition.start(); // Restart recognition if there's an error
 };
-
-// ------------------------------ end of account speech recognition ------------------------------
-
-
-
-// ------------------------------ end of account speech recognition ------------------------------

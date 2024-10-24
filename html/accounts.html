@@ -6,25 +6,25 @@
         <title>OCBC Accounts Page</title>
         <link rel="stylesheet" href="../css/account.css">
         <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
-</head>
     </head>
-    <header>
-        <div class="logo">
-            <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
-        </div>
-        <nav>
-            <button>View Accounts</button>
-            <button>Transfer and Payments</button>
-            <button>Investments</button>
-        </nav>
-    </header>
-
+    
     <body>
+        <header>
+            <div class="logo">
+                <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+            </div>
+            <nav>
+                <button>View Accounts</button>
+                <button>Transfer and Payments</button>
+                <button>Investments</button>
+            </nav>
+        </header>
+
         <main>
             <section class="slideshow">
                 <h1>SLIDESHOW</h1>
             </section>
-    
+
             <section class="account-summary">
                 <div class="account-box">
                     <h2>What you have (SGD)</h2>
@@ -38,7 +38,7 @@
                     <p>SLIDESHOW <br> (Scam prevention)</p>
                 </div>
             </section>
-    
+
             <section class="deposits">
                 <h3>Deposits</h3>
                 <p>Account <br> <span class="account-number">123-456789-001</span></p>
@@ -46,19 +46,23 @@
                 <p>Available <span class="amount">SGD 2000.00</span></p>
                 <p class="card-info">DEBIT CARD 1234-1111-2222-3333</p>
             </section>
-    
+
             <section class="money-insights">
                 <h3>Money Insights</h3>
                 <div class="chart">
                     <!-- Insert your chart/graph image here -->
                 </div>
             </section>
-        </main>
-    </body> 
-    
-    <footer>
-        <p>Footer</p>
-    </footer>
 
-    <script src="script.js"></script>
+            <!-- Element to display speech recognition result -->
+            <p id="result"></p>
+        </main>
+
+        <footer>
+            <p>Footer</p>
+        </footer>
+
+        <!-- Link to external JavaScript file -->
+        <script src="js/accounts.js"></script>
+    </body>
 </html>
