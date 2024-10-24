@@ -1,56 +1,53 @@
-// Initialize the Speech Recognition API
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.continuous = true; // Enable continuous listening mode
-recognition.interimResults = false; // Finalize the result only when the user stops speaking
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    // Set recognition properties
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    // Button to start the speech recognition
+    const startButton = document.getElementById('start-btn');
+    
+    startButton.addEventListener('click', () => {
+        recognition.start();
+        console.log('Speech recognition started');
+    });
 
-// Start recognition automatically when the page loads
-window.onload = function() {
-    startRecognition();
-};
+    // When speech is recognized
+    recognition.onresult = (event) => {
+        const spokenText = event.results[0][0].transcript.toLowerCase();
+        console.log('Recognized: ' + spokenText);
 
-// Start recognition and set status to listening
-function startRecognition() {
-    recognition.start();
-    document.getElementById('result').textContent = "Listening..."; // Optional: Visual cue that it's listening
+        if (spokenText.includes('view accounts')) {
+            alert('Navigating to View Accounts');
+            // Redirect to View Accounts page
+            window.location.href = 'view-accounts.html';
+        } else if (spokenText.includes('transfer') || spokenText.includes('payments')) {
+            alert('Navigating to Transfer and Payments');
+            // Redirect to Transfer and Payments page
+            window.location.href = 'transfer-payments.html';
+        } else if (spokenText.includes('investments')) {
+            alert('Navigating to Investments');
+            // Redirect to Investments page
+            window.location.href = 'investments.html';
+        } else {
+            alert('Command not recognized, please try again.');
+        }
+    };
+
+    // Handle errors
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error: ', event.error);
+        alert('Error occurred in speech recognition: ' + event.error);
+    };
+
+    // On recognition end (for re-triggering or alerts)
+    recognition.onend = () => {
+        console.log('Speech recognition ended.');
+    };
+} else {
+    console.warn('Speech Recognition is not supported in this browser.');
+    alert('Sorry, your browser does not support the Web Speech API.');
 }
-
-// Handle the speech recognition result
-recognition.onresult = function(event) {
-    const spokenText = event.results[event.resultIndex][0].transcript.toLowerCase();
-    document.getElementById('result').textContent = `You said: "${spokenText}"`;
-
-    // Call function to navigate based on voice command
-    navigateBasedOnCommand(spokenText);
-};
-
-// Define logic for navigation based on spoken commands
-function navigateBasedOnCommand(command) {
-    if (command.includes("view accounts")) {
-        window.location.href = "#view-accounts"; // Navigate to View Accounts section
-    } else if (command.includes("transfer payments")) {
-        window.location.href = "#transfer-payments"; // Navigate to Transfer and Payments section
-    } else if (command.includes("investments")) {
-        window.location.href = "#investments"; // Navigate to Investments section
-    } else if (command.includes("credit card")) {
-        window.location.href = "#credit-card"; // Navigate to Credit Card section
-    } else if (command.includes("loans")) {
-        window.location.href = "#loans"; // Navigate to Loans section
-    } else if (command.includes("home page")) {
-        window.location.href = "#home"; // Navigate to Home section
-    } else {
-        document.getElementById('result').textContent = "Sorry, I didn't understand that.";
-    }
-}
-
-// Restart recognition when it stops (for continuous listening)
-recognition.onend = function() {
-    recognition.start(); // Restart recognition after it ends
-    document.getElementById('result').textContent = "Listening again..."; // Optional: Update status
-};
-
-// Handle recognition errors
-recognition.onerror = function(event) {
-    console.error("Speech recognition error:", event.error);
-    document.getElementById('result').textContent = "Error occurred, please try again.";
-    recognition.start(); // Restart recognition if there's an error
-};
