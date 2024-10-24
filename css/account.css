@@ -3,128 +3,128 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f2f2f2;
 }
 
 header {
-    background-color: #333;
-    padding: 20px;
+    background-color: #4b4b4b;
     color: white;
+    padding: 15px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
-header .logo img {
-    width: 200px;
+.logo img {
+    width: 120px;
 }
 
-nav button {
-    background-color: #f4f4f4;
+.nav-buttons button {
+    background-color: #f2f2f2;
     border: none;
-    margin: 0 10px;
-    padding: 10px 20px;
+    padding: 10px;
+    margin: 5px;
     cursor: pointer;
-    font-size: 16px;
 }
 
-nav button:hover {
-    background-color: #e0e0e0;
+.nav-buttons button:hover {
+    background-color: #ddd;
 }
 
-/* Slideshow Section */
-.slideshow {
-    background-color: #e0e0e0;
-    text-align: center;
-    padding: 40px 0;
-    font-size: 24px;
-    margin: 20px 0;
-}
-
-/* Account Summary Section */
-.account-summary {
-    display: flex;
-    justify-content: space-evenly;
-    margin: 20px 0;
-}
-
-.account-box {
-    background-color: white;
+section {
     padding: 20px;
-    text-align: center;
-    width: 30%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-selection {
+    background-color: white;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-card {
+    background-color: #f2f2f2;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.account-card:hover {
+    background-color: #ddd;
+}
+
+.account-card h3 {
+    margin: 0;
 }
 
 .balance {
-    font-size: 24px;
+    color: green;
     font-weight: bold;
 }
 
-.balance.positive {
-    color: green;
-}
-
-.balance.negative {
-    color: red;
-}
-
-.slideshow-box {
-    background-color: #f0f0f0;
-    padding: 20px;
-    text-align: center;
-    width: 30%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Deposits Section */
-.deposits {
+.account-details {
     background-color: white;
+    margin: 20px auto;
     padding: 20px;
-    margin: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.deposits h3 {
+.account-summary {
+    display: flex;
+    justify-content: space-around;
     margin-bottom: 20px;
 }
 
-.account-number {
-    color: blue;
-    font-weight: bold;
-}
-
-.amount {
-    font-weight: bold;
-}
-
-.card-info {
-    color: blue;
-    margin-top: 20px;
-}
-
-/* Money Insights Section */
-.money-insights {
-    background-color: white;
-    padding: 20px;
-    margin: 20px;
+.balance-box {
+    width: 120px;
+    padding: 10px;
     text-align: center;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
 }
 
-.chart {
-    width: 100%;
-    height: 200px;
+.green {
+    background-color: #e0f8e0;
+}
+
+.red {
+    background-color: #f8e0e0;
+}
+
+.recent-transactions {
+    background-color: #f2f2f2;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Back Button Styling */
+.back-button {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.back-button:hover {
     background-color: #ddd;
 }
 
 /* Footer */
-footer {
-    background-color: #333;
+.footer {
+    background-color: #4b4b4b;
     color: white;
     text-align: center;
     padding: 10px;
     position: fixed;
-    bottom: 0;
     width: 100%;
+    bottom: 0;
 }

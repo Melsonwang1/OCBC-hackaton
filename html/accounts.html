@@ -1,73 +1,121 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>OCBC Accounts Page</title>
-        <link rel="stylesheet" href="../css/account.css">
-        <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
-    </head>
-    
-    <body>
-        <header>
-            <div class="logo">
-                <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/account.css">
+    <title>OCBC Account Page</title>
+    <script src="../js/accounts.js"></script>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo">
+            <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+        </div>
+        <div class="nav-buttons">
+            <button>View Accounts</button>
+            <button>Transfer and Payments</button>
+            <button>Investments</button>
+        </div>
+    </header>
+
+    <!-- Account Selection Page -->
+    <section id="account-selection" class="account-selection">
+        <h2>Which bank account would you like to see?</h2>
+        <div class="account-card" onclick="showAccount('myAccount')">
+            <h3>My Account</h3>
+            <p>123-456789-001</p>
+            <p class="balance">SGD $2000.00</p>
+        </div>
+        <div class="account-card" onclick="showAccount('savingsAccount')">
+            <h3>My Savings Account</h3>
+            <p>123-456789-002</p>
+            <p class="balance">SGD $2100.00</p>
+        </div>
+    </section>
+
+    <!-- My Account Page -->
+    <section id="myAccount" class="account-details" style="display:none;">
+        <h2>My Account</h2>
+        <p>123-456789-001</p>
+        <div class="account-summary">
+            <div class="balance-box green">
+                <p>What you have:</p>
+                <p>SGD $2000.00</p>
             </div>
-            <nav>
-                <button>View Accounts</button>
-                <button>Transfer and Payments</button>
-                <button>Investments</button>
-            </nav>
-        </header>
+            <div class="balance-box red">
+                <p>What you owe:</p>
+                <p>SGD $0.00</p>
+            </div>
+        </div>
 
-        <main>
-            <section class="slideshow">
-                <h1>SLIDESHOW</h1>
-            </section>
+        <div class="recent-transactions">
+            <h3>Recent transactions:</h3>
+            <p>PayNow from: TOM LIM</p>
+            <p>+65-00000000</p>
+            <p>SGD +$65.00</p>
+            <p>28 July 2024</p>
+        </div>
 
-            <section class="account-summary">
-                <div class="account-box">
-                    <h2>What you have (SGD)</h2>
-                    <p class="balance positive">2000.00</p>
-                </div>
-                <div class="account-box">
-                    <h2>What you owe (SGD)</h2>
-                    <p class="balance negative">0.00</p>
-                </div>
-                <div class="slideshow-box">
-                    <p>SLIDESHOW <br> (Scam prevention)</p>
-                </div>
-            </section>
+        <!-- Back Button -->
+        <button onclick="goBack()" class="back-button">Back</button>
+    </section>
 
-            <section class="deposits">
-                <h3>Deposits</h3>
-                <p>Account <br> <span class="account-number">123-456789-001</span></p>
-                <p>Balance <span class="amount">SGD 2000.00</span></p>
-                <p>Available <span class="amount">SGD 2000.00</span></p>
-                <p class="card-info">DEBIT CARD 1234-1111-2222-3333</p>
-                
+    <!-- My Savings Account Page -->
+    <section id="savingsAccount" class="account-details" style="display:none;">
+        <h2>My Savings Account</h2>
+        <p>123-456789-002</p>
+        <div class="account-summary">
+            <div class="balance-box green">
+                <p>What you have:</p>
+                <p>SGD $2100.00</p>
+            </div>
+            <div class="balance-box red">
+                <p>What you owe:</p>
+                <p>SGD $0.00</p>
+            </div>
+        </div>
 
-            </section>
+        <div class="recent-transactions">
+            <h3>Recent transactions:</h3>
+            <p>PayNow from: JOHN DOE</p>
+            <p>+65-12345678</p>
+            <p>SGD +$100.00</p>
+            <p>28 July 2024</p>
+        </div>
 
-            <section class="money-insights">
-                <h3>Money Insights</h3>
-                <div class="chart">
-                    <!-- Insert your chart/graph image here -->
-                </div>
-            </section>
+        <!-- Back Button -->
+        <button onclick="goBack()" class="back-button">Back</button>
+    </section>
 
-            <!-- Element to display speech recognition result -->
-            <p id="result"></p>
+    <!-- Footer Section -->
+    <footer class="footer">
+        <p>Footer</p>
+    </footer>
 
-            <!-- Button to start speech recognition manually for testing -->
-            
-        </main>
+    <script>
+        function showAccount(accountId) {
+            // Hide all sections first
+            document.getElementById('account-selection').style.display = 'none';
+            document.getElementById('myAccount').style.display = 'none';
+            document.getElementById('savingsAccount').style.display = 'none';
 
-        <footer>
-            <p>Footer</p>
-        </footer>
+            // Show the selected section
+            document.getElementById(accountId).style.display = 'block';
+        }
 
-        <!-- Link to external JavaScript file -->
-        <script src="../js/accounts.js"></script>
-    </body>
+        function goBack() {
+            // Hide all account details
+            document.getElementById('myAccount').style.display = 'none';
+            document.getElementById('savingsAccount').style.display = 'none';
+
+            // Show the account selection page
+            document.getElementById('account-selection').style.display = 'block';
+        }
+    </script>
+</body>
+
 </html>
