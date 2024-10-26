@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/account.css">
     <title>OCBC Account Page</title>
-    <script src="../js/accounts.js"></script>
 </head>
 
 <body>
@@ -17,7 +16,7 @@
         </div>
         <div class="nav-buttons">
             <nav>
-                <a href="accounts.html" class="nav-btn.active">View Accounts</a>
+                <a href="accounts.html" class="nav-btn active">View Accounts</a>
                 <a href="transfer.html" class="nav-btn">Transfer and Payments</a>
                 <a href="investment.html" class="nav-btn">Investments</a>
             </nav>
@@ -27,12 +26,12 @@
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <h2>Which bank account would you like to see?</h2>
-        <div class="account-card" onclick="showAccount('myAccount')">
+        <div class="account-card" onclick="showAccount('myBank')">
             <h3>My Account</h3>
             <p>123-456789-001</p>
             <p class="balance">SGD $2000.00</p>
         </div>
-        <div class="account-card" onclick="showAccount('savingsAccount')">
+        <div class="account-card" onclick="showAccount('savingsBank')">
             <h3>My Savings Account</h3>
             <p>123-456789-002</p>
             <p class="balance">SGD $2100.00</p>
@@ -40,56 +39,52 @@
     </section>
 
     <!-- My Account Page -->
-    <section id="myAccount" class="account-details" style="display:none;">
-        <h2>My Account</h2>
-        <p>123-456789-001</p>
+    <section id="myBank" class="account-details" style="display:none;">
+        <h2 id="myBankName">My Account</h2>
+        <p id="myBankNumberDetails">123-456789-001</p>
+        <p id="myBankBranchDetails">Central Branch</p>
         <div class="account-summary">
             <div class="balance-box green">
-                <p>What you have:</p>
-                <p>SGD $2000.00</p>
+                <p id="have">What you have:</p>
+                <p id="haveamt">SGD $2000.00</p>
             </div>
             <div class="balance-box red">
-                <p>What you owe:</p>
-                <p>SGD $0.00</p>
+                <p id="owed">What you owe:</p>
+                <p id="owedamt">SGD $0.00</p>
             </div>
         </div>
-
         <div class="recent-transactions">
-            <h3>Recent transactions:</h3>
-            <p>PayNow from: TOM LIM</p>
-            <p>+65-00000000</p>
-            <p>SGD +$65.00</p>
-            <p>28 July 2024</p>
+            <h3 id="transaction">Recent transactions:</h3> <!-- Changed ID to transaction -->
+            <p id="person">PayNow from: TOM LIM</p>
+            <p id="phonenum">+65-00000000</p>
+            <p id="amt">SGD +$65.00</p>
+            <p id="date">28 July 2024</p>
         </div>
-
-        <!-- Back Button -->
         <button onclick="goBack()" class="back-button">Back</button>
     </section>
 
     <!-- My Savings Account Page -->
-    <section id="savingsAccount" class="account-details" style="display:none;">
-        <h2>My Savings Account</h2>
-        <p>123-456789-002</p>
+    <section id="savingsBank" class="account-details" style="display:none;">
+        <h2 id="savingsBankName">My Savings Account</h2>
+        <p id="savingsBankNumberDetails">123-456789-002</p>
+        <p id="savingsBankBranchDetails">Downtown Branch</p>
         <div class="account-summary">
             <div class="balance-box green">
-                <p>What you have:</p>
-                <p>SGD $2100.00</p>
+                <p id="savingshave">What you have:</p>
+                <p id="savingshaveamt">SGD $2100.00</p>
             </div>
             <div class="balance-box red">
-                <p>What you owe:</p>
-                <p>SGD $0.00</p>
+                <p id="savingsOwed">What you owe:</p>
+                <p id="savingsOwedamt">SGD $0.00</p>
             </div>
         </div>
-
         <div class="recent-transactions">
-            <h3>Recent transactions:</h3>
-            <p>PayNow from: JOHN DOE</p>
-            <p>+65-12345678</p>
-            <p>SGD +$100.00</p>
-            <p>28 July 2024</p>
+            <h3 id="savingsTransactions">Recent transactions:</h3>
+            <p id="savingsTransactionsperson">PayNow from: JOHN DOE</p>
+            <p id="savingsTransactionsphonenum">+65-12345678</p>
+            <p id="savingsTransactionsamt">SGD +$100.00</p>
+            <p id="savingsTransactionsdate">28 July 2024</p>
         </div>
-
-        <!-- Back Button -->
         <button onclick="goBack()" class="back-button">Back</button>
     </section>
 
@@ -98,12 +93,13 @@
         <p>Footer</p>
     </footer>
 
+    <!-- JavaScript for handling account display -->
     <script>
         function showAccount(accountId) {
             // Hide all sections first
             document.getElementById('account-selection').style.display = 'none';
-            document.getElementById('myAccount').style.display = 'none';
-            document.getElementById('savingsAccount').style.display = 'none';
+            document.getElementById('myBank').style.display = 'none';
+            document.getElementById('savingsBank').style.display = 'none';
 
             // Show the selected section
             document.getElementById(accountId).style.display = 'block';
@@ -111,13 +107,14 @@
 
         function goBack() {
             // Hide all account details
-            document.getElementById('myAccount').style.display = 'none';
-            document.getElementById('savingsAccount').style.display = 'none';
+            document.getElementById('myBank').style.display = 'none';
+            document.getElementById('savingsBank').style.display = 'none';
 
             // Show the account selection page
             document.getElementById('account-selection').style.display = 'block';
         }
     </script>
+    <script src="../js/accounts.js"></script>
 </body>
 
 </html>
