@@ -13,6 +13,8 @@ if (!SpeechRecognition) {
     let hasMicPermission = false;
     let useVoiceFeedback = false; // Default to no voice feedback
     let awaitingVoiceFeedbackResponse = true;
+    let awaitingRememberMeConfirmation = false; // Tracks remember-me prompt
+    let awaitingLoginConfirmation = false; // Tracks login confirmation
 
     // Narrate prompt to ask user if they want voice feedback
     speakBack("Would you like to enable voice feedback? Please say yes or no.");
@@ -53,90 +55,139 @@ if (!SpeechRecognition) {
         console.log("Recognized word (raw):", spokenWord);
         spokenWord = spokenWord.replace(/[^\w\s]/gi, '');
         console.log("Cleaned recognized word:", spokenWord);
-
+    
+        // Handle voice feedback confirmation
         if (awaitingVoiceFeedbackResponse) {
             if (spokenWord === "yes") {
                 useVoiceFeedback = true;
-                speakBack("Voice feedback is now enabled.");
+                speakBack("Voice feedback is now enabled. Have you forgotten your password? Say yes or no.");
             } else if (spokenWord === "no") {
                 useVoiceFeedback = false;
-                speakBack("Voice feedback is disabled.");
+                speakBack("Voice feedback is disabled. Have you forgotten your password? Say yes or no.");
             } else {
                 speakBack("Please say yes or no to confirm.");
-                return; // Wait for valid response before proceeding
+                return;
             }
             awaitingVoiceFeedbackResponse = false;
+            awaitingForgotPassword = true;
             return;
         }
+    
+        // Handle forgot password confirmation
+        if (awaitingForgotPassword) {
+            if (spokenWord === "yes") {
+                window.location.href = "rememberpassword.html";
+            } else if (spokenWord === "no") {
+                speakBack("You are at the User ID field. Say 'switch to password' to enter password, or 'done' when completed.");
+                currentField = 'user-id';
+            } else {
+                speakBack("Please say yes or no.");
+                return;
+            }
+            awaitingForgotPassword = false;
+            return;
+        }
+    
+        // Handle remember me confirmation
+        if (awaitingRememberMeConfirmation) {
+            if (spokenWord === "yes") {
+                document.getElementById("remember-me").checked = true;
+                speakBack("Remember Me option is now selected. Are you ready to log in? Say yes or no.");
+        
+                // Start listening for login confirmation
+                awaitingLoginConfirmation = true;
+                awaitingRememberMeConfirmation = false;
+                return;
+            } else if (spokenWord === "no") {
+                document.getElementById("remember-me").checked = false;
+                speakBack("Remember Me option is disabled. Are you ready to log in? Say yes or no.");
+        
+                // Start listening for login confirmation
+                awaitingLoginConfirmation = true;
+                awaitingRememberMeConfirmation = false;
+                return;
+            } else {
+                speakBack("Please say yes or no.");
+                return;
+            }
+        }
+        
+        // Handle login confirmation
+        if (awaitingLoginConfirmation) {
+            if (spokenWord === "yes") {
+                document.querySelector(".login-btn").click();
 
-        // Switch field based on spoken words "change to password" or "change to username"
-        if (spokenWord.includes("change to password") || spokenWord.includes("password")) {
-            currentField = 'password';
+                awaitingLoginConfirmation = true;
+            } else if (spokenWord === "no") {
+                speakBack("Okay, let me know if you need further assistance.");
+                awaitingLoginConfirmation = false;
+            } else {
+                speakBack("Please say yes or no.");
+            }
+            return;
+        }
+        
+    
+        // Switch between fields based on spoken words
+        if (spokenWord.includes("change to password") || spokenWord.includes("password") || spokenWord.includes("pin")) {
+            currentField = 'pin';
             speakBack("Switched to password field.");
             return;
-        } else if (spokenWord.includes("change to username") || spokenWord.includes("user name") || spokenWord.includes("username")|| spokenWord.includes("user id")) {
+        } else if (spokenWord.includes("change to username") || spokenWord.includes("user name") || spokenWord.includes("username") || spokenWord.includes("user id")) {
             currentField = 'user-id';
             speakBack("Switched to username field.");
             return;
         }
-
-        // Other recognition logic
-        if (spokenWord.includes("capital letter")) {
+    
+        // Handle PIN and character deletion
+        if (spokenWord.startsWith("capital letter")) {
             let character = spokenWord.split(" ").pop().toUpperCase();
-            processSpokenCharacter(character, true);
-        } else if (spokenWord.includes("pin") || spokenWord.includes("done")) {
-            switchToPinField();
-        } else if (spokenWord.includes("back")) {
+            processSpokenCharacter(character, character);
+            return;
+        } else if (spokenWord.includes("back") || spokenWord.includes("delete") || spokenWord.includes("remove") || spokenWord.includes("erase") || spokenWord.includes("undo") || spokenWord.includes("backspace") || spokenWord.includes("back space")) {
             deleteLastCharacter();
+            return;
+        } else if (spokenWord === "done") {
+            const userId = document.getElementById("user-id").value;
+            const password = document.getElementById("pin").value;
+            speakBack(`User ID: ${userId}. Password: ${password}. Would you like me to remember you? Say yes or no.`);
+            awaitingRememberMeConfirmation = true;
+            return;
+        }
+    
+        // Process special characters and letter/numbers
+        const specialCharacterMap = {
+            "left bracket": "[", "right bracket": "]", "left parenthesis": "(", "right parenthesis": ")",
+            "underscore": "_", "under score": "_", "dash": "-", "star": "*", "asterisk": "*", "estrus": "*"
+        };
+        if (specialCharacterMap[spokenWord]) {
+            processSpokenCharacter(specialCharacterMap[spokenWord], spokenWord);
+            return;
+        }
+    
+        // Map common letters, numbers, and symbols
+        const spokenToCharMap = {
+            "hey": "A", "ay": "A", "a": "A", "bee": "B", "b": "B","be":"B", "see": "C", "sea": "C", "c": "C", 
+            "dee": "D", "d": "D", "ee": "E", "e": "E", "eff": "F", "f": "F", "gee": "G", "g": "G", 
+            "aitch": "H", "h": "H", "eye": "I", "i": "I", "jay": "J", "j": "J", "kay": "K", "k": "K", 
+            "ell": "L", "l": "L", "em": "M", "m": "M", "en": "N", "n": "N", "oh": "O", "o": "O", 
+            "pee": "P", "p": "P", "queue": "Q", "q": "Q", "are": "R", "r": "R", "ess": "S", "s": "S", 
+            "tee": "T", "tea": "T", "t": "T", "you": "U", "u": "U", "vee": "V", "v": "V", 
+            "double you": "W", "w": "W", "ex": "X", "x": "X", "why": "Y", "y": "Y", "zee": "Z", "z": "Z",
+            "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", 
+            "seven": "7", "eight": "8", "nine": "9", "dollar": "$", "dollar sign": "$", "hash": "#", 
+            "hashtag": "#", "exclamation": "!", "exclamation mark": "!", "at": "@", "percent": "%", 
+            "caret": "^", "carrot": "^", "ampersand": "&", "plus": "+", "equal": "="
+        };
+    
+        const character = spokenToCharMap[spokenWord];
+        if (character) {
+            processSpokenCharacter(character, spokenWord);
         } else {
-            // Map specific phrases directly to special characters
-            if (spokenWord === "left bracket") {
-                processSpokenCharacter("[", "left bracket");
-            } else if (spokenWord === "right bracket") {
-                processSpokenCharacter("]", "right bracket");
-            } else if (spokenWord === "left parenthesis") {
-                processSpokenCharacter("(", "left parenthesis");
-            } else if (spokenWord === "right parenthesis") {
-                processSpokenCharacter(")", "right parenthesis");
-            } else if (spokenWord === "underscore" || spokenWord === "under score") {
-                processSpokenCharacter("_", "underscore");
-            } else if (spokenWord === "dash") {
-                processSpokenCharacter("-", "dash");
-            } else if (spokenWord === "star" || spokenWord === "asterisk" || spokenWord === "estrus") {
-                processSpokenCharacter("*", "star");
-            } else {
-                // Attempt to map common letters and numbers
-                const spokenToCharMap = {
-                    "hey": "A", "ay": "A", "a": "A", "bee": "B", "b": "B", "see": "C",
-                    "sea": "C", "c": "C", "dee": "D", "d": "D", "ee": "E", "e": "E",
-                    "eff": "F", "f": "F", "gee": "G", "g": "G", "aitch": "H", "h": "H",
-                    "eye": "I", "i": "I", "jay": "J", "j": "J", "kay": "K", "k": "K",
-                    "ell": "L", "l": "L", "em": "M", "m": "M", "en": "N", "n": "N",
-                    "oh": "O", "o": "O", "pee": "P", "p": "P", "queue": "Q", "q": "Q",
-                    "are": "R", "r": "R", "ess": "S", "s": "S", "tee": "T", "tea": "T",
-                    "t": "T", "you": "U", "u": "U", "vee": "V", "v": "V", "double you": "W",
-                    "w": "W", "ex": "X", "x": "X", "why": "Y", "y": "Y", "zee": "Z", "z": "Z",
-                    "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
-                    "six": "6", "seven": "7", "eight": "8", "nine": "9", "0": "0", "1": "1",
-                    "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9",
-                    "done": "DONE",  // For switching fields
-                    "back": "BACK",  // For deleting last character
-                    "dollar": "$", "dollar sign": "$", "hash": "#", "hashtag": "#", "hash tag": "#",
-                    "exclamation": "!", "exclamation mark": "!", "at": "@", "percent": "%", "caret": "^", "carrot": "^",
-                    "ampersand": "&", "star": "*", "asterisk": "*", "estrus": "*", "left bracket": "[",
-                    "right bracket": "]", "left parenthesis": "(", "right parenthesis": ")",
-                    "dash": "-", "underscore": "_", "under score": "_", "plus": "+", "equal": "=", "equals": "=", "equal sign": "="
-                };
-                
-                const character = spokenToCharMap[spokenWord];
-                if (character) {
-                    processSpokenCharacter(character, spokenWord);
-                } else {
-                    if (useVoiceFeedback) speakBack(`Error: unrecognized input "${spokenWord}"`);
-                }
-            }
+            if (useVoiceFeedback) speakBack(`Error: unrecognized input "${spokenWord}"`);
         }
     }
+    
 
     function processSpokenCharacter(character, charName) {
         const inputField = document.getElementById(currentField);
@@ -157,17 +208,15 @@ if (!SpeechRecognition) {
     function deleteLastCharacter() {
         const inputField = document.getElementById(currentField);
         if (inputField && inputField.value.length > 0) {
-            const deletedChar = inputField.value.slice(-1);
             inputField.value = inputField.value.slice(0, -1);
-            if (useVoiceFeedback) speakBack(`Deleted ${deletedChar}`);
+            if (useVoiceFeedback) speakBack("Deleted last character");
         } else {
-            if (useVoiceFeedback) speakBack("Error: No character to delete");
+            if (useVoiceFeedback) speakBack("Field is empty, nothing to delete.");
         }
     }
 
     function speakBack(message) {
-        const synth = window.speechSynthesis;
-        const utterThis = new SpeechSynthesisUtterance(message);
-        synth.speak(utterThis);
+        const speech = new SpeechSynthesisUtterance(message);
+        window.speechSynthesis.speak(speech);
     }
 }
