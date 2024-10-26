@@ -1,22 +1,21 @@
-// Check if the browser supports SpeechRecognition
+// Check if SpeechRecognition is supported in this browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (!SpeechRecognition) {
     alert("Speech recognition is not supported in this browser.");
 } else {
     const recognition = new SpeechRecognition();
-
-    // Set recognition properties
-    recognition.continuous = false;  // Disable continuous mode to prevent repetition
+    recognition.continuous = false;  // Disable continuous mode to handle pauses
     recognition.lang = 'en-US';
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-    let currentField = 'user-id';  // Track which field is currently being populated
-    let hasMicPermission = false;  // Track if permissions were granted
+    let currentField = 'user-id';
+    let hasMicPermission = false;
+    let lastRecognitionTime = 0;
 
-    // Map spoken words to letters/numbers and actions
+    // Map spoken words to characters
     const spokenToCharMap = {
-        "hey": "A", "ay": "A", "a": "A", "bee": "B", "b": "B","be":"", "see": "C",
+        "hey": "A", "ay": "A", "a": "A", "bee": "B", "b": "B", "see": "C",
         "sea": "C", "c": "C", "dee": "D", "d": "D", "ee": "E", "e": "E",
         "eff": "F", "f": "F", "gee": "G", "g": "G", "aitch": "H", "h": "H",
         "eye": "I", "i": "I", "jay": "J", "j": "J", "kay": "K", "k": "K",
@@ -28,95 +27,97 @@ if (!SpeechRecognition) {
         "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
         "six": "6", "seven": "7", "eight": "8", "nine": "9", "0": "0", "1": "1",
         "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9",
-        "done": "DONE",   // For switching fields
-        "back": "BACK"    // For deleting last character
+        "done": "DONE",  // For switching fields
+        "back": "BACK"   // For deleting last character
     };
 
-    // Start listening when the page loads
-    window.onload = () => {
-        requestMicPermissionOnce();
-    };
+    // Start recognition initially
+    startVoiceRecognition();
 
-    // Function to request microphone permission once
-    function requestMicPermissionOnce() {
-        if (!hasMicPermission) {
-            recognition.start();
-
-            recognition.onstart = () => {
-                hasMicPermission = true;
-                console.log("Microphone permission granted, listening...");
-            };
-
-            // Handle recognition result
-            recognition.onresult = (event) => {
-                processRecognitionResult(event);
-            };
-
-            // Error handling
-            recognition.onerror = (event) => {
-                console.error("Speech recognition error:", event.error);
-                if (event.error === "not-allowed") {
-                    alert("Please allow microphone access.");
-                }
-            };
-
-            // Restart recognition after each input
-            recognition.onend = () => {
-                if (hasMicPermission) {
-                    recognition.start();
-                }
-            };
-        }
+    function startVoiceRecognition() {
+        recognition.start();
+        console.log("Starting voice recognition...");
     }
 
-    // Function to process recognition result
+    recognition.onstart = () => {
+        hasMicPermission = true;
+        console.log("Microphone permission granted, listening...");
+    };
+
+    recognition.onresult = (event) => {
+        const now = new Date().getTime();
+        if (now - lastRecognitionTime > 1000) {  // 1-second pause
+            processRecognitionResult(event);
+        }
+        lastRecognitionTime = now;
+    };
+
+    recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        if (event.error === "not-allowed") {
+            alert("Please allow microphone access.");
+        }
+    };
+
+    recognition.onend = () => {
+        // Automatically restart recognition after it stops
+        if (hasMicPermission) {
+            recognition.start();
+        }
+    };
+
     function processRecognitionResult(event) {
         let spokenWord = event.results[0][0].transcript.trim().toLowerCase();
         console.log("Recognized word (raw):", spokenWord);
-
-        // Remove punctuation
         spokenWord = spokenWord.replace(/[^\w\s]/gi, '');
         console.log("Cleaned recognized word:", spokenWord);
 
-        // Check if the cleaned spoken word corresponds to a letter, number, "done," or "back"
-        if (spokenToCharMap[spokenWord]) {
-            const character = spokenToCharMap[spokenWord];
-            if (character === "DONE") {
-                switchToPinField();
-            } else if (character === "BACK") {
-                deleteLastCharacter();
-            } else {
-                processSpokenCharacter(character);
-            }
+        if (spokenWord.includes("capital letter")) {
+            let character = spokenWord.split(" ").pop().toUpperCase();
+            processSpokenCharacter(character, true);
+        } else if (spokenWord.includes("pin") || spokenWord.includes("done")) {
+            switchToPinField();
+        } else if (spokenWord.includes("back")) {
+            deleteLastCharacter();
         } else {
-            console.log("Unrecognized word. Please try again.");
+            for (const word of spokenWord.split(" ")) {
+                if (spokenToCharMap[word]) {
+                    processSpokenCharacter(spokenToCharMap[word]);
+                }
+            }
         }
     }
 
-    // Function to insert the recognized character into the current field
-    function processSpokenCharacter(character) {
+    function processSpokenCharacter(character, isUpperCase = false) {
         const inputField = document.getElementById(currentField);
-        inputField.value += character;
-        speakBack(character);
+        if (currentField === "pin" && isUpperCase) {
+            inputField.value += character;
+        } else {
+            inputField.value += character.toLowerCase();
+        }
+        // Narrate the character added
+        speakBack(`Added ${character}`);
     }
 
-    // Function to switch to the PIN input field
     function switchToPinField() {
-        currentField = currentField === 'user-id' ? 'pin' : 'user-id';  // Toggle between User ID and PIN
+        currentField = currentField === 'user-id' ? 'pin' : 'user-id';
         console.log("Switched to field:", currentField);
+        // Narrate field switching
+        speakBack(`Switched to ${currentField.replace("-", " ")} field`);
     }
 
-    // Function to delete the last character from the current input field
     function deleteLastCharacter() {
         const inputField = document.getElementById(currentField);
-        inputField.value = inputField.value.slice(0, -1);  // Remove the last character
+        const deletedChar = inputField.value.slice(-1);
+        inputField.value = inputField.value.slice(0, -1);
         console.log("Deleted last character from field:", currentField);
+        // Narrate character deletion
+        speakBack(`Deleted ${deletedChar}`);
     }
 
-    // Function to speak back the recognized character for user confirmation
-    function speakBack(character) {
+    function speakBack(message) {
         const synth = window.speechSynthesis;
-        const utterThis = new SpeechSynthesisUtterance(character);
+        const utterThis = new SpeechSynthesisUtterance(message);
         synth.speak(utterThis);
     }
 }
