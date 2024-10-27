@@ -3,28 +3,29 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
+    recognition.lang = 'zh-CN';
 
     let isRecognitionRunning = false;
 
     const narrate = (message) => {
         const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
+        utterance.lang = 'zh-CN';
         window.speechSynthesis.speak(utterance);
     };
 
     const handleCommand = (spokenText) => {
         const command = spokenText.toLowerCase();
 
-        if (command.includes("accounts")) {
-            narrate("Navigating to View Accounts page.");
+        if (command.includes("账户")) {
+            narrate("正在导航到查看账户页面。");
             window.location.href = "accounts.html";
-        } else if (command.includes("transfer")) {
-            narrate("Navigating to Transfer and Payments page.");
+        } else if (command.includes("转账")) {
+            narrate("正在导航到转账和支付页面。");
             window.location.href = "transfer.html";
-        } else if (command.includes("investment")) {
-            narrate("You are on the Investment page.");
+        } else if (command.includes("投资")) {
+            narrate("您在投资页面。");
         } else {
-            narrate("Command not recognized on this page.");
+            narrate("此页面上未识别命令。");
         }
     };
 
@@ -37,7 +38,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
     recognition.onresult = (event) => {
         const spokenText = event.results[0][0].transcript;
-        console.log(`Recognized: ${spokenText}`);
+        console.log(`识别结果: ${spokenText}`);
         handleCommand(spokenText);
     };
 
@@ -47,21 +48,21 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
     recognition.onerror = (event) => {
-        console.error('Error occurred:', event.error);
-        narrate('Error occurred. Please try again.');
+        console.error('发生错误:', event.error);
+        narrate('发生错误。请再试一次。');
         isRecognitionRunning = false;
         startListening();
     };
 
-    // Initial welcome message
-    narrate('Welcome to the Investment page. Here are your current investments. Say "Accounts" to view accounts, "Transfer" for transfers, or "Investment" for this page.');
+    // Initial welcome message in Chinese
+    narrate('欢迎来到投资页面。以下是您当前的投资。说 "账户" 查看账户，"转账" 进行转账，或"投资"留在此页面。');
     startListening();
 
 } else {
     const narrate = (message) => {
         const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
+        utterance.lang = 'zh-CN';
         window.speechSynthesis.speak(utterance);
     };
-    narrate('Sorry, your browser does not support the Web Speech API.');
+    narrate('抱歉,您的浏览器不支持网络语音API。');
 }
