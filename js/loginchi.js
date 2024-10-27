@@ -84,59 +84,61 @@ if (!SpeechRecognition) {
 
         // Handle remember me confirmation
         if (awaitingRememberMeConfirmation) {
-            if (spokenWord === "yes") {
+            if (spokenWord === "是") {
                 document.getElementById("remember-me").checked = true;
-                speakBack("Remember Me option is now selected. Are you ready to log in? Say yes or no.");
+                speakBack("记住我”选项现在已被选中。您准备好登录吗？请说是或不是。" , "zh-CN");
         
                 awaitingLoginConfirmation = true;
                 awaitingRememberMeConfirmation = false;
                 return;
-            } else if (spokenWord === "no") {
+            } else if (spokenWord === "不是" || spokenWord === "不") {
                 document.getElementById("remember-me").checked = false;
-                speakBack("Remember Me option is disabled. Are you ready to log in? Say yes or no.");
+                speakBack("记住我选项已被禁用。您准备好登录吗？请说是或不是。" , "zh-CN");
         
                 awaitingLoginConfirmation = true;
                 awaitingRememberMeConfirmation = false;
                 return;
             } else {
-                speakBack("Please say yes or no.");
+                speakBack("请说是或不是。", "zh-CN");
+
                 return;
             }
         }
 
         // Handle login confirmation
         if (awaitingLoginConfirmation) {
-            if (spokenWord === "yes") {
+            if (spokenWord === "是") {
                 document.querySelector(".login-btn").click();
                 awaitingLoginConfirmation = true;
-            } else if (spokenWord === "no") {
-                speakBack("Okay, let me know if you need further assistance.");
+            } else if (spokenWord === "不是" || spokenWord === "不") {
+                speakBack("好的，如果您需要进一步的帮助，请告诉我。" , "zh-CN");
                 awaitingLoginConfirmation = false;
             } else {
-                speakBack("Please say yes or no.");
+                speakBack("请说是或不是。" , "zh-CN");
+
             }
             return;
         }
 
         // Switch between fields based on spoken words
-        if (spokenWord.includes("change to password") || spokenWord.includes("password") || spokenWord.includes("pin")) {
+        if (spokenWord.includes("密码") || spokenWord.includes("切换到密码")) {
             currentField = 'pin';
-            speakBack("Switched to password field.");
+            speakBack("切换到密码字段。", "zh-CN");
             return;
-        } else if (spokenWord.includes("change to username") || spokenWord.includes("user name") || spokenWord.includes("username") || spokenWord.includes("user id")) {
+        } else if (spokenWord.includes("切换到用户名") || spokenWord.includes("用户名")  || spokenWord.includes("user id")) {
             currentField = 'user-id';
-            speakBack("Switched to username field.");
+            speakBack("切换到用户名字段。", "zh-CN");
             return;
         }
 
         // Handle character deletion
-        if (spokenWord.includes("back") || spokenWord.includes("delete") || spokenWord.includes("remove") || spokenWord.includes("erase")) {
+        if (spokenWord.includes("返回") || spokenWord.includes("删除") || spokenWord.includes("remove") || spokenWord.includes("erase")) {
             deleteLastCharacter();
             return;
-        } else if (spokenWord === "done") {
+        } else if (spokenWord === "完成" || spokenWord === "完") {
             const userId = document.getElementById("user-id").value;
             const password = document.getElementById("pin").value;
-            speakBack(`User ID: ${userId}. Password: ${password}. Would you like me to remember you? Say yes or no.`);
+            speakBack(`用户 ID: ${userId}。密码: ${password}。您想让我记住您吗？请说是或不是。`, "zh-CN");
             awaitingRememberMeConfirmation = true;
             return;
         }
@@ -167,7 +169,7 @@ if (!SpeechRecognition) {
         const inputField = document.getElementById(currentField);
         if (inputField) {
             inputField.value += character;
-            speakBack(`Added ${charName}`);
+            speakBack(`当前输入的字符是: ${charName}`, "zh-CN");
         } else {
             speakBack("Error: Field not found.");
         }
