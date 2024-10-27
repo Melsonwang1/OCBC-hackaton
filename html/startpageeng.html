@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCBC Page</title>
-    <link rel="stylesheet" href="../css/startpage.css">
-    <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
+    <title>OCBC Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../css/startpage.css"> <!-- Link to CSS -->
+
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div class="page-container">
@@ -15,23 +21,55 @@
                 <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
             </div>
             <div class="login">
-                <a href="login.html">Login</a>
+                <button onclick="window.location.href='login.html'">
+                    Login
+                    <img src="../pics/login-icon.png" alt="Login Icon" class="login-icon">
             </div>
         </header>
 
         <!-- Main Content Section -->
         <main>
-            <section class="welcome">
-                <h1>Welcome to OCBC</h1>
-            </section>
-            <section class="highlights">
-                <h2>Highlights</h2>
+            <section class="welcome-message">
+                <h1>Welcome to the OCBC Bank</h1>
             </section>
         </main>
+
     </div>
-    <!-- Footer Section -->
-    <footer>
-        <p>Footer</p>
+
+    <!-- Footer Section --> 
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section logo-about">
+                <div class="logo">
+                    <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+                </div>
+                <div class="about">
+                    <h3>Who Are We?</h3>
+                    <p>OCBC is the longest established Singapore bank, formed in 1932 from the merger of three local banks, 
+                        the oldest of which was founded in 1912. Since our incorporation, we have been enabling people 
+                        and communities to realise their aspirations.</p>
+                </div>
+            </div>
+            <div class="footer-section links">
+                <h3>Useful Links</h3>
+                <ul>
+                    <li><a href="#">Online Banking</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <ul class="contact-info">
+                    <li>
+                        <span><i class="fas fa-phone"></i></span>
+                        <p><a href="tel:+6561234567">+65 6123 4567</a></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </footer>
     <script src="../js/startpage.js"></script>
 </body>

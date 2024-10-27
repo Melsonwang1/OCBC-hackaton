@@ -7,12 +7,8 @@
 
 body {
     height: 100%;
-    font-family: Arial, sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: #f4f4f4;
-}
-
-/* Flexbox layout for the entire page */
-body {
     display: flex;
     flex-direction: column;
 }
@@ -26,54 +22,166 @@ body {
 
 /* Header styling */
 header {
-    background-color: #333;
+    background-color: #ffffff;
     color: white;
-    padding: 10px 20px;
+    padding: 20px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 header .logo img {
-    width: 200px; /* Adjust based on the actual logo size */
+    width: 200px; 
+    margin-left: 70px;
+    margin-top: 15px;
 }
 
-header .login a {
+header .login button {
+    display: flex;
+    align-items: center; /* Aligns text and icon vertically */
+    background-color: #ff0000; /* Replace with your desired color */
     color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 20px;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 50px;
+    margin-top: -15px;
+    cursor: pointer;
+    font-size: 26px;
+    border-radius: 10px;
 }
 
-/* Main content area styling */
+header .login button:hover {
+    background-color: #cc0000; /* Darker shade on hover */
+}
+
+header .login button .login-icon {
+    margin-left: 12px; 
+    width: 30px; 
+    height: 30px;
+}
+
+/* Main Styles */
 main {
-    flex: 1; /* This ensures the main section takes the remaining space */
+    flex: 1; 
     padding: 20px;
     text-align: center;
 }
 
-.welcome, .highlights {
+.welcome-message, .highlights {
     background-color: #e0e0e0;
     margin: 20px 0;
     padding: 40px;
     border-radius: 8px;
 }
 
-.welcome {
+.welcome-message {
     height: 300px;
+    font-size: 26px;
 }
 
 .highlights {
     height: 200px;
 }
 
-/* Footer always stays at the bottom */
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    bottom: 0;
-    width: 100%;
-    height: 100px;
+/* Footer Styles */
+.footer {
+    background-color: #ffffff; 
+    color: #000000; 
+    padding: 40px 20px; 
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start; 
+    padding-left: 0; 
+}
+
+/* Logo and About Section */
+.logo-about {
+    flex: 1.2; 
+    display: flex;
+    flex-direction: column; 
+}
+
+.about {
+    max-width: 700px; 
+}
+
+.logo img {
+    width: 180px;
+    margin-bottom: 30px; 
+}
+
+/* Links and Contact Sections */
+.links, .contact {
+    flex: 0.3; 
+    text-align: right; 
+}
+
+.footer-section.links {
+    margin-right: 60px; 
+    margin-left: 200px;
+}
+
+/* Typography */
+.footer-section h3 {
+    font-size: 18px;
+    margin-bottom: 20px; 
+    color: #000000;
+}
+
+.footer-section p, .footer-section ul {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #000000;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.footer-section ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-section.contact {
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-start; 
+    margin-left: 20px; 
+}
+
+.footer-section.contact .contact-info {
+    display: flex;
+    align-items: center; 
+    list-style-type: none; 
+    padding: 0; 
+    margin: 0; 
+}
+
+.footer-section.contact .contact-info li {
+    display: flex; 
+    align-items: center; 
+}
+
+.footer-section.contact .contact-info span {
+    margin-right: 10px; 
+}
+
+.footer-section.contact .contact-info p {
+    margin: 0; 
 }
