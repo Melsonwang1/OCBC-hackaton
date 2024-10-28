@@ -258,6 +258,15 @@ section {
     margin-bottom: 20px; 
 }
 
+.transaction-description {
+    margin: 5px 10px; 
+    white-space: normal; 
+    overflow-wrap: break-word; 
+    flex-grow: 1; 
+    min-width: 0; 
+    max-width: 500px; 
+}
+
 .transaction-amount {
     font-size: 18px; 
     font-weight: bold; 
