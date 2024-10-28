@@ -30,6 +30,8 @@
         <!-- Welcome message -->
         <div class="welcome">Welcome, THOMAS LIM JUN WEI</div>
 
+        <!-- What would you like to do today? -->
+        <h2 class="welcome-message">What would you like to do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
             <a href="../html/accountseng.html" class="active">
@@ -48,21 +50,22 @@
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <h2>Your Bank Accounts:</h2>
-        <div class="account-card" onclick="showAccount('myBank')">
+        <a href="accountsdetails.html" class="account-card">
             <div>
                 <h3>My Account</h3>
                 <p>123-456789-001</p>
             </div>
             <p class="balance"><span class="currency">SGD</span> $2000.00</p>
-        </div>
-        <div class="account-card" onclick="showAccount('savingsBank')">
+        </a>
+        <a href="savingsBank.html" class="account-card">
             <div>
                 <h3>My Savings Account</h3>
                 <p>123-456789-002</p>
             </div>
             <p class="balance"><span class="currency">SGD</span> $2159.63</p>
-        </div>
+        </a>
     </section>
+
 
     <!-- My Account Page -->
     <section id="myBank" class="account-details" style="display:none;">

@@ -67,7 +67,13 @@ header .logout button .login-icon {
     font-weight: bold;
     text-align: left;
     margin-left: 90px;
-    
+}
+
+.welcome-message {
+    text-align: center; /* Centers the text */
+    font-size: 24px; /* Adjust the font size as needed */
+    margin-bottom: 20px; /* Adds space below the heading */
+    font-weight: bold; /* Makes the text bold */
 }
 
 /* Navigation bar styling */
@@ -119,7 +125,7 @@ section {
 .account-selection {
     background-color: white;
     margin: 20px auto;
-    padding: 20px;
+    padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 70px;
@@ -127,7 +133,7 @@ section {
     max-width: 1000px; /* Adjust this value as needed */
 }
 
-.account-selection h2{
+.account-selection h2 {
     margin-bottom: 40px;
     font-size: 30px;
 }
@@ -143,6 +149,8 @@ section {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-bottom: 20px;
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit text color */
 }
 
 .account-card:hover {
