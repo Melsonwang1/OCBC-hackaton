@@ -61,7 +61,7 @@ header .logout button .login-icon {
 
 /* Welcome message styling */
 .welcome {
-    font-size: 32px;
+    font-size: 27px;
     margin-bottom: 50px;
     margin-top: 40px;
     font-weight: bold;
@@ -70,10 +70,10 @@ header .logout button .login-icon {
 }
 
 .welcome-message {
-    text-align: center; /* Centers the text */
-    font-size: 24px; /* Adjust the font size as needed */
-    margin-bottom: 20px; /* Adds space below the heading */
-    font-weight: bold; /* Makes the text bold */
+    text-align: center; 
+    font-size: 30px; 
+    margin-bottom: 20px; 
+    font-weight: bold; 
 }
 
 /* Navigation bar styling */
