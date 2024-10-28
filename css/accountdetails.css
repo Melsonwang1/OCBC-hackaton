@@ -1,0 +1,296 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100%;
+    font-family: "Poppins", sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header styling */
+header {
+    background-color: #ffffff;
+    color: white;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo img {
+    width: 200px; 
+    margin-left: 70px;
+    margin-top: 15px;
+}
+
+header .logout button {
+    display: flex;
+    align-items: center; /* Aligns text and icon vertically */
+    background-color: #ff0000; /* Replace with your desired color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 50px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 26px;
+    border-radius: 10px;
+}
+
+header .logout button:hover {
+    background-color: #cc0000; /* Darker shade on hover */
+}
+
+header .logout button .login-icon {
+    margin-left: 12px; 
+    width: 30px; 
+    height: 30px;
+}
+
+/* Centering container */
+.container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Welcome message styling */
+.welcome {
+    font-size: 32px;
+    margin-bottom: 60px;
+    margin-top: 40px;
+    font-weight: bold;
+    text-align: left;
+    margin-left: 90px;
+    
+}
+
+.welcome-message {
+    text-align: center; 
+    font-size: 24px; 
+    margin-bottom: 20px; 
+    font-weight: bold; 
+}
+
+/* Navigation bar styling */
+.navbar {
+    display: inline-flex;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    max-width: 1000px;
+}
+
+/* Navigation links styling */
+.navbar a {
+    color: black;
+    padding: 10px 20px;
+    margin: 0 30px;
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 15px;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column; /* Stack icon above text */
+    align-items: center;
+}
+
+/* Icon image styling */
+.navbar a img {
+    width: 70px; 
+    height: 60px; 
+    margin-bottom: 15px; 
+}
+
+/* Highlighted button styling */
+.navbar a.active {
+    background-color: #ddd;
+}
+
+/* Hover effect */
+.navbar a:hover {
+    background-color: #ccc;
+}
+
+section {
+    padding: 20px;
+}
+
+/* Account Details Styling */
+.account-details {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    width: 100%; 
+    max-width: 1000px; 
+    margin-bottom: 50px;
+}
+
+.account-details h2{
+    font-size: 33px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.account-details p{
+    font-size: 23px;
+}
+
+/* Balance Summary Styling */
+.balance-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+    margin-bottom: 50px;
+}
+
+.balance-item {
+    background-color: #d3d3d3;
+    padding: 20px;
+    border-radius: 8px;
+    width: 45%;
+    text-align: center;
+}
+
+.balance-item p{
+    font-size: 23px;
+    margin-top: 20px;
+}
+
+.balance-item .amount {
+    margin-top: 15px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.balance-item .amount .currency {
+    color: black; 
+    margin-right: 5px;
+}
+
+.balance-item .amount.positive .value {
+    color: green; 
+    font-size: 30px;
+}
+
+.balance-item .amount.negative .value {
+    color: red; 
+    font-size: 30px;
+}
+
+.balance-icon {
+    width: 50px; 
+    height: 50px; 
+    margin: 0 auto; 
+    margin-bottom: 10px; 
+}
+
+.balance-icon img {
+    max-width: 100%; 
+    max-height: 100%; 
+    display: block;
+}
+
+.amount-positive {
+    color: green;
+}
+
+.amount-negative {
+    color: red;
+}
+
+/* Recent Transactions Styling */
+.recent-transactions {
+    background-color: #d3d3d3;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.recent-transactions h3{
+    text-align: left;
+    font-size: 25px;
+    margin-bottom: 30px;
+}
+
+.transaction-legend {
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 10px; 
+    font-weight: bold; 
+    font-size: 17px;
+}
+
+.legend-item {
+    flex: 1; 
+    text-align: center; 
+}
+
+.legend-item.date {
+    margin-left: -130px;
+}
+
+.legend-item.amount {
+    margin-right: -110px;
+}
+
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #999;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 10px;
+}
+
+.transaction-date {
+    font-weight: bold; 
+    color: #555; 
+    margin-bottom: 20px; 
+}
+
+.transaction-amount {
+    font-size: 18px; 
+    font-weight: bold; 
+}
+
+.currency {
+    color: black; 
+    font-size: 18px; 
+}
+
+.value-positive {
+    color: green; 
+    font-size: 24px; 
+    margin-left: 5px; 
+}
+
+.value-negative {
+    color: red; 
+    font-size: 24px; 
+    margin-left: 5px; 
+}
+
+/* Back Button Styling */
+.back-button {
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.back-button:hover {
+    background-color: #ddd;
+}
