@@ -12,16 +12,21 @@ if (!SpeechRecognition) {
     let currentField = 'user-id';
     let hasMicPermission = false;
     let awaitingSubmitConfirmation = false; // Tracks submit confirmation
+    let inputTimeout; // Timer for 3-second timeout
+    let isRecognitionRunning = false; // Tracks if recognition is running
 
     // Start with a welcome message
-    speakBack("Welcome to the password recovery page. Please enter your User ID. Say 'done' when completed.");
+    speakBack("Welcome to the password recovery page. Please enter your User ID letter by letter. Say 'done' when completed.");
 
     // Start voice recognition
     startVoiceRecognition();
 
     function startVoiceRecognition() {
-        recognition.start();
-        console.log("Starting voice recognition...");
+        if (!isRecognitionRunning) {
+            recognition.start();
+            isRecognitionRunning = true;
+            console.log("Starting voice recognition...");
+        }
     }
 
     recognition.onstart = () => {
@@ -30,7 +35,9 @@ if (!SpeechRecognition) {
     };
 
     recognition.onresult = (event) => {
+        clearTimeout(inputTimeout); // Clear the timer as we received a result
         processRecognitionResult(event);
+        startInputTimeout(); // Restart the timeout for the next word
     };
 
     recognition.onerror = (event) => {
@@ -39,8 +46,9 @@ if (!SpeechRecognition) {
     };
 
     recognition.onend = () => {
+        isRecognitionRunning = false;
         if (hasMicPermission) {
-            recognition.start();
+            startVoiceRecognition(); // Restart if stopped
         }
     };
 
@@ -116,4 +124,17 @@ if (!SpeechRecognition) {
         const speech = new SpeechSynthesisUtterance(message);
         window.speechSynthesis.speak(speech);
     }
+
+    function startInputTimeout() {
+        clearTimeout(inputTimeout);
+        inputTimeout = setTimeout(() => {
+            console.log("No input detected within 3 seconds, restarting recognition...");
+            if (isRecognitionRunning) {
+                recognition.stop(); // Stop the recognition to handle the timeout
+            }
+        }, 3000); // 3 seconds
+    }
+
+    // Initialize the timeout on first start
+    startInputTimeout();
 }

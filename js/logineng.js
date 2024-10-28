@@ -57,7 +57,7 @@ if (!SpeechRecognition) {
             if (spokenWord === "yes") {
                 window.location.href = "rememberpassword.html";
             } else if (spokenWord === "no") {
-                speakBack("You are at the User ID field. Say 'switch to password' to enter password, or 'done' when completed.");
+                speakBack("You are at the User ID field. Say 'switch to password' to enter password, or 'done' when completed. please say letter by letter.");
                 currentField = 'user-id';
             } else {
                 speakBack("Please say yes or no.");
