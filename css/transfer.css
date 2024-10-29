@@ -1,62 +1,56 @@
-/* Reset and base styles */
+/* General Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
+body {
     height: 100%;
-    font-family: Arial, sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header styling */
 header {
-    background-color: #333;
-    padding: 10px 20px;
+    background-color: #ffffff;
+    color: white;
+    padding: 20px 20px;
     display: flex;
-    align-items: center;
-    justify-content: space-between; /* Align logo on left, nav buttons on right */
-}
-
-.header-content {
-    display: flex;
-    width: 100%;
     justify-content: space-between;
     align-items: center;
 }
 
 header .logo img {
-    width: 120px; /* Adjust the logo size */
+    width: 200px; 
+    margin-left: 70px;
+    margin-top: 15px;
 }
 
-nav.account-navigation {
+header .logout button {
     display: flex;
-    gap: 10px;
-}
-
-.nav-buttons a {
-    display: inline-block;
-    background-color: #f2f2f2;
-    color: #333;
-    padding: 10px 20px;
-    margin: 5px;
-    text-decoration: none;
-    border-radius: 8px;  /* Rounded corners */
-    font-weight: bold;
-    transition: background-color 0.3s, color 0.3s;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-.nav-buttons a:hover {
-    background-color: #ddd;
-    color: #000; /* Darker text on hover */
-}
-
-.nav-buttons a.active {
-    background-color: #007BFF; /* Active button color */
+    align-items: center; /* Aligns text and icon vertically */
+    background-color: #ff0000; /* Replace with your desired color */
     color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 50px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 26px;
+    border-radius: 10px;
+}
+
+header .logout button:hover {
+    background-color: #cc0000; /* Darker shade on hover */
+}
+
+header .logout button .login-icon {
+    margin-left: 12px; 
+    width: 30px; 
+    height: 30px;
 }
 
 /* Main content */
@@ -64,20 +58,86 @@ main {
     text-align: center;
 }
 
+/* Centering container */
+.container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Welcome message styling */
+.welcome {
+    font-size: 27px;
+    margin-bottom: 50px;
+    margin-top: 40px;
+    font-weight: bold;
+    text-align: left;
+    margin-left: 90px;
+}
+
+.welcome-message {
+    text-align: center; 
+    font-size: 30px; 
+    margin-bottom: 20px; 
+    font-weight: bold; 
+}
+
+/* Navigation bar styling */
+.navbar {
+    display: inline-flex;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    max-width: 1000px;
+}
+
+/* Navigation links styling */
+.navbar a {
+    color: black;
+    padding: 10px 20px;
+    margin: 0 30px;
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 15px;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column; /* Stack icon above text */
+    align-items: center;
+}
+
+/* Icon image styling */
+.navbar a img {
+    width: 70px; /* Set icon width */
+    height: 60px; /* Set icon height */
+    margin-bottom: 15px; /* Space between icon and text */
+}
+
+/* Highlighted button styling */
+.navbar a.active {
+    background-color: #ddd;
+}
+
+/* Hover effect */
+.navbar a:hover {
+    background-color: #ccc;
+}
+
 .transfer-container {
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     padding: 40px;
     border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
+    width: 100%;
+    max-width: 1000px;
     margin: 0 auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 50px;
+    margin-bottom: 70px;
 }
 
-h2 {
-    margin-bottom: 20px;
-    font-size: 1.2rem;
+.transfer-container h2 {
+    margin-bottom: 30px;
+    font-size: 28px;
     font-weight: bold;
     text-align: left;
 }
@@ -93,10 +153,11 @@ form {
     text-align: left;
 }
 
-label {
+.form-group label {
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
+    font-size: 18px;
 }
 
 select, input[type="text"] {
@@ -126,6 +187,7 @@ select, input[type="text"] {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-top: 10px; /* Add some space above the input fields */
 }
 
 .input-box {
@@ -173,15 +235,4 @@ select, input[type="text"] {
 
 .transfer-btn:hover {
     background-color: #45a049;
-}
-
-/* Footer styling */
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #333;
-    color: white;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
 }

@@ -3,27 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transfer and Payments</title>
     <link rel="stylesheet" href="../css/transfer.css">
-    <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
+    <title>OCBC - Transfer Money</title>
+
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
 </head>
-<body>
+<body> 
     <!-- Header Section -->
     <header class="header">
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
-        <div class="nav-buttons">
-            <nav>   
-                <a href="accounts.html" class="nav-btn">View Accounts</a>
-                <a href="transfer.html" class="nav-btn.active">Transfer and Payments</a>
-                <a href="investment.html" class="nav-btn">Investments</a>
-            </nav>
+        <div class="logout">
+            <button onclick="window.location.href='login.html'">
+                Log out
+                <img src="../pics/logout.png" alt="Log Out Icon" class="login-icon">
         </div>
     </header>
 
     <!-- Main Content Section -->
     <main>
+        <div class="container">
+            <!-- Welcome message -->
+            <div class="welcome">Welcome, THOMAS LIM JUN WEI</div>
+    
+            <!-- What would you like to do today? -->
+            <h2 class="welcome-message">What would you like to do today?</h2>
+            <!-- Navigation bar -->
+            <div class="navbar">
+                <a href="../html/accountseng.html">
+                    <img src="../pics/view-account.png" alt="View Icon">
+                    View Accounts</a>
+                <a href="../html/transfer.html"class="active">
+                    <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+                    Transfer Money</a>
+                <a href="../html/investmenteng.html">
+                    <img src="../pics/investment.png" alt="Investments Icon">
+                    Investments</a> 
+            </div>
+                
+        </div>
         <div class="transfer-container">
             <h2>Transfer and Payments</h2>
             <form>
@@ -38,23 +61,24 @@
                 </div>
 
                 <!-- Transferring money to -->
-                <!-- Transferring money to -->
                 <div class="form-group">
-                    <label>2. Transferring money to</label>
-                    <div class="transfer-input-group">
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="transfer-to" value="mobile">
-                                Mobile number
-                            </label>
-                            <label>
-                                <input type="radio" name="transfer-to" value="nric">
-                                NRIC
-                            </label>
-                        </div>
+                    <label>2. Send Money Using:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="transfer-to" value="mobile" onclick="toggleInput('mobile')">
+                            Mobile number
+                        </label>
+                        <label>
+                            <input type="radio" name="transfer-to" value="nric" onclick="toggleInput('nric')">
+                            NRIC
+                        </label>
+                    </div>
+                    
+                    <!-- Transfer input group with text box below the options -->
+                    <div class="transfer-input-group" style="display: none;">
                         <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number">
                         <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;">
-                        <button type="button" class="enter-btn">Enter</button>
+                        <button type="button" id="enterBtn" class="enter-btn" style="display: none;">Enter</button>
                     </div>
                 </div>
 
@@ -86,10 +110,32 @@
         </div>
     </main>
 
-    <!-- Footer Section -->
-    <footer>
-        Footer
-    </footer>
+    <!-- Leave it here first -->
+    <script>
+        function toggleInput(selected) {
+            const mobileInput = document.getElementById('mobile');
+            const nricInput = document.getElementById('nric');
+            const enterBtn = document.getElementById('enterBtn');
+            const transferInputGroup = document.querySelector('.transfer-input-group');
+
+            // Show the transfer input group when an option is selected
+            transferInputGroup.style.display = 'flex'; // Ensure it displays as flex
+        
+            if (selected === 'mobile') {
+                mobileInput.style.display = 'block';
+                nricInput.style.display = 'none';
+                enterBtn.style.display = 'block'; // Show the button
+            } else if (selected === 'nric') {
+                nricInput.style.display = 'block';
+                mobileInput.style.display = 'none';
+                enterBtn.style.display = 'block'; // Show the button
+            } else {
+                mobileInput.style.display = 'none';
+                nricInput.style.display = 'none';
+                enterBtn.style.display = 'none'; // Hide the button if no option is selected
+            }
+        }
+        </script>
     <script src="../js/transfer.js"></script>
 </body>
 </html>
