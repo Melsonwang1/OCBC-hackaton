@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCBC Login Page with Voice Control</title>
+    <title>OCBC 语音登录</title>
     <link rel="stylesheet" href="../css/login.css">
     <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
+
+        <!-- Import Google Fonts-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -20,30 +25,30 @@
     <!-- Main Content Section -->
     <main>
         <div class="login-container">
-            <h2>Online Banking</h2>
+            <h2>网上银行</h2>
             <form action="#">
                 <div class="input-group">
-                    <label for="user-id">User ID</label>
+                    <label for="user-id">用户编号 (ID)</label>
                     <input type="text" id="user-id" name="user-id" required>
                 </div>
 
                 <div class="input-group">
-                    <label for="pin">PIN</label>
+                    <label for="pin">密码</label>
                     <input type="password" id="pin" name="pin" required>
                 </div>
 
                 <div class="remember-me">
                     <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Remember Me</label>
+                    <label for="remember-me">记住我</label>
                 </div>
 
-                <a href="rememberpassword.html" class="forgot-password">Forgot your password?</a>
+                <a href="rememberpassword.html" class="forgot-password">忘记密码</a>
 
-                <button type="submit" class="login-btn">Login</button>
+                <button type="submit" class="login-btn">登录</button>
 
-                <div class="or">OR</div>
+                <div class="or">或</div>
 
-                <button type="button" class="singpass-btn">Login with Singpass</button>
+                <button type="button" class="singpass-btn">Singpass 登录</button>
             </form>
 
             

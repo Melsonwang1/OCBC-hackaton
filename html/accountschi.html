@@ -5,8 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/account.css">
-    <title>OCBC Account Page</title>
-</head>
+    <title>OCBC 我的账户</title>
+
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head> 
 
 <body>
     <!-- Header Section -->
@@ -14,84 +19,104 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
-        <div class="nav-buttons">
-            <nav>
-                <a href="accountschi.html" class="nav-btn active">View Accounts</a>
-                <a href="transferchi.html" class="nav-btn">Transfer and Payments</a>
-                <a href="investmentchi.html" class="nav-btn">Investments</a>
-            </nav>
+        <div class="logout">
+            <button onclick="window.location.href='login.html'">
+                登出
+                <img src="../pics/logout.png" alt="Login Icon" class="login-icon">
         </div>
     </header>
 
+    <div class="container">
+        <!-- Welcome message -->
+        <div class="welcome">您好！欢迎, THOMAS LIM JUN WEI</div>
+
+        <!-- What would you like to do today? -->
+        <h2 class="welcome-message">您今天想做什么？</h2>
+        <!-- Navigation bar -->
+        <div class="navbar">
+            <a href="../html/accountseng.html" class="active">
+                <img src="../pics/view-account.png" alt="View Icon">
+                查看账户</a>
+            <a href="../html/transfer.html">
+                <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+                转账</a>
+            <a href="../html/investmenteng.html">
+                <img src="../pics/investment.png" alt="Investments Icon">
+                投资</a> 
+        </div>
+            
+    </div>
+
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
-        <h2>Which bank account would you like to see?</h2>
-        <div class="account-card" onclick="showAccount('myBank')">
-            <h3>My Account</h3>
-            <p>123-456789-001</p>
-            <p class="balance">SGD $2000.00</p>
-        </div>
-        <div class="account-card" onclick="showAccount('savingsBank')">
-            <h3>My Savings Account</h3>
-            <p>123-456789-002</p>
-            <p class="balance">SGD $2100.00</p>
-        </div>
+        <h2>我的银行账户:</h2>
+        <p>请选择一个账户以查看详细信息。</p>
+        <a href="accountsdetails.html" class="account-card">
+            <div>
+                <h3>我的账户</h3>
+                <p>123-456789-001</p>
+            </div>
+            <p class="balance"><span class="currency">SGD</span> $2000.00</p>
+        </a>
+        <a href="savingsBank.html" class="account-card">
+            <div>
+                <h3>我的储蓄账户</h3>
+                <p>123-456789-002</p>
+            </div>
+            <p class="balance"><span class="currency">SGD</span> $2159.63</p>
+        </a>
     </section>
+
 
     <!-- My Account Page -->
     <section id="myBank" class="account-details" style="display:none;">
-        <h2 id="myBankName">My Account</h2>
+        <h2 id="myBankName">我的账户</h2>
         <p id="myBankNumberDetails">123-456789-001</p>
-        <p id="myBankBranchDetails">Central Branch</p>
+        <p id="myBankBranchDetails">中央分行</p>
         <div class="account-summary">
             <div class="balance-box green">
-                <p id="have">What you have:</p>
+                <p id="have">您的余额:</p>
                 <p id="haveamt">SGD $2000.00</p>
             </div>
             <div class="balance-box red">
-                <p id="owed">What you owe:</p>
+                <p id="owed">您的欠款:</p>
                 <p id="owedamt">SGD $0.00</p>
             </div>
         </div>
         <div class="recent-transactions">
-            <h3 id="transaction">Recent transactions:</h3> <!-- Changed ID to transaction -->
-            <p id="person">PayNow from: TOM LIM</p>
+            <h3 id="transaction">最近的转账:</h3> <!-- Changed ID to transaction -->
+            <p id="person">PayNow 来自: TOM LIM</p>
             <p id="phonenum">+65-00000000</p>
             <p id="amt">SGD +$65.00</p>
-            <p id="date">28 July 2024</p>
+            <p id="date">2024年7月28日</p>
         </div>
-        <button onclick="goBack()" class="back-button">Back</button>
+        <button onclick="goBack()" class="back-button">返回</button>
     </section>
 
     <!-- My Savings Account Page -->
     <section id="savingsBank" class="account-details" style="display:none;">
-        <h2 id="savingsBankName">My Savings Account</h2>
+        <h2 id="savingsBankName">我的储蓄账户</h2>
         <p id="savingsBankNumberDetails">123-456789-002</p>
-        <p id="savingsBankBranchDetails">Downtown Branch</p>
+        <p id="savingsBankBranchDetails">市中心分行</p>
         <div class="account-summary">
             <div class="balance-box green">
-                <p id="savingshave">What you have:</p>
+                <p id="savingshave">您的余额:</p>
                 <p id="savingshaveamt">SGD $2100.00</p>
             </div>
             <div class="balance-box red">
-                <p id="savingsOwed">What you owe:</p>
+                <p id="savingsOwed">您的欠款:</p>
                 <p id="savingsOwedamt">SGD $0.00</p>
             </div>
         </div>
         <div class="recent-transactions">
-            <h3 id="savingsTransactions">Recent transactions:</h3>
-            <p id="savingsTransactionsperson">PayNow from: JOHN DOE</p>
+            <h3 id="savingsTransactions">最近的转账:</h3>
+            <p id="savingsTransactionsperson">PayNow 来自: JOHN DOE</p>
             <p id="savingsTransactionsphonenum">+65-12345678</p>
             <p id="savingsTransactionsamt">SGD +$100.00</p>
-            <p id="savingsTransactionsdate">28 July 2024</p>
+            <p id="savingsTransactionsdate">2024年7月28日</p>
         </div>
-        <button onclick="goBack()" class="back-button">Back</button>
+        <button onclick="goBack()" class="back-button">返回</button>
     </section>
-
-    <!-- Footer Section -->
-    <footer class="footer">
-        <p>Footer</p>
-    </footer>
 
     <!-- JavaScript for handling account display -->
     <script>
@@ -114,7 +139,7 @@
             document.getElementById('account-selection').style.display = 'block';
         }
     </script>
-    <script src="../js/accountschi.js"></script>
+    <script src="../js/accountseng.js"></script>
 </body>
 
 </html>
