@@ -1,24 +1,28 @@
 const express = require("express");
-const booksController = require("./controllers/booksController");
 const sql = require("mssql");
+const path = require('path');
 const dbConfig = require("./dbConfig");
-const bodyParser = require("body-parser"); // Import body-parser
-const validateBook = require("./middlewares/validateBook");
+const bodyParser = require("body-parser");
+const authorize = require("./middlewares/authorize");
+
+
+const transactionsController = require("./controllers/transactionsController");
+
+const validateTransactions = require("./middlewares/validateTransactions");
+const { profile } = require("console");
+
 
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable or default port
-const staticMiddleware = express.static("public"); // Path to the public folder
+const port = 3000;
+const staticMiddleware = express.static(path.join(__dirname, 'public'));
 
-// Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
-app.use(staticMiddleware); // Mount the static middleware
+app.use(staticMiddleware);
 
-app.get("/books", booksController.getAllBooks);
-app.get("/books/:id", booksController.getBookById);
-app.post("/books", validateBook, booksController.createBook); // POST for creating books (can handle JSON data)
-app.put("/books/:id", validateBook, booksController.updateBook); // PUT for updating books
-app.delete("/books/:id", booksController.deleteBook); // DELETE for deleting books
+app.get("/transactions/:account_id", transactionsController.getTransactionsbyaccountid);
+app.post("/transactions", validateTransactions, transactionsController.createTransaction);
+
 
 app.listen(port, async () => {
   try {
@@ -33,6 +37,9 @@ app.listen(port, async () => {
 
   console.log(`Server listening on port ${port}`);
 });
+
+
+
 
 // Close the connection pool on SIGINT signal
 process.on("SIGINT", async () => {
