@@ -33,21 +33,24 @@ class Transaction {
         try {
             const connection = await sql.connect(dbConfig);
             const sqlQuery = `
-                INSERT INTO transactions (account_id, amount, status, description, created_at, updated_at) 
-                VALUES (@account_id, @amount, @status, @description, GETDATE(), GETDATE())`;
+                INSERT INTO transactions (account_id, amount, date_of_transaction, status, description, created_at, updated_at) 
+                VALUES (@account_id, @amount, GETDATE(), @status, @description, GETDATE(), GETDATE())`;
+            
             const request = connection.request();
             request.input('account_id', sql.Int, account_id);
             request.input('amount', sql.Decimal, amount);
             request.input('status', sql.VarChar, status);
             request.input('description', sql.VarChar, description);
+            
             const result = await request.query(sqlQuery);
-
+    
             return result.rowsAffected > 0;
         } catch (error) {
             console.error("Database insertion error:", error);
             throw error;
         }
     }
+    
 }
 
 module.exports = Transaction;
