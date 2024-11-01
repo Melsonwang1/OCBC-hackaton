@@ -3,7 +3,7 @@ const sql = require("mssql");
 const path = require('path');
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
-const authorize = require("./middlewares/authorize");
+/*const authorize = require("./middlewares/authorize");*/
 
 
 const transactionsController = require("./controllers/transactionsController");
