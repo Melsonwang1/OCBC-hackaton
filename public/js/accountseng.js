@@ -1,22 +1,23 @@
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        // Uncomment and modify this if user information is needed
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId');
         
-        const userResponse = await fetch(`/user/1`);
+        const userResponse = await fetch(`/user/${userId}`);
         if (!userResponse.ok) {
             throw new Error("Failed to fetch user data");
         }
         const user = await userResponse.json();
-        document.getElementById("user-name").innerText = user.account.name; // Set user name
+        document.getElementById("user-name").innerText = user.account.name.toUpperCase(); 
         
 
         // Fetch account information
-        const accountResponse = await fetch(`/accounts/user/1`);
+        const accountResponse = await fetch(`/accounts/user/${userId}`);
         if (!accountResponse.ok) {
             throw new Error("Failed to fetch account data");
         }
-        const accounts = await accountResponse.json(); // Get the response data as an array
-        displayAccounts(accounts); // Pass the array of accounts to the display function
+        const accounts = await accountResponse.json(); 
+        displayAccounts(accounts); 
     } catch (error) {
         console.error("Error:", error);
     }
@@ -24,9 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Adjust the displayAccounts function to handle an array of account objects
 function displayAccounts(accounts) {
-    console.log('Display Accounts Function Called'); // Check if this function runs
     const accountsList = document.getElementById("accounts-list");
-    accountsList.innerHTML = ''; // Clear previous accounts if any
+    accountsList.innerHTML = ''; 
 
     accounts.forEach(account => {
         // Create a new account card for each account
@@ -38,7 +38,7 @@ function displayAccounts(accounts) {
         accountCard.innerHTML = `
             <div>
                 <h3>${account.account_name}</h3>
-                <p>${account.account_number}</p>
+                <p>Account Number: ${account.account_number}</p>
             </div>
             <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>
         `;
