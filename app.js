@@ -11,6 +11,7 @@ const validateTransactions = require("./middlewares/validateTransactions"); // T
 // Controllers
 const transactionsController = require("./controllers/transactionsController"); // Transaction Page (Melson)
 const accountController = require("./controllers/accountController"); // Account Page (Zheng Bin)
+const userController = require("./controllers/userController");
 
 const { profile } = require("console");
 
@@ -29,6 +30,9 @@ app.post("/transactions", validateTransactions, transactionsController.createTra
 // Account Page (Zheng Bin)
 app.get("/accounts/user/:user_id", accountController.getAccountsById);
 app.get("/accounts/account/:account_id", accountController.getAccountByAccountId);
+
+// User (Zheng Bin)
+app.get("/user/:user_id", userController.getUserById);
 
 
 app.listen(port, async () => {
