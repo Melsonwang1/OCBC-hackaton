@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             // Display account details
             document.querySelector('.account-details h2').innerText = account.account_name; // Set account name
-            document.querySelector('.account-details p').innerText = account.account_number; // Set account number
+            document.querySelector('.account-details .account-number').innerText = account.account_number; // Set account number
             document.querySelector('.balance-summary .balance-item.positive .value').innerText = account.balance_have.toFixed(2); // Set balance have
             document.querySelector('.balance-summary .balance-item.negative .value').innerText = account.balance_owe.toFixed(2); // Set balance owe
 
