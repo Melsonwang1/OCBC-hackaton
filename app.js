@@ -5,12 +5,14 @@ const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
 /*const authorize = require("./middlewares/authorize");*/
 
+// Middlewares
+const validateTransactions = require("./middlewares/validateTransactions"); // Transaction Page (Melson)
 
-const transactionsController = require("./controllers/transactionsController");
+// Controllers
+const transactionsController = require("./controllers/transactionsController"); // Transaction Page (Melson)
+const accountController = require("./controllers/accountController"); // Account Page (Zheng Bin)
 
-const validateTransactions = require("./middlewares/validateTransactions");
 const { profile } = require("console");
-
 
 const app = express();
 const port = 3000;
@@ -20,8 +22,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware);
 
+// Transaction Page (Melson)
 app.get("/transactions/:account_id", transactionsController.getTransactionsbyaccountid);
 app.post("/transactions", validateTransactions, transactionsController.createTransaction);
+
+// Account Page (Zheng Bin)
+app.get("/accounts/user/:user_id", accountController.getAccountsById);
+app.get("/accounts/account/:account_id", accountController.getAccountByAccId);
 
 
 app.listen(port, async () => {
@@ -37,9 +44,6 @@ app.listen(port, async () => {
 
   console.log(`Server listening on port ${port}`);
 });
-
-
-
 
 // Close the connection pool on SIGINT signal
 process.on("SIGINT", async () => {
