@@ -33,6 +33,7 @@ app.get("/accounts/account/:account_id", accountController.getAccountByAccountId
 
 // User (Zheng Bin)
 app.get("/user/:user_id", userController.getUserById);
+app.get("/user", userController.getAccountByNricOrPhone);
 
 
 app.listen(port, async () => {

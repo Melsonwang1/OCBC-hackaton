@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 currentField = "mobile";
                 speakBack("You chose mobile number. Please enter the mobile number digit by digit.", "en-US");
                 currentStep = "enterDetails";
-            } else if ( === "nric") {
+            } else if ( spokenWord=== "nric") {
                 toggleInput('nspokenWordric');
                 currentField = "nric";
                 speakBack("You chose NRIC. Please enter the NRIC starting with a letter, followed by digits, and ending with a letter.", "en-US");

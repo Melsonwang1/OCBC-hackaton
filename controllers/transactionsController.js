@@ -1,4 +1,4 @@
-const Transactions = require('../models/transactions');
+const Transaction = require('../models/transactions');
 
 const getTransactionsbyaccountid = async (req, res) => {
     try {
@@ -22,14 +22,20 @@ const getTransactionsbyaccountid = async (req, res) => {
     }
 };
 
+// Create a new transaction (POST)
 const createTransaction = async (req, res) => {
     try {
-        const { account_id, amount, status, description } = req.body;
+        const { mobile_number, nric, amount, status, description } = req.body;
 
-        // Attempt to create the transaction
-        const isTransactionCreated = await Transactions.createTransaction(account_id, amount, status, description);
+        // Ensure required fields are provided
+        if (!mobile_number && !nric) {
+            return res.status(400).json({ message: 'Mobile number or NRIC is required to find the account' });
+        }
 
-        if (isTransactionCreated) {
+        // Attempt to create the transaction using the model method
+        const transactionResponse = await Transaction.createTransaction(mobile_number, nric, amount, status, description);
+
+        if (transactionResponse) {
             res.status(201).json({ message: 'Transaction created successfully' });
         } else {
             res.status(500).json({ message: 'Transaction creation failed' });
@@ -37,9 +43,8 @@ const createTransaction = async (req, res) => {
     } catch (error) {
         console.error("Error creating transaction:", error);
 
-        // Handle specific validation errors if they exist
-        if (error.name === 'ValidationError') {
-            res.status(400).json({ message: 'Validation error', details: error.details });
+        if (error.message === "Account not found for the provided mobile number or NRIC") {
+            res.status(404).json({ message: error.message });
         } else {
             res.status(500).json({ message: 'Server error while creating transaction' });
         }
