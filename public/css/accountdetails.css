@@ -131,7 +131,7 @@ section {
     text-align: center;
     margin: 20px auto;
     width: 100%; 
-    max-width: 1000px; 
+    max-width: 1400px; 
     margin-bottom: 50px;
 }
 
@@ -216,64 +216,96 @@ section {
     margin-top: 20px;
 }
 
-.recent-transactions h3{
+.recent-transactions h3 {
     text-align: left;
     font-size: 25px;
     margin-bottom: 30px;
 }
 
+/* Legend Styling */
 .transaction-legend {
-    display: flex; 
-    justify-content: space-between; 
-    margin-bottom: 10px; 
-    font-weight: bold; 
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
     font-size: 19px;
+    margin-bottom: 10px;
 }
 
+/* Define widths for each legend item */
 .legend-item {
-    flex: 1; 
-    text-align: center; 
+    text-align: center;
 }
 
 .legend-item.date {
-    margin-left: -110px;
+    width: 15%;
+}
+
+.legend-item.description {
+    width: 25%; 
+    margin-left: -10px; /* Move description legend left */
 }
 
 .legend-item.amount {
-    margin-right: -90px;
+    width: 20%; 
+    margin-left: -40px; /* Move amount legend left */
 }
 
-.legend-item.description{
-    margin-left: 70px;
+.legend-item.status {
+    width: 15%; 
+    margin-left: -10px; /* Move status legend left */
 }
 
 .transaction {
     display: flex;
     justify-content: space-between;
     border-top: 1px solid #999;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 15px;  /* Reduced padding for better alignment */
+    padding-bottom: 15px; /* Reduced padding for better alignment */
     margin-top: 10px;
 }
 
 .transaction-date {
     font-weight: bold; 
     color: #555; 
-    margin-bottom: 20px; 
+    margin-bottom: 0; /* Removed margin to align vertically with legend */
+    width: 20%; /* Match width with legend */
 }
 
 .transaction-description {
-    margin: 5px 10px; 
     white-space: normal; 
     overflow-wrap: break-word; 
     flex-grow: 1; 
     min-width: 0; 
-    max-width: 500px; 
+    max-width: 400px; 
+    margin-left: 20px;
 }
 
 .transaction-amount {
     font-size: 18px; 
     font-weight: bold; 
+    width: 20%; /* Match width with legend */
+    text-align: center; /* Center align amount for consistency */
+    margin-left: 20px;
+}
+
+.transaction-status {
+    font-weight: bold;
+    width: 15%; /* Match width with legend */
+    text-align: center; /* Center align status for consistency */
+    margin-right: -40px;
+}
+
+/* Status Color Styles */
+.status-completed {
+    color: green;
+}
+
+.status-pending {
+    color: orange;
+}
+
+.status-failed {
+    color: red;
 }
 
 .currency {
