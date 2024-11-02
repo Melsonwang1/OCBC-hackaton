@@ -110,14 +110,14 @@ CREATE TABLE Transactions (
     FOREIGN KEY (account_id) REFERENCES Account(account_id)  
 );
 
-INSERT INTO Transactions (account_id, amount, date_of_transaction, status, description, payer, created_at, updated_at)
+INSERT INTO Transactions (account_id, amount, date_of_transaction, status, description, created_at, updated_at)
 VALUES 
 (1, +150.00, '2024-11-01', 'Completed', 'Deposit to savings account', DEFAULT, DEFAULT),
 (2, -75.00, '2024-11-01', 'Completed', 'Payment for utility bill', DEFAULT, DEFAULT),
 (3, +200.00, '2024-10-31', 'Completed', 'Salary credited', DEFAULT, DEFAULT),
 (4, -250.00, '2024-10-30', 'Pending', 'Loan payment scheduled', DEFAULT, DEFAULT),
 (5, +300.00, '2024-11-02', 'Completed', 'Transfer from checking account', DEFAULT, DEFAULT),
-(6, -50.00, '2024-11-02', 'Pending', 'Service fee deduction', DEFAULT, DEFAULT);
+(6, -50.00, '2024-11-02', 'Pending', 'Service fee deduction', DEFAULT, DEFAULT),
 (1, -100.00, '2024-11-03', 'Completed', 'Grocery shopping', DEFAULT, DEFAULT),
 (2, +500.00, '2024-11-04', 'Completed', 'Monthly salary bonus', DEFAULT, DEFAULT);
 
