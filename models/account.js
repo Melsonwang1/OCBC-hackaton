@@ -26,7 +26,7 @@ class Account{
     }
 
     // Get specific bank account by Account Id
-    static async getAccountByAccId(account_id) {
+    static async getAccountByAccountId(account_id) {
         const connection = await sql.connect(dbConfig);
         const sqlQuery = `SELECT * FROM Account WHERE account_id = @account_id`;
         const request = connection.request();
@@ -44,6 +44,19 @@ class Account{
                 result.recordset[0].balance_owe
             )
             : null; // Return null if account not found
+    }
+
+    // Get transactions for the specific bank account by Account Id (GET)
+    static async getTransactionsByAccountId(account_id) {
+        const connection = await sql.connect(dbConfig);
+        const sqlQuery = `SELECT * FROM Transactions WHERE account_id = @account_id`;
+        const request = connection.request();
+        request.input('account_id', account_id);
+
+        const result = await request.query(sqlQuery);
+        connection.close();
+
+        return result.recordset; // Return all transactions associated with the account_id
     }
     
 }

@@ -19,23 +19,30 @@ const getAccountsById = async (req, res) => {
 };
 
 // Get specific bank account associated with the specific account id. (GET)
-const getAccountByAccId = async (req, res) => {
+const getAccountByAccountId = async (req, res) => {
     const account_id = parseInt(req.params.account_id); // Get account id from parameters
 
     try {
-        const account = await Account.getAccountByAccId(account_id); 
+        const account = await Account.getAccountByAccountId(account_id); 
         if (!account) {
             return res.status(404).send("Bank Account not found"); // Send a status code 404 Not Found if no bank account are found
         }
 
-        res.json(account); // Send the retrieved bank account
+        // Fetch transactions for the account
+        const transactions = await Account.getTransactionsByAccountId(account_id);
+        
+        // Return both account and transactions together
+        res.json({
+            account,
+            transactions 
+        });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error retrieving bank account"); // Send a status code 500 Internal Server Error if fails to retrieve bank account
+        res.status(500).send("Error retrieving bank account details"); // Send a status code 500 Internal Server Error if fails to retrieve bank account
     }
 };
 
 module.exports = {
     getAccountsById,
-    getAccountByAccId
+    getAccountByAccountId
 };
