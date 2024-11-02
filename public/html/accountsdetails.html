@@ -23,6 +23,7 @@
             <button onclick="window.location.href='login.html'">
                 Log out
                 <img src="../pics/logout.png" alt="Log Out Icon" class="login-icon">
+            </button>
         </div>
     </header>
 
@@ -74,33 +75,16 @@
                     <div class="legend-item description">Description</div>
                     <div class="legend-item amount">Transaction Amount</div>
                 </div>
-                <div class="transaction">
-                    <p class="transaction-date">28 July 2024</p>
-                    <p class="transaction-description">Paynow From: TOM LIM<br>+65-00000000</p>
-                    <p class="transaction-amount positive">
-                        <span class="currency">SGD</span> <span class="value-positive">+65.00</span>
-                    </p>
-                </div>
-                <div class="transaction">
-                    <p class="transaction-date">26 July 2024</p>
-                    <p class="transaction-description">FAIRPRICE FINEST, THE CLEMENTI MALL</p>
-                    <p class="transaction-amount negative">
-                        <span class="currency">SGD</span> <span class="value-negative">-135.00</span>
-                    </p>
-                </div>
-                <div class="transaction">
-                    <p class="transaction-date">25 July 2024</p>
-                    <p class="transaction-description">Paynow To: NGEE ANN POLYTECHNIC</p>
-                    <p class="transaction-amount negative">
-                        <span class="currency">SGD</span> <span class="value-negative">-1500.00</span>
-                    </p>
-                </div>
+
+                <!-- Transaction List Container -->
+                <div id="transaction-list"></div>
+
             </div>
             
         </div>        
     </div>
 
-    <script src="../js/accountseng.js"></script>
+    <script src="../js/accountsdetails.js"></script>
 </body>
 
 </html>
