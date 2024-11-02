@@ -28,7 +28,7 @@ app.post("/transactions", validateTransactions, transactionsController.createTra
 
 // Account Page (Zheng Bin)
 app.get("/accounts/user/:user_id", accountController.getAccountsById);
-app.get("/accounts/account/:account_id", accountController.getAccountByAccId);
+app.get("/accounts/account/:account_id", accountController.getAccountByAccountId);
 
 
 app.listen(port, async () => {
