@@ -29,7 +29,7 @@
 
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome">Welcome, THOMAS LIM JUN WEI</div>
+        <div class="welcome">Welcome, <span id="user-name"></span></div>
 
         <!-- What would you like to do today? -->
         <h2 class="welcome-message">What would you like to do today?</h2>
@@ -48,26 +48,32 @@
 
         <!-- Account Details Section -->
         <div class="account-details">
-            <h2>My Account</h2>
-            <p>123-456789-001</p>
+            <h2></h2>
+            <p></p>
 
             <div class="balance-summary">
-                <div class="balance-item">
+                <div class="balance-item positive"> 
                     <div class="balance-icon positive">
                         <img src="../pics/what_you_have.png" alt="What You Have Icon" class="what-you-have-icon">
                     </div>
                     <p>What you have:</p>
-                    <p class="amount positive"><span class="currency">SGD</span> <span class="value">2000.00</span></p>
+                    <p class="amount positive">
+                        <span class="currency">SGD</span> 
+                        <span class="value">0.00</span> 
+                    </p>
                 </div>
-                <div class="balance-item">
+                <div class="balance-item negative"> 
                     <div class="balance-icon negative">
                         <img src="../pics/what_you_owe.png" alt="What You Owe Icon" class="what-you-owe-icon">
                     </div>
                     <p>What you owe:</p>
-                    <p class="amount negative"><span class="currency">SGD</span> <span class="value">0.00</span></p>
+                    <p class="amount negative">
+                        <span class="currency">SGD</span> 
+                        <span class="value">0.00</span> 
+                    </p>
                 </div>
             </div>
-
+ 
             <div class="recent-transactions">
                 <h3>Recent Transactions:</h3>
                 <div class="transaction-legend">

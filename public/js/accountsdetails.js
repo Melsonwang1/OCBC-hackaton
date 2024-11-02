@@ -2,10 +2,47 @@
 document.addEventListener('DOMContentLoaded', async function() {
     let token = localStorage.getItem('token');
 
+    // Function to fetch user and account details
+    async function fetchUserAccount(token) {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accountId = urlParams.get('accountId');
+
+            // Fetch account information
+            const accountResponse = await fetch(`/accounts/account/${accountId}`, {
+                headers: { 'Authorization': `Bearer ${token}` } 
+            });
+
+            if (!accountResponse.ok) {
+                throw new Error("Failed to fetch account data");
+            }
+            
+            const accountData = await accountResponse.json();
+            const account = accountData.account; 
+
+            // Display user name
+            document.getElementById("user-name").innerText = account.user_name.toUpperCase(); // Display user name
+
+            // Display account details
+            document.querySelector('.account-details h2').innerText = account.account_name; // Set account name
+            document.querySelector('.account-details p').innerText = account.account_number; // Set account number
+            document.querySelector('.balance-summary .balance-item.positive .value').innerText = account.balance_have.toFixed(2); // Set balance have
+            document.querySelector('.balance-summary .balance-item.negative .value').innerText = account.balance_owe.toFixed(2); // Set balance owe
+
+            // Fetch transactions for the account
+            await fetchTransactions(accountId, token); // Pass accountId to fetch transactions
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
     // Function to fetch transactions
     async function fetchTransactions() {
         try {
-            const response = await fetch(`/transactions/1`, {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accountId = urlParams.get('accountId');
+
+            const response = await fetch(`/transactions/${accountId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) {
@@ -62,5 +99,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Fetch transactions on page load
+    await fetchUserAccount();
     await fetchTransactions();
 });
