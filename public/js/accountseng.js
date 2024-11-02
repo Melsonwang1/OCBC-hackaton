@@ -1,3 +1,54 @@
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        // Uncomment and modify this if user information is needed
+        
+        const userResponse = await fetch(`/user/1`);
+        if (!userResponse.ok) {
+            throw new Error("Failed to fetch user data");
+        }
+        const user = await userResponse.json();
+        document.getElementById("user-name").innerText = user.account.name; // Set user name
+        
+
+        // Fetch account information
+        const accountResponse = await fetch(`/accounts/user/1`);
+        if (!accountResponse.ok) {
+            throw new Error("Failed to fetch account data");
+        }
+        const accounts = await accountResponse.json(); // Get the response data as an array
+        displayAccounts(accounts); // Pass the array of accounts to the display function
+    } catch (error) {
+        console.error("Error:", error);
+    }
+});
+
+// Adjust the displayAccounts function to handle an array of account objects
+function displayAccounts(accounts) {
+    console.log('Display Accounts Function Called'); // Check if this function runs
+    const accountsList = document.getElementById("accounts-list");
+    accountsList.innerHTML = ''; // Clear previous accounts if any
+
+    accounts.forEach(account => {
+        // Create a new account card for each account
+        const accountCard = document.createElement('a');
+        accountCard.href = `accountsdetails.html?accountId=${account.account_id}`; // Link to detailed view
+        accountCard.className = 'account-card'; // Apply CSS class
+
+        // Add account information using the properties from the backend response
+        accountCard.innerHTML = `
+            <div>
+                <h3>${account.account_name}</h3>
+                <p>${account.account_number}</p>
+            </div>
+            <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>
+        `;
+        
+        // Append the new card to the accounts list
+        accountsList.appendChild(accountCard);
+    });
+}
+
+
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
