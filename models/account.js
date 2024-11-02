@@ -2,8 +2,9 @@ const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class Account{
-    constructor(account_id, account_name, user_id, balance_have, balance_owe,){
+    constructor(account_id, account_number, account_name, user_id, balance_have, balance_owe,){
         this.account_id = account_id;
+        this.account_number = account_number;
         this.account_name = account_name;
         this.user_id = user_id;
         this.balance_have = balance_have;
@@ -21,7 +22,7 @@ class Account{
         connection.close();
 
         return result.recordset.map(
-            (row) => new Account(row.account_id, row.account_name, row.user_id, row.balance_have, row.balance_owe)
+            (row) => new Account(row.account_id, row.account_number, row.account_name, row.user_id, row.balance_have, row.balance_owe)
         );
     }
 
@@ -38,6 +39,7 @@ class Account{
         return result.recordset.length > 0
             ? new Account(
                 result.recordset[0].account_id,
+                result.recordset[0].account_number,
                 result.recordset[0].account_name,
                 result.recordset[0].user_id,
                 result.recordset[0].balance_have,

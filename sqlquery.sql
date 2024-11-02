@@ -74,7 +74,8 @@ VALUES
 
 /* Account Table */
 CREATE TABLE Account (
-    account_id INT PRIMARY KEY IDENTITY(1,1),      
+    account_id INT PRIMARY KEY IDENTITY(1,1),
+    account_number VARCHAR(15) NOT NULL UNIQUE,      
     account_name VARCHAR(100) NOT NULL,             
     user_id INT,                                    
     balance_have DECIMAL(10, 2) NOT NULL DEFAULT 0.00,  
@@ -82,18 +83,18 @@ CREATE TABLE Account (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)  
 );
 
-INSERT INTO Account (account_name, user_id, balance_have, balance_owe)
+INSERT INTO Account (account_number, account_name, user_id, balance_have, balance_owe)
 VALUES 
-('My Account', 1, 1500.75, 0.00),
-('My OCBC Savings Account', 1, 2000.75, 0.00),
-('My Account', 2, 2000.00, 0.00),
-('My Credit Account', 2, 0.00, 500.00),
-('My Account', 3, 2100.00, 0.00),
-('My Investment Account', 3, 2000.00, 0.00),
-('My Account', 4, 850.00, 0.00),
-('My Loan Account', 4, 0.00, 2500.00),
-('My Account', 5, 2000.00, 0.00),
-('My Savings Account', 5, 750.00, 0.00);
+('123-456789-001', 'My Account', 1, 1500.75, 0.00),
+('123-456789-002', 'My OCBC Savings Account', 1, 2000.75, 0.00),
+('124-987654-003', 'My Account', 2, 2000.00, 0.00),
+('124-987654-004', 'My Credit Account', 2, 0.00, 500.00),
+('125-123456-005', 'My Account', 3, 2100.00, 0.00),
+('125-123456-006', 'My Investment Account', 3, 2000.00, 0.00),
+('126-789456-007', 'My Account', 4, 850.00, 0.00),
+('126-789456-008', 'My Loan Account', 4, 0.00, 2500.00),
+('127-654321-009', 'My Account', 5, 2000.00, 0.00),
+('127-654321-010', 'My Savings Account', 5, 750.00, 0.00);
 
 
 /* Transaction Table */
