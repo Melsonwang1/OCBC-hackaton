@@ -227,7 +227,7 @@ section {
     justify-content: space-between; 
     margin-bottom: 10px; 
     font-weight: bold; 
-    font-size: 17px;
+    font-size: 19px;
 }
 
 .legend-item {
@@ -236,11 +236,15 @@ section {
 }
 
 .legend-item.date {
-    margin-left: -130px;
+    margin-left: -110px;
 }
 
 .legend-item.amount {
-    margin-right: -110px;
+    margin-right: -90px;
+}
+
+.legend-item.description{
+    margin-left: 70px;
 }
 
 .transaction {
