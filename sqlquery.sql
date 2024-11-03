@@ -1,56 +1,16 @@
-USE master
-IF EXISTS(select * from sys.databases where name='fsdpSQL')
-DROP DATABASE fsdpSQL;
+USE master;
+IF EXISTS(select * from sys.databases where name='FSDP')
+DROP DATABASE FSDP;
 GO
 
-Create Database fsdpSQL;
+CREATE DATABASE FSDP;
 GO
 
-use fsdpSQL;
+USE FSDP;
 GO
 
-
-user table
-
-user id (primary key) 
-password
-name
-mobile number
-nric
-email 
-dob
-recovery (on hold)
-
-
-
-account table
-
-account id (primary key)
-account name
-user id (foreign key)
-balance_have
-balance_owe
-
-transaction table
-
-transaction id (primary key)
-account id(foreign key)
-amount 
-date of transaction
-status
-description
-
-investment table 
-amount 
-account id 
-investment id 
-profit & lost
-
-
-/* SQL Query */
-
-/* Users Table */
-CREATE TABLE Users (
+/* UserAccounts Table */
+CREATE TABLE UserAccounts (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(255) NOT NULL,  
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -58,11 +18,10 @@ CREATE TABLE Users (
     phoneNumber VARCHAR(255) NOT NULL UNIQUE,                                     
     nric VARCHAR(9) NOT NULL UNIQUE,                           
     dob DATE NOT NULL,                              
-    recovery VARCHAR(255)                          
+    recovery VARCHAR(255)                           
 );
 
-
-INSERT INTO Users (name, email, password, phoneNumber, nric, dob, recovery)
+INSERT INTO UserAccounts (name, email, password, phoneNumber, nric, dob, recovery)
 VALUES 
 ('John Doe', 'john.doe@example.com', 'password123', '91234567', 'S1234567A', '1990-05-15', 'john.recovery@example.com'),
 ('Jane Smith', 'jane.smith@example.com', 'securePass456', '98765432', 'T2345678B', '1985-10-20', 'jane.recovery@example.com'),
@@ -70,7 +29,6 @@ VALUES
 ('Emily Lim', 'emily.lim@example.com', 'emilySecret321', '96543210', 'G4567890D', '1995-12-05', 'emily.recovery@example.com'),
 ('Daniel Lee', 'daniel.lee@example.com', 'danielSecure654', '93218765', 'S5678901E', '1992-03-22', 'daniel.recovery@example.com'),
 ('Sophia Chia', 'sophia.chia@example.com', 'sophiaSafe987', '91827364', 'T6789012F', '1988-08-14', 'sophia.recovery@example.com');
-
 
 /* Account Table */
 CREATE TABLE Account (
@@ -80,7 +38,7 @@ CREATE TABLE Account (
     user_id INT,                                    
     balance_have DECIMAL(10, 2) NOT NULL DEFAULT 0.00,  
     balance_owe DECIMAL(10, 2) NOT NULL DEFAULT 0.00,   
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)  
+    FOREIGN KEY (user_id) REFERENCES UserAccounts(user_id)  
 );
 
 INSERT INTO Account (account_number, account_name, user_id, balance_have, balance_owe)
@@ -96,7 +54,6 @@ VALUES
 ('127-654321-009', 'My Account', 5, 2000.00, 0.00),
 ('127-654321-010', 'My Savings Account', 5, 750.00, 0.00);
 
-
 /* Transaction Table */
 CREATE TABLE Transactions (
     transaction_id INT PRIMARY KEY IDENTITY(1000,1),  
@@ -105,8 +62,8 @@ CREATE TABLE Transactions (
     date_of_transaction DATE NOT NULL,               
     status VARCHAR(50) NOT NULL,                     
     description VARCHAR(255),                        
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,   -- Date transaction was created
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,    -- Last update date
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,   
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,    
     FOREIGN KEY (account_id) REFERENCES Account(account_id)  
 );
 
@@ -121,14 +78,13 @@ VALUES
 (1, -100.00, '2024-11-03', 'Completed', 'Grocery shopping', DEFAULT, DEFAULT),
 (2, +500.00, '2024-11-04', 'Completed', 'Monthly salary bonus', DEFAULT, DEFAULT);
 
-
 /* Investment Table */
 CREATE TABLE Investment (
-    investment_id INT PRIMARY KEY AUTO_INCREMENT,    -- Unique investment identifier
-    account_id INT,                                  -- References account_id from Account table
-    amount DECIMAL(10, 2) NOT NULL,                 -- Amount invested
-    profit_loss DECIMAL(10, 2) DEFAULT 0.00,        -- Profit or loss from the investment
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Date investment was created
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Last update date
-    FOREIGN KEY (account_id) REFERENCES Account(account_id)  -- Foreign key constraint
+    investment_id INT PRIMARY KEY IDENTITY(1,1),    -- Changed from AUTO_INCREMENT
+    account_id INT,                                  
+    amount DECIMAL(10, 2) NOT NULL,                 
+    profit_loss DECIMAL(10, 2) DEFAULT 0.00,        
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,  
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,   
+    FOREIGN KEY (account_id) REFERENCES Account(account_id)  
 );
