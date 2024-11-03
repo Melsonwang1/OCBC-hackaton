@@ -30,7 +30,7 @@ class Account{
 
     static async getAccountnameandnumberByAccountId(user_id) {
         const connection = await sql.connect(dbConfig);
-        const sqlQuery = `SELECT account_name, account_number FROM Account WHERE user_id = @user_id`;
+        const sqlQuery = `SELECT account_name, account_number, account_id FROM Account WHERE user_id = @user_id`;
         const request = connection.request();
         request.input('user_id', user_id);
     
