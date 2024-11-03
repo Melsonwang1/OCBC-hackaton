@@ -16,25 +16,27 @@ const validateTransaction = (req, res, next) => {
                 "number.precision": "Amount can only have up to two decimal places",
                 "any.required": "Amount is required"
             }),
-        status: Joi.string().valid("completed", "pending", "failed").required()
-            .messages({
-                "string.base": "Status must be a string",
-                "any.only": "Status must be one of 'completed', 'pending', or 'failed'",
-                "any.required": "Status is required"
-            }),
         description: Joi.string().max(255).required()
             .messages({
                 "string.base": "Description must be a string",
                 "string.max": "Description can have a maximum of 255 characters",
                 "any.required": "Description is required"
-            })
+            }),
+        phoneNumber: Joi.string().optional().messages({
+            "string.base": "Phone number must be a string"
+        }),
+        nric: Joi.string().optional().messages({
+            "string.base": "NRIC must be a string"
+        })
+    }).xor('phoneNumber', 'nric') // Require either phoneNumber or nric, but not both
+    .messages({
+        "object.missing": "Either phoneNumber or nric is required"
     });
 
-    const validation = schema.validate(req.body);
-    if (validation.error) {
-        const errors = validation.error.details.map((error) => error.message);
-        res.status(400).json({ message: "Validation error", errors });
-        return;
+    const { error } = schema.validate(req.body);
+    if (error) {
+        const errors = error.details.map((err) => err.message);
+        return res.status(400).json({ message: "Validation error", errors });
     }
 
     next();
