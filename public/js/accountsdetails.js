@@ -62,20 +62,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         const container = document.getElementById('transaction-list');
         if (container) {
             container.innerHTML = ''; // Clear any previous content
-    
+
             transactions.forEach(transaction => {
-                const amountClass = transaction.amount >= 0 ? 'value-positive' : 'value-negative';
-                const amountSign = transaction.amount >= 0 ? '+' : '-';
-    
+                const amountClass = transaction.transactionAmount >= 0 ? 'value-positive' : 'value-negative';
+                const amountSign = transaction.transactionAmount >= 0 ? '+' : '-';
+
                 let statusClass;
-                switch (transaction.status) {
-                    case 'Completed':
+                switch (transaction.status.toLowerCase()) {
+                    case 'completed':
                         statusClass = 'status-completed';
                         break;
-                    case 'Pending':
+                    case 'pending':
                         statusClass = 'status-pending';
                         break;
-                    case 'Failed':
+                    case 'failed':
                         statusClass = 'status-failed';
                         break;
                     default:
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 container.innerHTML += `
                     <div class="transaction">
                         <!-- Display Date -->
-                        <p class="transaction-date">${new Date(transaction.created_at).toLocaleDateString('en-GB', {
+                        <p class="transaction-date">${new Date(transaction.date).toLocaleDateString('en-GB', {
                             day: '2-digit', month: 'long', year: 'numeric'
                         })}</p>
                         
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <!-- Display Transaction Amount with Class for Styling -->
                         <p class="transaction-amount ${amountClass}">
                             <span class="currency">SGD</span> 
-                            <span class="${amountClass}">${amountSign}${Math.abs(transaction.amount).toFixed(2)}</span>
+                            <span class="${amountClass}">${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}</span>
                         </p>
                         
                         <!-- Display Status -->
@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('Transaction list container not found');
         }
     }
+
     
     // Handle authentication-related errors
     function handleAuthError(error) {
