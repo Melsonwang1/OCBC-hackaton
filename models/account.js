@@ -1,6 +1,7 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
+
 class Account{
     constructor(account_id, account_number, account_name, user_id, balance_have, balance_owe, user_name){
         this.account_id = account_id;
@@ -26,6 +27,20 @@ class Account{
             (row) => new Account(row.account_id, row.account_number, row.account_name, row.user_id, row.balance_have, row.balance_owe)
         );
     }
+
+    static async getAccountnameandnumberByAccountId(user_id) {
+        const connection = await sql.connect(dbConfig);
+        const sqlQuery = `SELECT account_name, account_number FROM Account WHERE user_id = @user_id`;
+        const request = connection.request();
+        request.input('user_id', user_id);
+    
+        const result = await request.query(sqlQuery);
+        connection.close();
+    
+        // Return an array of account records or an empty array if none are found
+        return result.recordset.length > 0 ? result.recordset : [];
+    }
+    
 
     // Get specific bank account by Account Id
     static async getAccountByAccountId(account_id) {
