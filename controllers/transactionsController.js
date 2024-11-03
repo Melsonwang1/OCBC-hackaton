@@ -22,34 +22,39 @@ const getTransactionsbyaccountid = async (req, res) => {
     }
 };
 
-// Create a new transaction (POST)
 const createTransaction = async (req, res) => {
+    const { account_id, phoneNumber, nric, amount, description } = req.body;
+
+    // Validate required fields
+    if (!account_id || !amount || !description || (!phoneNumber && !nric)) {
+        return res.status(400).json({
+            message: 'Please provide account_id, amount, description, and either phoneNumber or nric.'
+        });
+    }
+
     try {
-        const { mobile_number, nric, amount, status, description } = req.body;
+        // Call the model function to create the transaction
+        const transactionCreated = await Transaction.createTransaction(
+            account_id,
+            amount,
+            description,
+            phoneNumber,
+            nric
+        );
 
-        // Ensure required fields are provided
-        if (!mobile_number && !nric) {
-            return res.status(400).json({ message: 'Mobile number or NRIC is required to find the account' });
-        }
-
-        // Attempt to create the transaction using the model method
-        const transactionResponse = await Transaction.createTransaction(mobile_number, nric, amount, status, description);
-
-        if (transactionResponse) {
+        if (transactionCreated) {
             res.status(201).json({ message: 'Transaction created successfully' });
         } else {
-            res.status(500).json({ message: 'Transaction creation failed' });
+            res.status(400).json({ message: 'Failed to create transaction' });
         }
     } catch (error) {
         console.error("Error creating transaction:", error);
-
-        if (error.message === "Account not found for the provided mobile number or NRIC") {
-            res.status(404).json({ message: error.message });
-        } else {
-            res.status(500).json({ message: 'Server error while creating transaction' });
-        }
+        res.status(500).json({ message: 'Server error while creating transaction' });
     }
 };
+
+
+
 
 module.exports = {
     getTransactionsbyaccountid,
