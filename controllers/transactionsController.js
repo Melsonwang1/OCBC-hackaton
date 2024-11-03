@@ -9,7 +9,7 @@ const getTransactionsbyaccountid = async (req, res) => {
             return res.status(400).json({ message: 'Invalid account ID format' });
         }
         
-        const transactions = await Transactions.getTransactionsbyaccountid(account_id);
+        const transactions = await Transaction.getTransactionsByAccountId(account_id);
 
         if (transactions && transactions.length > 0) {
             res.status(200).json(transactions);

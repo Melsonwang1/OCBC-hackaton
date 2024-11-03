@@ -12,22 +12,43 @@ class Transaction {
         this.updated_at = updated_at;
     }
 
-    static async getTransactionsbyaccountid(account_id) {
+    static async getTransactionsByAccountId(account_id) {
+        let connection;
         try {
-            const connection = await sql.connect(dbConfig);
-            const sqlQuery = `SELECT * FROM transactions WHERE account_id = @account_id`;
+            // Establish the database connection
+            connection = await sql.connect(dbConfig);
+            
+            const sqlQuery = `
+                SELECT date_of_transaction, description, amount AS transaction_amount, status 
+                FROM Transactions 
+                WHERE account_id = @account_id
+            `;
+    
+            // Prepare and execute the SQL query
             const request = connection.request();
             request.input('account_id', sql.Int, account_id);
+            
             const result = await request.query(sqlQuery);
-
-            return result.recordset.length > 0
-                ? result.recordset.map(row => new Transaction(row.transaction_id, row.account_id, row.amount, row.status, row.description, row.created_at, row.updated_at))
-                : null;
+    
+            // Return the necessary data for each transaction
+            return result.recordset.map(row => ({
+                date: row.date_of_transaction,
+                description: row.description,
+                transactionAmount: row.transaction_amount,
+                status: row.status
+            }));
         } catch (error) {
             console.error("Database query error:", error);
-            throw error;
+            throw error;  // Re-throw error for higher-level handling
+        } finally {
+            // Ensure the connection is closed after the query
+            if (connection) {
+                await connection.close();
+            }
         }
     }
+    
+    
 
     
 
