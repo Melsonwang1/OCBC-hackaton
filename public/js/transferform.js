@@ -1,5 +1,23 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    let token = localStorage.getItem("token");
+
+    // User Id = 1
     try {
+        const userResponse = await fetch(`/user/1`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!userResponse.ok) {
+            const errorData = await userResponse.json();
+            throw new Error(errorData.message || "Failed to fetch user data");
+        }
+
+        const user = await userResponse.json();
+        document.getElementById("user-name").innerText = user.account.name.toUpperCase();
+
         const response = await fetch(`/accounts/accountnameandnumber/1`); // Replace 1 with the actual user ID
         if (!response.ok) {
             throw new Error('Failed to fetch account data');
