@@ -1,40 +1,63 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('userId');
-        
-        const userResponse = await fetch(`/user/${userId}`);
-        if (!userResponse.ok) {
-            throw new Error("Failed to fetch user data");
-        }
-        const user = await userResponse.json();
-        document.getElementById("user-name").innerText = user.account.name.toUpperCase(); 
-        
+    let token = localStorage.getItem("token"); // Retrieve the token from local storage
 
-        // Fetch account information
-        const accountResponse = await fetch(`/accounts/user/${userId}`);
-        if (!accountResponse.ok) {
-            throw new Error("Failed to fetch account data");
+    try {
+        // Fetch user data with authorization header
+        const userResponse = await fetch(`/user/1`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!userResponse.ok) {
+            const errorData = await userResponse.json();
+            throw new Error(errorData.message || "Failed to fetch user data");
         }
-        const accounts = await accountResponse.json(); 
-        displayAccounts(accounts); 
+
+        const user = await userResponse.json();
+        document.getElementById("user-name").innerText = user.account.name.toUpperCase();
+
+        // Fetch account information with authorization header
+        const accountResponse = await fetch(`/accounts/user/1`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!accountResponse.ok) {
+            const errorData = await accountResponse.json();
+            throw new Error(errorData.message || "Failed to fetch account data");
+        }
+
+        const accounts = await accountResponse.json();
+        displayAccounts(accounts);
     } catch (error) {
         console.error("Error:", error);
+
+        // Handle specific error messages for token expiration or absence
+        if (error.message === 'Forbidden') {
+            alert("Session timed out. Please log in again.");
+            localStorage.setItem("token", null); // Clear token from local storage
+            window.location.href = "index.html"; // Redirect to login
+        } else if (error.message === 'Unauthorized') {
+            alert("Please log in first.");
+            window.location.href = "index.html"; // Redirect to login
+        }
     }
 });
 
-// Adjust the displayAccounts function to handle an array of account objects
+// Function to display account cards
 function displayAccounts(accounts) {
     const accountsList = document.getElementById("accounts-list");
-    accountsList.innerHTML = ''; 
+    accountsList.innerHTML = '';
 
     accounts.forEach(account => {
-        // Create a new account card for each account
         const accountCard = document.createElement('a');
-        accountCard.href = `accountsdetails.html?accountId=${account.account_id}`; // Link to detailed view
-        accountCard.className = 'account-card'; // Apply CSS class
+        accountCard.href = `accountsdetails.html?accountId=${account.account_id}`;
+        accountCard.className = 'account-card';
 
-        // Add account information using the properties from the backend response
         accountCard.innerHTML = `
             <div>
                 <h3>${account.account_name}</h3>
@@ -43,7 +66,6 @@ function displayAccounts(accounts) {
             <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>
         `;
         
-        // Append the new card to the accounts list
         accountsList.appendChild(accountCard);
     });
 }

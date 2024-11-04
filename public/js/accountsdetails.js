@@ -1,54 +1,53 @@
 // Event listener for DOMContentLoaded to ensure the script runs after the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', async function() {
-    let token = localStorage.getItem('token');
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
 
     // Function to fetch user and account details
-    async function fetchUserAccount(token) {
+    async function fetchUserAccount() {
         try {
             const urlParams = new URLSearchParams(window.location.search);
             const accountId = urlParams.get('accountId');
 
-            // Fetch account information
+            // Fetch account information with authorization
             const accountResponse = await fetch(`/accounts/account/${accountId}`, {
-                headers: { 'Authorization': `Bearer ${token}` } 
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (!accountResponse.ok) {
-                throw new Error("Failed to fetch account data");
+                const errorData = await accountResponse.json();
+                throw new Error(errorData.message || "Failed to fetch account data");
             }
             
             const accountData = await accountResponse.json();
-            const account = accountData.account; 
+            const account = accountData.account;
 
-            // Display user name
-            document.getElementById("user-name").innerText = account.user_name.toUpperCase(); // Display user name
-
-            // Display account details
-            document.querySelector('.account-details h2').innerText = account.account_name; // Set account name
-            document.querySelector('.account-details .account-number').innerText = account.account_number; // Set account number
-            document.querySelector('.balance-summary .balance-item.positive .value').innerText = account.balance_have.toFixed(2); // Set balance have
-            document.querySelector('.balance-summary .balance-item.negative .value').innerText = account.balance_owe.toFixed(2); // Set balance owe
+            // Display account and user details
+            document.getElementById("user-name").innerText = account.user_name.toUpperCase();
+            document.querySelector('.account-details h2').innerText = account.account_name;
+            document.querySelector('.account-details .account-number').innerText = account.account_number;
+            document.querySelector('.balance-summary .balance-item.positive .value').innerText = account.balance_have.toFixed(2);
+            document.querySelector('.balance-summary .balance-item.negative .value').innerText = account.balance_owe.toFixed(2);
 
             // Fetch transactions for the account
-            await fetchTransactions(accountId, token); // Pass accountId to fetch transactions
+            await fetchTransactions(accountId); // Pass accountId to fetch transactions
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error fetching user account:", error.message);
+            handleAuthError(error);
         }
     }
 
     // Function to fetch transactions
-    async function fetchTransactions() {
+    async function fetchTransactions(accountId) {
         try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const accountId = urlParams.get('accountId');
-
             const response = await fetch(`/transactions/${accountId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message);
+                throw new Error(errorData.message || "Failed to fetch transactions");
             }
+
             const transactions = await response.json();
             displayTransactions(transactions);
         } catch (error) {
@@ -79,27 +78,20 @@ document.addEventListener('DOMContentLoaded', async function() {
                         statusClass = 'status-failed';
                         break;
                     default:
-                        statusClass = ''; // No specific class
+                        statusClass = '';
                 }
 
                 container.innerHTML += `
                     <div class="transaction">
-                        <!-- Display Date -->
                         <p class="transaction-date">${new Date(transaction.date).toLocaleDateString('en-GB', {
                             day: '2-digit', month: 'long', year: 'numeric'
                         })}</p>
-                        
-                        <!-- Display Description -->
                         <p class="transaction-description">${transaction.description}</p>
-                        
-                        <!-- Display Transaction Amount with Class for Styling -->
                         <p class="transaction-amount ${amountClass}">
                             <span class="currency">SGD</span> 
                             <span class="${amountClass}">${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}</span>
                         </p>
-                        
-                        <!-- Display Status -->
-                        <p class="transaction-status ${statusClass}">${transaction.status}</p> <!-- Apply status class -->
+                        <p class="transaction-status ${statusClass}">${transaction.status}</p>
                     </div>
                 `;
             });
@@ -108,25 +100,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    
     // Handle authentication-related errors
     function handleAuthError(error) {
         if (error.message === 'Forbidden') {
             alert("Session expired. Please log in again!");
-            localStorage.setItem("token", null);
-            window.location.href = "index.html";
+            localStorage.setItem("token", null); // Clear token from local storage
+            window.location.href = "index.html"; // Redirect to login
         } else if (error.message === 'Unauthorized') {
             alert("Please log in first!");
-            window.location.href = "index.html";
+            window.location.href = "index.html"; // Redirect to login
         } else {
             alert("An error occurred. Please try again later.");
         }
     }
 
-    // Fetch transactions on page load
+    // Fetch user account details and transactions on page load
     await fetchUserAccount();
-    await fetchTransactions();
 });
+
 
 
 // IN CASE NEED
