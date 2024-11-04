@@ -26,9 +26,9 @@ const createTransaction = async (req, res) => {
     const { account_id, phoneNumber, nric, amount, description } = req.body;
 
     // Validate required fields
-    if (!account_id || !amount || !description || (!phoneNumber && !nric)) {
+    if (!account_id || !amount || !description || (phoneNumber === null && nric === null) || (phoneNumber !== null && nric !== null)) {
         return res.status(400).json({
-            message: 'Please provide account_id, amount, description, and either phoneNumber or nric.'
+            message: 'Please provide account_id, amount, description, and either phoneNumber or nric, with one explicitly set to null.'
         });
     }
 
@@ -52,6 +52,8 @@ const createTransaction = async (req, res) => {
         res.status(500).json({ message: 'Server error while creating transaction' });
     }
 };
+
+
 
 
 

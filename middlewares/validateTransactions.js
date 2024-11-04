@@ -22,18 +22,25 @@ const validateTransaction = (req, res, next) => {
                 "string.max": "Description can have a maximum of 255 characters",
                 "any.required": "Description is required"
             }),
-        phoneNumber: Joi.string().optional().messages({
-            "string.base": "Phone number must be a string"
-        }),
-        nric: Joi.string().optional().messages({
-            "string.base": "NRIC must be a string"
-        })
-    }).xor('phoneNumber', 'nric') // Require either phoneNumber or nric, but not both
-    .messages({
-        "object.missing": "Either phoneNumber or nric is required"
+        phoneNumber: Joi.string().allow(null).optional()
+            .messages({
+                "string.base": "Phone number must be a string or null"
+            }),
+        nric: Joi.string().allow(null).optional()
+            .messages({
+                "string.base": "NRIC must be a string or null"
+            })
+    })
+    .custom((value, helpers) => {
+        // Custom rule: Allow only one of phoneNumber or nric to be provided, or the other must be null
+        if ((value.phoneNumber === null && value.nric === null) || (value.phoneNumber && value.nric)) {
+            return helpers.message("Please provide either phoneNumber or nric, with one explicitly set to null.");
+        }
+        return value;
     });
 
-    const { error } = schema.validate(req.body);
+    const { error, value } = schema.validate(req.body);
+
     if (error) {
         const errors = error.details.map((err) => err.message);
         return res.status(400).json({ message: "Validation error", errors });

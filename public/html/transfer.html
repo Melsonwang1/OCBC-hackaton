@@ -22,6 +22,7 @@
             <button onclick="window.location.href='login.html'">
                 Log out
                 <img src="../pics/logout.png" alt="Log Out Icon" class="login-icon">
+            </button>
         </div>
     </header>
 
@@ -38,7 +39,7 @@
                 <a href="../html/accountseng.html">
                     <img src="../pics/view-account.png" alt="View Icon">
                     View Accounts</a>
-                <a href="../html/transfer.html"class="active">
+                <a href="../html/transfer.html" class="active">
                     <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                     Transfer Money</a>
                 <a href="../html/investmenteng.html">
@@ -51,7 +52,6 @@
             <h2>Transfer and Payments</h2>
             <form>
                 <!-- Make a transfer from -->
-                <!-- Make a transfer from -->
                 <div class="form-group">
                     <label for="transfer-from">1. Make a transfer from</label>
                     <select id="transfer-from">
@@ -59,7 +59,6 @@
                         <!-- Options will be populated dynamically -->
                     </select>
                 </div>
-
 
                 <!-- Transferring money to -->
                 <div class="form-group">
@@ -83,7 +82,6 @@
                     </div>
                 </div>
 
-
                 <!-- Amount and Description -->
                 <div class="form-group">
                     <label for="amount">3. Amount transferring</label>
@@ -93,16 +91,6 @@
                     </div>
                 </div>
 
-                <!-- Purpose of transfer -->
-                <div class="form-group">
-                    <label for="purpose">Purpose of transfer</label>
-                    <select id="purpose">
-                        <option value="" disabled selected>Select purpose</option>
-                        <option value="bills">Bill Payment</option>
-                        <option value="gift">Gift</option>
-                        <option value="others">Others</option>
-                    </select>
-                </div>
                 <!-- Transfer button -->
                 <div class="form-group">
                     <button type="submit" class="transfer-btn">Transfer</button>
@@ -111,32 +99,6 @@
         </div>
     </main>
 
-    <!-- Leave it here first -->
-    <script>
-        function toggleInput(selected) {
-            const mobileInput = document.getElementById('mobile');
-            const nricInput = document.getElementById('nric');
-            const enterBtn = document.getElementById('enterBtn');
-            const transferInputGroup = document.querySelector('.transfer-input-group');
-
-            // Show the transfer input group when an option is selected
-            transferInputGroup.style.display = 'flex'; // Ensure it displays as flex
-        
-            if (selected === 'mobile') {
-                mobileInput.style.display = 'block';
-                nricInput.style.display = 'none';
-                enterBtn.style.display = 'block'; // Show the button
-            } else if (selected === 'nric') {
-                nricInput.style.display = 'block';
-                mobileInput.style.display = 'none';
-                enterBtn.style.display = 'block'; // Show the button
-            } else {
-                mobileInput.style.display = 'none';
-                nricInput.style.display = 'none';
-                enterBtn.style.display = 'none'; // Hide the button if no option is selected
-            }
-        }
-        </script>
     <script src="../js/transferform.js"></script>
 </body>
 </html>
