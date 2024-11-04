@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // User Id = 1
     try {
+        // Fetch user data (zb)
         const userResponse = await fetch(`/user/1`, {
             method: 'GET',
             headers: {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const user = await userResponse.json();
         document.getElementById("user-name").innerText = user.account.name.toUpperCase();
 
+        // Fetch account names and numbers
         const response = await fetch(`/accounts/accountnameandnumber/1`); // Replace 1 with the actual user ID
         if (!response.ok) {
             throw new Error('Failed to fetch account data');
@@ -40,8 +42,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
             transferFromDropdown.appendChild(option);
         });
+
+        // Display and show balance when an account is selected (zb)
+        transferFromDropdown.addEventListener('change', async (event) => {
+            const selectedAccountId = event.target.value;
+            if (selectedAccountId) {
+                document.getElementById('balance').style.display = 'block'; // Show balance display
+                await fetchAndDisplayBalance(selectedAccountId); // Fetch and show balance
+            } else {
+                document.getElementById('balance').style.display = 'none'; // Hide balance if no account is selected
+            }
+        });
+
     } catch (error) {
         console.error('Error fetching account data:', error);
+    }
+
+    // Function to fetch and display the balance (zb)
+    async function fetchAndDisplayBalance(accountId) {
+        let token = localStorage.getItem("token");
+        
+        try {
+            const accountResponse = await fetch(`/accounts/account/${accountId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!accountResponse.ok) {
+                const errorData = await accountResponse.json();
+                throw new Error(errorData.message || "Failed to fetch account data");
+            }
+
+            const accountData = await accountResponse.json();
+
+            const balanceHave = accountData.account.balance_have.toFixed(2);
+            document.getElementById('balance-amount').innerText = balanceHave; // Display balance
+        } catch (error) {
+            console.error('Error fetching account balance:', error);
+        }
     }
 
     // Add event listener to the form for transaction submission
@@ -109,6 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert("Transaction completed successfully!");
                 // Optional: Clear form fields
                 form.reset();
+                document.getElementById('balance').style.display = 'none'; // Hide balance after successful transaction
             } else {
                 throw new Error(result.error || "Transaction failed");
             }
