@@ -91,7 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <span class="currency">SGD</span> 
                             <span class="${amountClass}">${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}</span>
                         </p>
-                        <p class="transaction-status ${statusClass}">${transaction.status}</p>
+                        <p class="transaction-status ${statusClass} ${transaction.status === 'Completed' ? 'status-completed' : transaction.status === 'Pending' ? 'status-pending' : 'status-failed'}">
+                        ${transaction.status}
+                        </p>
+
                     </div>
                 `;
             });
