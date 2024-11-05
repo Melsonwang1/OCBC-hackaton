@@ -29,28 +29,40 @@ header .logo img {
     margin-top: 15px;
 }
 
-header .logout button {
+.header-right {
+    display: flex;
+    align-items: center; /* Aligns language switch and logout button vertically */
+}
+
+.language-switch {
+    margin-right: 10px; /* Adjust the space between language switch and logout button */
+}
+
+.logout {
+    display: flex;
+    align-items: center; /* Aligns text and icon vertically */
+}
+
+.logout button {
     display: flex;
     align-items: center; /* Aligns text and icon vertically */
     background-color: #ff0000; /* Replace with your desired color */
     color: white;
     border: none;
     padding: 10px 20px;
-    margin-right: 50px;
-    margin-top: 15px;
     cursor: pointer;
-    font-size: 26px;
+    font-size: 22px; /* Adjusted font size for uniformity */
     border-radius: 10px;
 }
 
-header .logout button:hover {
+.logout button:hover {
     background-color: #cc0000; /* Darker shade on hover */
 }
 
-header .logout button .login-icon {
-    margin-left: 12px; 
-    width: 30px; 
-    height: 30px;
+.logout button .login-icon {
+    margin-left: 10px; /* Space between text and icon */
+    width: 20px; /* Adjusted width */
+    height: 20px; /* Adjusted height */
 }
 
 /* Main content */
@@ -247,4 +259,22 @@ select, input[type="text"] {
 
 .transfer-btn:hover {
     background-color: #45a049;
+}
+
+/* Language switch button styling */
+.language-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; /* Increased font size */
+    padding: 8px 15px; /* Adjusted padding */
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px; /* Slightly larger border radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.language-btn:hover {
+    background-color: #d3d3d3;
 }
