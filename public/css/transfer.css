@@ -182,16 +182,26 @@ select, input[type="text"] {
 
 .radio-group {
     display: flex;
-    gap: 10px;
+    gap: 20px;
 }
 
-.radio-group label {
-    display: flex;
-    align-items: center;
+/* Style for buttons */
+.radio-button {
+    padding: 12px 24px;
+    background-color: #ffffff;
+    color: #000000; 
+    border: 1px solid #000000; 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+    font-size: 20px;
 }
 
-.radio-group input {
-    margin-right: 5px;
+/* Selected button style */
+.radio-button.selected {
+    background-color: #ff0000; /* Red background for selected button */
+    color: #ffffff; /* White font for selected button */
 }
 
 /* Transfer input group with text box beside button */

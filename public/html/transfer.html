@@ -74,14 +74,8 @@
                 <div class="form-group">
                     <label>2. Send Money Using:</label>
                     <div class="radio-group">
-                        <label>
-                            <input type="radio" name="transfer-to" value="mobile" onclick="toggleInput('mobile')">
-                            Mobile number
-                        </label>
-                        <label>
-                            <input type="radio" name="transfer-to" value="nric" onclick="toggleInput('nric')">
-                            NRIC
-                        </label>
+                        <button type="button" class="radio-button" name="transfer-to" value="mobile" onclick="toggleInput('mobile'); selectOption('mobile')">Mobile Number</button>
+                        <button type="button" class="radio-button" name="transfer-to" value="nric" onclick="toggleInput('nric'); selectOption('nric')">NRIC</button>
                     </div>
 
                     <!-- Transfer input group with text box below the options -->

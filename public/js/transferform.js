@@ -183,3 +183,21 @@ function toggleInput(selected) {
         enterBtn.style.display = 'none';
     }
 }
+
+// Function for buttons nric and phone number
+function selectOption(value) {
+    // Get all buttons
+    const buttons = document.querySelectorAll('.radio-button');
+    
+    // Remove selected class from all buttons
+    buttons.forEach(button => {
+        button.classList.remove('selected');
+    });
+
+    // Add selected class to the clicked button
+    const selectedButton = Array.from(buttons).find(button => button.textContent === (value === 'mobile' ? 'Mobile Number' : 'NRIC'));
+    selectedButton.classList.add('selected');
+
+    // Call your existing toggleInput function
+    toggleInput(value);
+}
