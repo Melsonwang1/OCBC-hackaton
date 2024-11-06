@@ -1,0 +1,227 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100%;
+    font-family: "Poppins", sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header styling */
+header {
+    background-color: #ffffff;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo img {
+    width: 200px; 
+    margin-left: 70px;
+    margin-top: 15px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center; /* Aligns language switch and logout button vertically */
+}
+
+/* Language switch button styling */
+.language-switch {
+    margin-right: 20px; /* Space between language switch and logout button */
+}
+
+.language-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; /* Increased font size */
+    padding: 8px 15px; /* Adjusted padding */
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px; /* Slightly larger border radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.language-btn:hover {
+    background-color: #d3d3d3;
+}
+
+/* Logout button styling */
+header .logout button {
+    display: flex;
+    align-items: center; /* Aligns text and icon vertically */
+    background-color: #ff0000; /* Logout button color */
+    color: white;
+    border: none;
+    padding: 10px 15px; /* Adjusted padding for better size */
+    cursor: pointer;
+    font-size: 22px; /* Adjusted font size */
+    border-radius: 10px;
+    transition: background-color 0.3s; /* Added transition */
+}
+
+header .logout button:hover {
+    background-color: #cc0000; /* Darker shade on hover */
+}
+
+header .logout button .login-icon {
+    margin-left: 12px; 
+    width: 30px; 
+    height: 30px;
+}
+
+/* Centering container */
+.container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Welcome message styling */
+.welcome {
+    font-size: 27px;
+    margin-bottom: 50px;
+    margin-top: 40px;
+    font-weight: bold;
+    text-align: left;
+    margin-left: 90px;
+}
+
+.welcome-message {
+    text-align: center; 
+    font-size: 30px; 
+    margin-bottom: 20px; 
+    font-weight: bold; 
+}
+
+/* Navigation bar styling */
+.navbar {
+    display: inline-flex;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    max-width: 1000px;
+}
+
+/* Navigation links styling */
+.navbar a {
+    color: black;
+    padding: 10px 20px;
+    margin: 0 30px;
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 15px;
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column; /* Stack icon above text */
+    align-items: center;
+}
+
+/* Icon image styling */
+.navbar a img {
+    width: 70px; /* Set icon width */
+    height: 60px; /* Set icon height */
+    margin-bottom: 15px; /* Space between icon and text */
+}
+
+/* Highlighted button styling */
+.navbar a.active {
+    background-color: #ddd;
+}
+
+/* Hover effect */
+.navbar a:hover {
+    background-color: #ccc;
+}
+
+.content {
+    padding: 20px;
+}
+
+.investment-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.total-value h1 {
+    font-size: 32px;
+    margin: 0;
+}
+
+.total-value .gain {
+    color: green;
+}
+
+.net-deposits {
+    text-align: right;
+}
+
+.chart {
+    padding: 20px;
+    text-align: center;
+}
+
+.time-frame {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.time-frame button {
+    border: none;
+    background: none;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.time-frame button.active {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.account-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+}
+
+.option img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.option a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+}

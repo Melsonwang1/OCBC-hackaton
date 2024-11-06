@@ -88,3 +88,17 @@ CREATE TABLE Investment (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,   
     FOREIGN KEY (account_id) REFERENCES Account(account_id)  
 );
+
+INSERT INTO Investment (account_id, amount, profit_loss)
+VALUES
+    (1, 5000.00, 250.00),   
+    (2, 3000.00, -150.00),  
+    (1, 7000.00, 500.00),   
+    (3, 10000.00, 1000.00), 
+    (2, 4500.00, -75.00),   
+    (4, 2000.00, 100.00),   
+    (3, 6500.00, -200.00),  
+    (5, 8000.00, 400.00),   
+    (4, 5500.00, 275.00),   
+    (5, 7200.00, -120.00);  
+

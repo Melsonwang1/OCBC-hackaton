@@ -4,8 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/account.css">
-    <title>OCBC Account Page</title>
+    <link rel="stylesheet" href="../css/investment.css">
+    <title>OCBC Investment Page</title>
+
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -13,14 +18,84 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
-        <div class="nav-buttons">
-            <nav>
-                <a href="accountseng.html" class="nav-btn active">View Accounts</a>
-                <a href="transfereng.html" class="nav-btn">Transfer and Payments</a>
-                <a href="investmenteng.html" class="nav-btn">Investments</a>
-            </nav>
+
+        <div class="header-right">
+            <div class="language-switch">
+                <a href="investmentchi.html" class="language-btn">中文</a>
+            </div>
+    
+            <div class="logout">
+                <button onclick="window.location.href='login.html'"> 
+                    Logout
+                    <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
+                </button>
+            </div>
         </div>
     </header>
+
+    <div class="container">
+        <!-- Welcome message -->
+        <div class="welcome">Welcome, <span id="user-name"></span></div>
+
+        <!-- What would you like to do today? -->
+        <h2 class="welcome-message">What would you like to do today?</h2>
+        <!-- Navigation bar -->
+        <div class="navbar">
+            <a href="../html/accountseng.html">
+                <img src="../pics/view-account.png" alt="View Icon">
+                View Accounts</a>
+            <a href="../html/transfer.html">
+                <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+                Transfer Money</a>
+            <a href="../html/investmenteng.html" class="active">
+                <img src="../pics/investment.png" alt="Investments Icon">
+                Investments</a> 
+        </div>
+            
+    </div>
+
+    <main class="content">
+        <section class="investment-summary">
+            <div class="total-value">
+                <p>Total value (sgd)</p>
+                <h1>$100.47</h1>
+                <p class="gain">+ $0.47 <span>since 15 Oct 2024</span></p>
+            </div>
+            <div class="net-deposits">
+                <p>Net deposits</p>
+                <p>$100</p>
+            </div>
+        </section>
+
+        <section class="chart">
+            <!-- Placeholder for chart -->
+            <div class="time-frame">
+                <button>1M</button>
+                <button>3M</button>
+                <button>6M</button>
+                <button>YTD</button>
+                <button>1Y</button>
+                <button class="active">All-time</button>
+                <span class="currency">USD</span>
+            </div>
+            <p class="exchange-info">Exchange rates and security prices as of 20 Oct 2024.</p>
+        </section>
+
+        <section class="account-options">
+            <div class="option">
+                <img src="../pics/fixed-deposit-icon.png" alt="Fixed Deposit Icon">
+                <a href="#">Fixed deposit accounts</a>
+            </div>
+            <div class="option">
+                <img src="../pics/unit-trust-icon.png" alt="Unit Trust Icon">
+                <a href="#">Unit trusts and ETFs</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        Footer
+    </footer>
 
     <!-- Only one script tag here -->
     <script src="../js/investmenteng.js"></script>
