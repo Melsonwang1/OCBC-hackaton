@@ -66,16 +66,58 @@
         <button onclick="updateChart('ALL')">All-time</button>
     </div>
     <div class="content">
-        <section class="account-options">
-            <div class="option">
-                <img src="../pics/piggybank-icon.png" alt="Fixed Deposit Icon">
-                <a href="#">Fixed deposit accounts</a>
+        <div class="dropdown">
+            
+            <button class="dropdown-btn" onclick="toggleDropdown('fixedDeposit')">Fixed Deposit Accounts ▼</button>
+            <div id="fixedDeposit" class="dropdown-content">
+                <div class="card">
+                    <h2>Our Pick</h2>
+                    <h3>XYZ Fixed Deposit Plan</h3>
+                    <p>Interest Rate: 3.50% per annum</p>
+                    <p>Minimum Deposit: $5,000</p>
+                    <p>Duration: 1 Year</p>
+                </div>
+                <div class="card">
+                    <h2>Our Pick</h2>
+                    <h3>ABC Savings Plan</h3>
+                    <p>Interest Rate: 2.75% per annum</p>
+                    <p>Minimum Deposit: $1,000</p>
+                    <p>Duration: 6 Months</p>
+                </div>
             </div>
-            <div class="option">
-                <img src="../pics/Unit-trust-icon.png" alt="Unit Trust Icon">
-                <a href="#">Unit trusts and ETFs</a>
+        </div>
+
+        <!-- Unit Trusts and ETFs Dropdown -->
+        <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown('unitTrust')">Unit Trusts and ETFs ▼</button>
+            <div id="unitTrust" class="dropdown-content">
+                <div class="card">
+                    <h2>Our Pick</h2>
+                    <h3>AB American Income Portfolio A2 ACC SGD-H</h3>
+                    <p>Risk: Growth</p>
+                    <p>ESG: A</p>
+                    <p>Indicative Price: $20.55</p>
+                    <p>1-year Performance: 10.01%</p>
+                </div>
+                <div class="card">
+                    <h2>Our Pick</h2>
+                    <h3>AB American Income Portfolio AT SGD-H</h3>
+                    <p>Risk: Growth</p>
+                    <p>ESG: A</p>
+                    <p>Indicative Price: $10.59</p>
+                    <p>1-year Performance: 9.97%</p>
+                    <p>Annualised Dividend Yield: 4.53%</p>
+                </div>
+                <div class="card">
+                    <h2>Our Pick</h2>
+                    <h3>AB SICAV I - Low Volatility Equity Portfolio A SGD-H</h3>
+                    <p>Risk: Growth</p>
+                    <p>ESG: AA</p>
+                    <p>Indicative Price: $36.62</p>
+                    <p>1-year Performance: 23.55%</p>
+                </div>
             </div>
-        </section>
+        </div>
     </div>
 
     <footer class="footer">
@@ -188,6 +230,10 @@
                 }
             }
         });
+        function toggleDropdown(id) {
+            const content = document.getElementById(id);
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
     </script>
     <script src="../js/investmenteng.js"></script>
 </body>
