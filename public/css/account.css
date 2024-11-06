@@ -79,6 +79,42 @@ header .logout button .login-icon {
     height: 30px;
 }
 
+/* Positioning and styling for the keyboard shortcut note */
+.keyboard-note {
+    position: absolute; /* This will allow it to scroll with the page */
+    top: 120px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: black;
+    border: 2px solid black;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    max-width: 250px;
+    text-align: left; /* Align text to the left */
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+.keyboard-note p{
+    color:black;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.keyboard-note ul {
+    list-style-type: none;
+    padding-left: 0;
+    color: black;
+}
+
+.keyboard-note li {
+    margin-bottom: 5px;
+    color: black;
+    align-content:left;
+    font-size: 18px;
+}
+
 /* Centering container */
 .container {
     text-align: center;

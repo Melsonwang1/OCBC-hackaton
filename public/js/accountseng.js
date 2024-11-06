@@ -1,3 +1,35 @@
+document.addEventListener('keydown', function (event) {
+    // Ensure we don't interfere with regular typing events
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+    // Shortcut for "View Accounts"
+    if (event.key === '1') {
+        window.location.href = "../html/accountseng.html";
+    }
+    
+    // Shortcut for "Transfer Money"
+    if (event.key === '2') {
+        window.location.href = "../html/transfer.html";
+    }
+
+    // Shortcut for "Investments"
+    if (event.key === '3') {
+        window.location.href = "../html/investmenteng.html";
+    }
+
+    // Shortcut for "Chinese Translation"
+    if(event.key == 'c'){
+        window.location.href = "../html/accountschi.html";
+    }
+
+    // Shortcut for "Log Out" (L key)
+    if (event.key === 'l') {
+        window.location.href = 'logineng.html';
+    }
+
+});
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     let token = localStorage.getItem("token"); // Retrieve the token from local storage
 
