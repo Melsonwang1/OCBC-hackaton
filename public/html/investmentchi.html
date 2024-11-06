@@ -4,8 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/account.css">
-    <title>OCBC 我的账户</title>
+    <link rel="stylesheet" href="../css/investment.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>OCBC 我的投资</title>
+
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -13,14 +19,222 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
-        <div class="nav-buttons">
-            <nav>
-                <a href="accountschi.html" class="nav-btn active">查看账户</a>
-                <a href="transferchi.html" class="nav-btn">转账与支付</a>
-                <a href="investmentchi.html" class="nav-btn">投资</a>
-            </nav>
+
+        <div class="header-right">
+            <div class="language-switch">
+                <a href="investmentchi.html" class="language-btn">中文</a>
+            </div>
+    
+            <div class="logout">
+                <button onclick="window.location.href='login.html'"> 
+                    Logout
+                    <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
+                </button>
+            </div>
         </div>
     </header>
+
+    <div class="container">
+        <!-- Welcome message -->
+        <div class="welcome">欢迎, <span id="user-name"></span></div>
+
+        <!-- What would you like to do today? -->
+        <h2 class="welcome-message">请问您需要什么服务呢?</h2>
+        <!-- Navigation bar -->
+        <div class="navbar">
+            <a href="../html/accountschi.html">
+                <img src="../pics/view-account.png" alt="View Icon">
+                查看账户</a>
+            <a href="../html/transferchi.html">
+                <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+                转账与支付</a>
+            <a href="../html/investmentchi.html" class="active">
+                <img src="../pics/investment.png" alt="Investments Icon">
+                投资</a> 
+        </div>
+    </div>
+
+    <h1>投资随着时间的推移增长</h1>
+
+    <!-- Canvas element where the chart will be rendered -->
+    <canvas id="investmentChart"></canvas>
+    <div id="range-buttons">
+        <button onclick="updateChart('3M')">3个月</button>
+        <button onclick="updateChart('6M')">6个月</button>
+        <button onclick="updateChart('YTD')">今年</button>
+        <button onclick="updateChart('2Y')">两年</button>
+        <button onclick="updateChart('ALL')">全部</button>
+    </div>
+    <div class="content">
+        <div class="dropdown">
+            
+            <button class="dropdown-btn" onclick="toggleDropdown('fixedDeposit')">定期存款账户 ▼</button>
+            <div id="fixedDeposit" class="dropdown-content">
+                <div class="card">
+                    <h2>我们的选择</h2>
+                    <h3>XYZ 定期存款计划</h3>
+                    <p>利率: 年利率3.50%</p>
+                    <p>最低存款: $5,000</p>
+                    <p>期间: 1年</p>
+                </div>
+                <div class="card">
+                    <h2>我们的选择</h2>
+                    <h3>ABC 储蓄计划</h3>
+                    <p>利率: 年利率2.75%</p>
+                    <p>最低存款: $1,000</p>
+                    <p>期间: 6个月</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unit Trusts and ETFs Dropdown -->
+        <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown('unitTrust')">单位信托基金和ETF ▼</button>
+            <div id="unitTrust" class="dropdown-content">
+                <div class="card">
+                    <h2>我们的选择</h2>
+                    <h3>AB 美国收入投资组合 A2 ACC SGD-H</h3>
+                    <p>风险: 增长</p>
+                    <p>环境、社会及管治: A</p>
+                    <p>参考价格: $20.55</p>
+                    <p>1年表现: 10.01%</p>
+                </div>
+                <div class="card">
+                    <h2>我们的选择</h2>
+                    <h3>AB 美国收入投资组合 AT SGD-H</h3>
+                    <p>风险: 增长</p>
+                    <p>环境、社会及管治: A</p>
+                    <p>参考价格: $20.55</p>
+                    <p>1年表现: 10.01%</p>
+                    <p>年化股息率: 4.53%</p>
+                </div>
+                <div class="card">
+                    <h2>我们的选择</h2>
+                    <h3>AB SICAV I - 低波动性股票投资组合 A SGD-H</h3>
+                    <p>风险: 增长</p>
+                    <p>环境、社会及管治: AA</p>
+                    <p>参考价格: $36.62</p>
+                    <p>1年表现: 23.55%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        Footer
+    </footer>
+
+    <!-- Only one script tag here -->
+    <script>
+        // Full dataset for "All-time"
+        const allTimeData = {
+            labels: [
+                "2022-01-01", "2022-02-01", "2022-03-01", "2022-04-01",
+                "2022-05-01", "2022-06-01", "2022-07-01", "2022-08-01",
+                "2022-09-01", "2022-10-01", "2022-11-01", "2022-12-01",
+                "2023-01-01", "2023-02-01", "2023-03-01", "2023-04-01",
+                "2023-05-01", "2023-06-01", "2023-07-01", "2023-08-01",
+                "2023-09-01", "2023-10-01", "2023-11-01", "2023-12-01",
+                "2024-01-01", "2024-02-01", "2024-03-01", "2024-04-01",
+                "2024-05-01", "2024-06-01", "2024-07-01", "2024-08-01",
+                "2024-09-01", "2024-10-01", "2024-11-01", "2024-12-01"
+            ],
+            values: [
+                100.00, 101.50, 103.00, 102.50, 104.00, 106.00,
+                107.50, 109.00, 108.00, 110.50, 112.00, 115.00,
+                117.50, 119.00, 121.00, 120.50, 122.50, 125.00,
+                126.50, 128.00, 130.00, 132.50, 134.00, 136.50,
+                138.00, 140.00, 142.50, 145.00, 146.50, 148.00,
+                150.50, 152.00, 153.50, 155.00, 157.50, 160.00
+            ]
+        };
+
+        // Function to get filtered data based on the selected range
+        function getFilteredData(range) {
+            const today = new Date();
+            const labels = [...allTimeData.labels];
+            const values = [...allTimeData.values];
+            
+            // Calculate the start index for each range
+            let startIndex;
+            switch (range) {
+                case '3M':
+                    startIndex = labels.length - 3; // Last 3 months
+                    break;
+                case '6M':
+                    startIndex = labels.length - 6; // Last 6 months
+                    break;
+                case 'YTD':
+                    startIndex = labels.findIndex(date => date.startsWith(today.getFullYear())); // From beginning of this year
+                    break;
+                case '2Y':
+                    startIndex = labels.length - 24; // Last 24 months (2 years)
+                    break;
+                case 'ALL':
+                default:
+                    return { labels, values }; // Full data
+            }
+
+            // Ensure startIndex is not out of range
+            startIndex = Math.max(0, startIndex);
+
+            return {
+                labels: labels.slice(startIndex),
+                values: values.slice(startIndex)
+            };
+        }
+
+        // Function to update the chart based on selected range
+        function updateChart(range) {
+            const filteredData = getFilteredData(range);
+            
+            // Update the data in the chart
+            investmentChart.data.labels = filteredData.labels;
+            investmentChart.data.datasets[0].data = filteredData.values;
+            investmentChart.update();
+        }
+
+        // Initial chart rendering with "All-time" data
+        const ctx = document.getElementById('investmentChart').getContext('2d');
+        const investmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allTimeData.labels,
+                datasets: [{
+                    label: "Investment Value (SGD)",
+                    data: allTimeData.values,
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'category',
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Investment Value (SGD)'
+                        }
+                    }
+                }
+            }
+        });
+        function toggleDropdown(id) {
+            const content = document.getElementById(id);
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
 
     <!-- Only one script tag here -->
     <script src="../js/investmentchi.js"></script>

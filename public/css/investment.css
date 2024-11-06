@@ -185,31 +185,54 @@ h1 {
     padding: 20px;
 }
 
-.account-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
+.dropdown-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    background-color: #757575;
+    color: #fff;
+    border-radius: 5px;
+    text-align: left;
+    margin-top: 20px;
 }
 
-.option {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    background-color: #f8f8f8;
+.dropdown-content {
+    display: none;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    background-color: #fff;
     border-radius: 5px;
 }
 
-.option img {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
+.card {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
 }
 
-.option a {
-    text-decoration: none;
-    color: #000;
-    font-size: 20px;
+.card h2 {
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #007bff;
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+}
+
+.card h3 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.card p {
+    font-size: 14px;
+    margin: 5px 0;
 }
 
 .footer {
