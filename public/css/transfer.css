@@ -38,31 +38,28 @@ header .logo img {
     margin-right: 10px; /* Adjust the space between language switch and logout button */
 }
 
-.logout {
+/* Logout button styling */
+header .logout button {
     display: flex;
     align-items: center; /* Aligns text and icon vertically */
-}
-
-.logout button {
-    display: flex;
-    align-items: center; /* Aligns text and icon vertically */
-    background-color: #ff0000; /* Replace with your desired color */
+    background-color: #ff0000; /* Logout button color */
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 10px 15px; /* Adjusted padding for better size */
     cursor: pointer;
-    font-size: 22px; /* Adjusted font size for uniformity */
+    font-size: 22px; /* Adjusted font size */
     border-radius: 10px;
+    transition: background-color 0.3s; /* Added transition */
 }
 
-.logout button:hover {
+header .logout button:hover {
     background-color: #cc0000; /* Darker shade on hover */
 }
 
-.logout button .login-icon {
-    margin-left: 10px; /* Space between text and icon */
-    width: 20px; /* Adjusted width */
-    height: 20px; /* Adjusted height */
+header .logout button .login-icon {
+    margin-left: 12px; 
+    width: 30px; 
+    height: 30px;
 }
 
 /* Main content */
@@ -128,6 +125,9 @@ main {
 /* Highlighted button styling */
 .navbar a.active {
     background-color: #ddd;
+    border-color: black;
+    border-style: solid; /* Specify the border style */
+    border-width: 2px; /* Specify the border width */
 }
 
 /* Hover effect */
