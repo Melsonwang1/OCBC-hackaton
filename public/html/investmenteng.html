@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/investment.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>OCBC Investment Page</title>
 
     <!-- Import Google Fonts-->
@@ -51,54 +52,143 @@
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments</a> 
         </div>
-            
     </div>
 
-    <main class="content">
-        <section class="investment-summary">
-            <div class="total-value">
-                <p>Total value (sgd)</p>
-                <h1>$100.47</h1>
-                <p class="gain">+ $0.47 <span>since 15 Oct 2024</span></p>
-            </div>
-            <div class="net-deposits">
-                <p>Net deposits</p>
-                <p>$100</p>
-            </div>
-        </section>
+    <h1>Investment Growth Over Time</h1>
 
-        <section class="chart">
-            <!-- Placeholder for chart -->
-            <div class="time-frame">
-                <button>1M</button>
-                <button>3M</button>
-                <button>6M</button>
-                <button>YTD</button>
-                <button>1Y</button>
-                <button class="active">All-time</button>
-                <span class="currency">USD</span>
-            </div>
-            <p class="exchange-info">Exchange rates and security prices as of 20 Oct 2024.</p>
-        </section>
-
+    <!-- Canvas element where the chart will be rendered -->
+    <canvas id="investmentChart"></canvas>
+    <div id="range-buttons">
+        <button onclick="updateChart('3M')">3 Months</button>
+        <button onclick="updateChart('6M')">6 Months</button>
+        <button onclick="updateChart('YTD')">Year-to-Date</button>
+        <button onclick="updateChart('2Y')">2 Years</button>
+        <button onclick="updateChart('ALL')">All-time</button>
+    </div>
+    <div class="content">
         <section class="account-options">
             <div class="option">
-                <img src="../pics/fixed-deposit-icon.png" alt="Fixed Deposit Icon">
+                <img src="../pics/piggybank-icon.png" alt="Fixed Deposit Icon">
                 <a href="#">Fixed deposit accounts</a>
             </div>
             <div class="option">
-                <img src="../pics/unit-trust-icon.png" alt="Unit Trust Icon">
+                <img src="../pics/Unit-trust-icon.png" alt="Unit Trust Icon">
                 <a href="#">Unit trusts and ETFs</a>
             </div>
         </section>
-    </main>
+    </div>
 
     <footer class="footer">
         Footer
     </footer>
 
     <!-- Only one script tag here -->
+    <script>
+        // Full dataset for "All-time"
+        const allTimeData = {
+            labels: [
+                "2022-01-01", "2022-02-01", "2022-03-01", "2022-04-01",
+                "2022-05-01", "2022-06-01", "2022-07-01", "2022-08-01",
+                "2022-09-01", "2022-10-01", "2022-11-01", "2022-12-01",
+                "2023-01-01", "2023-02-01", "2023-03-01", "2023-04-01",
+                "2023-05-01", "2023-06-01", "2023-07-01", "2023-08-01",
+                "2023-09-01", "2023-10-01", "2023-11-01", "2023-12-01",
+                "2024-01-01", "2024-02-01", "2024-03-01", "2024-04-01",
+                "2024-05-01", "2024-06-01", "2024-07-01", "2024-08-01",
+                "2024-09-01", "2024-10-01", "2024-11-01", "2024-12-01"
+            ],
+            values: [
+                100.00, 101.50, 103.00, 102.50, 104.00, 106.00,
+                107.50, 109.00, 108.00, 110.50, 112.00, 115.00,
+                117.50, 119.00, 121.00, 120.50, 122.50, 125.00,
+                126.50, 128.00, 130.00, 132.50, 134.00, 136.50,
+                138.00, 140.00, 142.50, 145.00, 146.50, 148.00,
+                150.50, 152.00, 153.50, 155.00, 157.50, 160.00
+            ]
+        };
+
+        // Function to get filtered data based on the selected range
+        function getFilteredData(range) {
+            const today = new Date();
+            const labels = [...allTimeData.labels];
+            const values = [...allTimeData.values];
+            
+            // Calculate the start index for each range
+            let startIndex;
+            switch (range) {
+                case '3M':
+                    startIndex = labels.length - 3; // Last 3 months
+                    break;
+                case '6M':
+                    startIndex = labels.length - 6; // Last 6 months
+                    break;
+                case 'YTD':
+                    startIndex = labels.findIndex(date => date.startsWith(today.getFullYear())); // From beginning of this year
+                    break;
+                case '2Y':
+                    startIndex = labels.length - 24; // Last 24 months (2 years)
+                    break;
+                case 'ALL':
+                default:
+                    return { labels, values }; // Full data
+            }
+
+            // Ensure startIndex is not out of range
+            startIndex = Math.max(0, startIndex);
+
+            return {
+                labels: labels.slice(startIndex),
+                values: values.slice(startIndex)
+            };
+        }
+
+        // Function to update the chart based on selected range
+        function updateChart(range) {
+            const filteredData = getFilteredData(range);
+            
+            // Update the data in the chart
+            investmentChart.data.labels = filteredData.labels;
+            investmentChart.data.datasets[0].data = filteredData.values;
+            investmentChart.update();
+        }
+
+        // Initial chart rendering with "All-time" data
+        const ctx = document.getElementById('investmentChart').getContext('2d');
+        const investmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allTimeData.labels,
+                datasets: [{
+                    label: "Investment Value (SGD)",
+                    data: allTimeData.values,
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'category',
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Investment Value (SGD)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
     <script src="../js/investmenteng.js"></script>
 </body>
-
 </html>
