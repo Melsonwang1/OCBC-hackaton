@@ -137,6 +137,9 @@ header .logout button .login-icon {
 /* Highlighted button styling */
 .navbar a.active {
     background-color: #ddd;
+    border-color: black;
+    border-style: solid; /* Specify the border style */
+    border-width: 2px; /* Specify the border width */
 }
 
 /* Hover effect */
