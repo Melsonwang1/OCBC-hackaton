@@ -12,6 +12,7 @@ const validateTransactions = require("./middlewares/validateTransactions"); // T
 const transactionsController = require("./controllers/transactionsController"); // Transaction Page (Melson)
 const accountController = require("./controllers/accountController"); // Account Page (Zheng Bin)
 const userController = require("./controllers/userController");
+const investmentController = require("./controllers/investmentController"); // Investment Page (Zhe Kai)
 
 const { profile } = require("console");
 
@@ -35,6 +36,9 @@ app.get("/accounts/accountnameandnumber/:account_id", accountController.getAccou
 // User (Zheng Bin)
 app.get("/user/:user_id", userController.getUserById);
 app.get("/user", userController.getAccountByNricOrPhone);
+
+// Investment Page (Zhe Kai)
+app.get("/investments/:account_id", investmentController.getInvestmentsByAccountId);
 
 
 app.listen(port, async () => {
