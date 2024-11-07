@@ -144,7 +144,7 @@ function displayAccounts(accounts) {
         accountCard.innerHTML = 
             `<div>
                 <h3>${account.account_name}</h3>
-                <p>Account Number: ${account.account_number}</p>
+                <p>账户号码: ${account.account_number}</p>
             </div>
             <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>`;
         
