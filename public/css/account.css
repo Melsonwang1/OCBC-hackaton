@@ -243,6 +243,7 @@ section {
     margin-bottom: 20px;
     text-decoration: none; /* Remove underline from links */
     color: inherit; /* Inherit text color */
+    border: 2px solid black; /* Adds a black border outline */
 }
 
 .account-card:hover {
