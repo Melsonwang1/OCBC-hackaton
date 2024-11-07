@@ -1,3 +1,57 @@
+// login
+document.addEventListener('DOMContentLoaded', async function(){
+    const loginForm = document.querySelector('form');
+    const userIdInput = document.getElementById('user-id');
+    const pinInput = document.getElementById('pin');
+    const loginButton = document.querySelector('.login-btn');
+    
+    // Handle form submission
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent default form submission
+        
+        const userId = userIdInput.value.trim();
+        const pin = pinInput.value.trim();
+        
+        // Validate inputs
+        if (!userId || !pin) {
+            alert("Please enter both User ID and PIN.");
+            return;
+        }
+
+        // Create the payload
+        const payload = {
+            user_id: userId,
+            password: pin 
+        };
+
+        try {
+            // On successful login in the frontend
+            const response = await fetch('/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok){
+                throw new Error('Error logging in')
+            }
+
+            const data = await response.json();
+            token = data.token;
+            localStorage.setItem('token', token);
+            alert('Login successful!')
+            window.location.href = 'accountseng.html';
+            return token;
+
+        } catch (error) {
+            console.error('Error during login:', error);
+            alert('There was an error logging in. Please try again later.');
+        }
+    });
+});
+
 // Check if SpeechRecognition is supported in this browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (!SpeechRecognition) {

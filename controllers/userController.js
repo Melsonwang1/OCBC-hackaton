@@ -1,4 +1,65 @@
 const Users = require("../models/user");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+
+// Example User Registration Controller
+const registerUser = async (req, res) => {
+    const { name, email, password, phoneNumber, nric, dob, recovery } = req.body;
+
+    try {
+        // Hash the password before storing it in the database
+        const hashedPassword = await bcrypt.hash(password, 10); // saltRounds = 10
+
+        // Create the user in the database (user_id is auto-generated)
+        const newUser = await Users.createUser(name, email, hashedPassword, phoneNumber, nric, dob, recovery);
+
+        res.status(201).send({ message: 'User registered successfully' });
+    } catch (error) {
+        console.error("Error registering user:", error);
+        res.status(500).send("Error registering user");
+    }
+};
+
+  
+
+const loginUser = async (req, res) => {
+    const { user_id, password } = req.body;
+    
+    try {
+        const user = await Users.getUserById(user_id);
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        const passwordMatches = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatches) {
+            return res.status(401).send("Incorrect password");
+        }
+
+        if (!process.env.JWT_SECRET) {
+            return res.status(500).send("JWT secret is not defined");
+        }
+
+        const accessToken = jwt.sign(
+            { user_id: user.user_id, name: user.name, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).json({
+            message: "Login successful",
+            accessToken,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error logging in user");
+    }
+};
+
 
 // Get specific user associated with the specific user id. (GET)
 const getUserById = async (req, res) => {
@@ -44,5 +105,7 @@ const getAccountByNricOrPhone = async (req, res) => {
 
 module.exports = {
     getUserById,
-    getAccountByNricOrPhone
+    getAccountByNricOrPhone,
+    loginUser,
+    registerUser
 };
