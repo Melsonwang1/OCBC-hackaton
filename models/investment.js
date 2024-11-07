@@ -2,13 +2,13 @@ const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class Investment {
-    constructor(investment_id, account_id, amount, profit_loss, created_at, updated_at) {
+    constructor(investment_id, account_id, amount, period_start, period_end, profit_loss) {
         this.investment_id = investment_id;
         this.account_id = account_id;
         this.amount = amount;
+        this.period_start = period_start;
+        this.period_end = period_end;
         this.profit_loss = profit_loss;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
     }
 
     // Get all investments by Account ID
@@ -27,9 +27,9 @@ class Investment {
                     row.investment_id,
                     row.account_id,
                     row.amount,
+                    row.period_start,
+                    row.period_end,
                     row.profit_loss,
-                    row.created_at,
-                    row.updated_at
                 )
             );
         } catch(error) {
@@ -47,7 +47,7 @@ class Investment {
         try {
             connection = await sql.connect(dbConfig);
             const sqlQuery = `
-                SELECT created_at, amount, profit_loss
+                SELECT amount, period_start, period_end, profit_loss
                 FROM Investment
                 WHERE account_id = @account_id
                 ORDER BY created_at ASC;

@@ -159,7 +159,7 @@
 
                 const data = await response.json();
                 const labels = data.map(item => item.created_at.split('T')[0]);
-                const values = data.map(item => item.amount + item.profit_loss);
+                const values = data.map(item => item.profit_loss);
 
                 const filteredData = getFilteredData(range);
                 investmentChart.data.labels = filteredData.labels;
