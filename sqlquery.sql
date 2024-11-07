@@ -10,7 +10,7 @@ USE FSDP;
 GO
 
 /* UserAccounts Table */
-CREATE TABLE UserAccounts (
+CREATE TABLE Users (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(255) NOT NULL,  
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -21,7 +21,7 @@ CREATE TABLE UserAccounts (
     recovery VARCHAR(255)                           
 );
 
-INSERT INTO UserAccounts (name, email, password, phoneNumber, nric, dob, recovery)
+INSERT INTO Users (name, email, password, phoneNumber, nric, dob, recovery)
 VALUES 
 ('John Doe', 'john.doe@example.com', 'password123', '91234567', 'S1234567A', '1990-05-15', 'john.recovery@example.com'),
 ('Jane Smith', 'jane.smith@example.com', 'securePass456', '98765432', 'T2345678B', '1985-10-20', 'jane.recovery@example.com'),
