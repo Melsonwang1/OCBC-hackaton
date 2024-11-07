@@ -3,7 +3,7 @@ const sql = require("mssql");
 const path = require('path');
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
-/*const authorize = require("./middlewares/authorize");*/
+const authorize = require("./middlewares/authorize");
 
 // Middlewares
 const validateTransactions = require("./middlewares/validateTransactions"); // Transaction Page (Melson)
@@ -23,6 +23,10 @@ const staticMiddleware = express.static(path.join(__dirname, 'public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware);
+
+// Login Page (Zheng Bin)
+app.post('/user/register', userController.registerUser);
+app.post("/user/login", userController.loginUser); //Use POST function to login for user
 
 // Transaction Page (Melson)
 app.get("/transactions/:account_id", transactionsController.getTransactionsbyaccountid);
