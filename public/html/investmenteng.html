@@ -120,30 +120,54 @@
 
     <!-- Embedded JavaScript with date-fns adapter -->
     <script>
-        const account_id = 1;
+        const account_id = 1;  // Replace with actual dynamic account_id if needed
 
-        function getFilteredData(range) {
+        // Fetch investment growth data and apply the selected range filter
+        async function fetchAndPlotData(range = 'ALL') {
+            try {
+                const response = await fetch(`/investments/growth/${account_id}`);
+                if (!response.ok) throw new Error("Failed to fetch investment growth data");
+
+                const data = await response.json();
+
+                // Prepare labels and values from fetched data
+                const labels = data.map(item => item.period_start.split('T')[0]);
+                const values = data.map(item => item.profit_loss);
+
+                // Filter data based on the selected range
+                const filteredData = filterDataByRange({ labels, values }, range);
+
+                // Update chart with filtered data
+                investmentChart.data.labels = filteredData.labels;
+                investmentChart.data.datasets[0].data = filteredData.values;
+                investmentChart.update();
+            } catch (error) {
+                console.error("Error fetching or updating chart data:", error);
+            }
+        }
+
+        // Filter data based on range selection
+        function filterDataByRange(data, range) {
+            const { labels, values } = data;
             const today = new Date();
-            const labels = [...allTimeData.labels];
-            const values = [...allTimeData.values];
-            
+
             let startIndex;
             switch (range) {
                 case '3M':
-                    startIndex = labels.length - 3;
+                    startIndex = labels.length - 3; // Assuming monthly data
                     break;
                 case '6M':
-                    startIndex = labels.length - 6;
+                    startIndex = labels.length - 6; // Assuming monthly data
                     break;
                 case 'YTD':
                     startIndex = labels.findIndex(date => date.startsWith(today.getFullYear()));
                     break;
                 case '2Y':
-                    startIndex = labels.length - 24;
+                    startIndex = labels.length - 24; // Assuming monthly data
                     break;
                 case 'ALL':
                 default:
-                    return { labels, values };
+                    return data;
             }
             startIndex = Math.max(0, startIndex);
             return {
@@ -152,25 +176,7 @@
             };
         }
 
-        async function updateChart(range) {
-            try {
-                const response = await fetch(`/investments/growth/${account_id}`);
-                if (!response.ok) throw new Error("Failed to fetch investment growth data");
-
-                const data = await response.json();
-                const labels = data.map(item => item.created_at.split('T')[0]);
-                const values = data.map(item => item.profit_loss);
-
-                const filteredData = getFilteredData(range);
-                investmentChart.data.labels = filteredData.labels;
-                investmentChart.data.datasets[0].data = filteredData.values;
-
-                investmentChart.update();
-            } catch (error) {
-                console.error("Error updating chart:", error);
-            }
-        }
-
+        // Chart.js initialization
         const ctx = document.getElementById("investmentChart").getContext("2d");
         const investmentChart = new Chart(ctx, {
             type: "line",
@@ -186,15 +192,18 @@
             },
             options: {
                 scales: {
-                    x: { type: "time", time: { unit: "day" } },
+                    x: { type: "time", time: { unit: "month" } },
                     y: { beginAtZero: true }
                 }
             }
         });
 
-        document.getElementById("range-buttons").addEventListener("click", (event) => {
-            const range = event.target.getAttribute("onclick").replace("updateChart(", "").replace(")", "");
-            updateChart(range);
+        // Attach event listeners to range buttons
+        document.querySelectorAll("#range-buttons button").forEach(button => {
+            button.addEventListener("click", () => {
+                const range = button.textContent;
+                fetchAndPlotData(range);
+            });
         });
 
         function toggleDropdown(id) {
