@@ -129,15 +129,14 @@
                 if (!response.ok) throw new Error("Failed to fetch investment growth data");
 
                 const data = await response.json();
+                console.log(data); // Log data to verify format
 
-                // Prepare labels and values from fetched data
-                const labels = data.map(item => item.period_start.split('T')[0]);
+                // Convert period_start to Date objects and extract profit_loss values
+                const labels = data.map(item => new Date(item.period_start));
                 const values = data.map(item => item.profit_loss);
 
-                // Filter data based on the selected range
                 const filteredData = filterDataByRange({ labels, values }, range);
 
-                // Update chart with filtered data
                 investmentChart.data.labels = filteredData.labels;
                 investmentChart.data.datasets[0].data = filteredData.values;
                 investmentChart.update();
@@ -210,8 +209,7 @@
             const content = document.getElementById(id);
             content.style.display = content.style.display === 'block' ? 'none' : 'block';
         }
-
-        updateChart('ALL');
+        fetchAndPlotData('ALL');
     </script>
 </body>
 </html>

@@ -50,7 +50,7 @@ class Investment {
                 SELECT amount, period_start, period_end, profit_loss
                 FROM Investment
                 WHERE account_id = @account_id
-                ORDER BY created_at ASC;
+                ORDER BY period_start ASC;
             `;
             const request = connection.request();
             request.input('account_id', sql.Int, account_id);
