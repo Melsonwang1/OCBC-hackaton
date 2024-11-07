@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/investment.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <title>OCBC - Investment</title>
 
     <!-- Import Google Fonts-->
@@ -35,24 +36,8 @@
     </header>
 
     <div class="container">
-        <!-- Welcome message -->
         <div class="welcome">Welcome, <span id="user-name"></span></div>
-
-        <!-- Keyboard shortcuts note-->
-        <!--<div id="keyboard-shortcut-note" class="keyboard-note">
-            <p><strong>Press the following keys to quickly navigate: </strong></p>
-            <ul>
-                <li><strong>1</strong>  → View Accounts</li>
-                <li><strong>2</strong>  → Transfer Money</li>
-                <li><strong>3</strong>  → Investments</li>
-                <li><strong>c</strong>  → Chinese Translation</li>
-                <li><strong>l</strong>  → Log Out</li>
-            </ul>
-        </div>-->
-
-        <!-- What would you like to do today? -->
         <h2 class="welcome-message">What would you like to do today?</h2>
-        <!-- Navigation bar -->
         <div class="navbar">
             <a href="../html/accountseng.html">
                 <img src="../pics/view-account.png" alt="View Icon">
@@ -67,8 +52,6 @@
     </div>
 
     <h1>Investment Growth Over Time</h1>
-
-    <!-- Canvas element where the chart will be rendered -->
     <canvas id="investmentChart"></canvas>
     <div id="range-buttons">
         <button onclick="updateChart('3M')">3 Months</button>
@@ -77,9 +60,9 @@
         <button onclick="updateChart('2Y')">2 Years</button>
         <button onclick="updateChart('ALL')">All-time</button>
     </div>
+    
     <div class="content">
         <div class="dropdown">
-            
             <button class="dropdown-btn" onclick="toggleDropdown('fixedDeposit')">Fixed Deposit Accounts ▼</button>
             <div id="fixedDeposit" class="dropdown-content">
                 <div class="card">
@@ -98,8 +81,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Unit Trusts and ETFs Dropdown -->
+        
         <div class="dropdown">
             <button class="dropdown-btn" onclick="toggleDropdown('unitTrust')">Unit Trusts and ETFs ▼</button>
             <div id="unitTrust" class="dropdown-content">
@@ -136,79 +118,67 @@
         Footer
     </footer>
 
-    <!-- Only one script tag here -->
+    <!-- Embedded JavaScript with date-fns adapter -->
     <script>
+        const account_id = 1;
 
-        // Function to get filtered data based on the selected range
         function getFilteredData(range) {
             const today = new Date();
             const labels = [...allTimeData.labels];
             const values = [...allTimeData.values];
             
-            // Calculate the start index for each range
             let startIndex;
             switch (range) {
                 case '3M':
-                    startIndex = labels.length - 3; // Last 3 months
+                    startIndex = labels.length - 3;
                     break;
                 case '6M':
-                    startIndex = labels.length - 6; // Last 6 months
+                    startIndex = labels.length - 6;
                     break;
                 case 'YTD':
-                    startIndex = labels.findIndex(date => date.startsWith(today.getFullYear())); // From beginning of this year
+                    startIndex = labels.findIndex(date => date.startsWith(today.getFullYear()));
                     break;
                 case '2Y':
-                    startIndex = labels.length - 24; // Last 24 months (2 years)
+                    startIndex = labels.length - 24;
                     break;
                 case 'ALL':
                 default:
-                    return { labels, values }; // Full data
+                    return { labels, values };
             }
-
-            // Ensure startIndex is not out of range
             startIndex = Math.max(0, startIndex);
-
             return {
                 labels: labels.slice(startIndex),
                 values: values.slice(startIndex)
             };
         }
 
-        // Function to update the chart based on selected range
-        async function updateChart(account_id, range) {
+        async function updateChart(range) {
             try {
-                // Fetch data from the server
                 const response = await fetch(`/investments/growth/${account_id}`);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch investment growth data");
-                }
+                if (!response.ok) throw new Error("Failed to fetch investment growth data");
 
                 const data = await response.json();
+                const labels = data.map(item => item.created_at.split('T')[0]);
+                const values = data.map(item => item.amount + item.profit_loss);
 
-                // Process the data for the chart
-                const labels = data.map(item => item.created_at.split('T')[0]); // Format the date
-                const values = data.map(item => item.amount + item.profit_loss); // Calculate investment value
+                const filteredData = getFilteredData(range);
+                investmentChart.data.labels = filteredData.labels;
+                investmentChart.data.datasets[0].data = filteredData.values;
 
-                // Update the chart's data
-                investmentChart.data.labels = labels;
-                investmentChart.data.datasets[0].data = values;
                 investmentChart.update();
             } catch (error) {
                 console.error("Error updating chart:", error);
             }
         }
 
-        updateChart(1, 'ALL');
-
-        // Initial chart rendering with "All-time" data
         const ctx = document.getElementById("investmentChart").getContext("2d");
         const investmentChart = new Chart(ctx, {
             type: "line",
             data: {
-                labels: [], // These will be populated by updateInvestmentChart()
+                labels: [],
                 datasets: [{
                     label: "Investment Growth",
-                    data: [], // These will be populated by updateInvestmentChart()
+                    data: [],
                     backgroundColor: "rgba(75, 192, 192, 0.2)",
                     borderColor: "rgba(75, 192, 192, 1)",
                     borderWidth: 1
@@ -216,16 +186,23 @@
             },
             options: {
                 scales: {
-                    x: { type: "time", time: { unit: "day" } }, // Show dates on x-axis
+                    x: { type: "time", time: { unit: "day" } },
                     y: { beginAtZero: true }
                 }
             }
         });
+
+        document.getElementById("range-buttons").addEventListener("click", (event) => {
+            const range = event.target.getAttribute("onclick").replace("updateChart(", "").replace(")", "");
+            updateChart(range);
+        });
+
         function toggleDropdown(id) {
             const content = document.getElementById(id);
             content.style.display = content.style.display === 'block' ? 'none' : 'block';
         }
+
+        updateChart('ALL');
     </script>
-    <script src="../js/investmenteng.js"></script>
 </body>
 </html>
