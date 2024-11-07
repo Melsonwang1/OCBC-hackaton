@@ -86,10 +86,16 @@
                 <div class="form-group">
                     <label>2. Send Money Using:</label>
                     <div class="radio-group">
-                        <button type="button" class="radio-button" name="transfer-to" value="mobile" onclick="toggleInput('mobile'); selectOption('mobile')">Mobile Number</button>
-                        <button type="button" class="radio-button" name="transfer-to" value="nric" onclick="toggleInput('nric'); selectOption('nric')">NRIC</button>
+                        <label>
+                            <input type="radio" name="transfer-to" value="mobile" onclick="toggleInput('mobile')">
+                            Mobile number
+                        </label>
+                        <label>
+                            <input type="radio" name="transfer-to" value="nric" onclick="toggleInput('nric')">
+                            NRIC
+                        </label>
                     </div>
-
+                    
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
                         <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number">
@@ -101,9 +107,6 @@
                 <!-- Amount and Description -->
                 <div class="form-group">
                     <label for="amount">3. Amount transferring</label>
-                    <div id="balance" class="balance-display" style="display: none;">
-                        Current Balance: <b><span id="balance-amount"></span> SGD</b>
-                    </div>
                     <div class="amount-transfer">
                         <input type="text" id="amount" placeholder="Amount (SGD)">
                         <input type="text" id="description" placeholder="Description (optional)">
@@ -120,5 +123,4 @@
 
     <script src="../js/transferform.js"></script>
 </body>
-
 </html>
