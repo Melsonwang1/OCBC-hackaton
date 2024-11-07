@@ -1,3 +1,84 @@
+document.addEventListener('keydown', function (event) {
+    // Ensure we don't interfere with regular typing events
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+    // Shortcut for "View Accounts"
+    if (event.key === '1') {
+        window.location.href = "../html/accountseng.html";
+    }
+    
+    // Shortcut for "Transfer Money"
+    if (event.key === '2') {
+        window.location.href = "../html/transfer.html";
+    }
+
+    // Shortcut for "Investments"
+    if (event.key === '3') {
+        window.location.href = "../html/investmenteng.html";
+    }
+
+    // Shortcut for "Chinese Translation"
+    if(event.key == 'c'){
+        window.location.href = "../html/accountschi.html";
+    }
+
+    // Shortcut for "Log Out" (L key)
+    if (event.key === 'l') {
+        window.location.href = 'logineng.html';
+    }
+
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Find the account list and account cards
+    const accountsList = document.getElementById('accounts-list');
+
+    // Sample accounts (You can replace this with dynamically loaded data)
+    const accounts = [];
+
+    // Function to create account card elements
+    function createAccountCards() {
+        accounts.forEach(account => {
+            const accountCard = document.createElement('button');
+            accountCard.classList.add('account-card');
+            accountCard.setAttribute('aria-label', account.name);
+            accountCard.setAttribute('tabindex', '0'); // Makes it focusable with Tab
+            accountCard.innerText = account.name;
+            accountCard.addEventListener('click', () => {
+                alert(`Viewing details of: ${account.name}`);
+                // You can add logic to open the account details page here.
+            });
+
+            accountsList.appendChild(accountCard);
+        });
+    }
+
+    // Call function to create account cards
+    createAccountCards();
+
+    // Handle Tab navigation only within account selection
+    document.addEventListener('keydown', function(event) {
+        // Only process Tab key (Forward or Shift + Tab for backward)
+        if (event.key === 'Tab') {
+            const focusableElements = Array.from(accountsList.querySelectorAll('.account-card'));
+            const currentIndex = focusableElements.findIndex(el => el === document.activeElement);
+
+            if (event.shiftKey) { 
+                // If Shift + Tab, go backward
+                const prevIndex = currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
+                focusableElements[prevIndex].focus();
+                event.preventDefault(); // Prevent default tabbing behavior
+            } else {
+                // If Tab (forward), go forward
+                const nextIndex = currentIndex < focusableElements.length - 1 ? currentIndex + 1 : 0;
+                focusableElements[nextIndex].focus();
+                event.preventDefault(); // Prevent default tabbing behavior
+            }
+        }
+    });
+});
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     let token = localStorage.getItem("token"); // Retrieve the token from local storage
 

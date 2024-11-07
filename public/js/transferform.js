@@ -1,3 +1,59 @@
+// Function to check if the user is currently focused on an input or textarea
+function isTyping() {
+    const activeElement = document.activeElement;
+    return activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.isContentEditable;
+}
+
+// General page navigation shortcuts
+document.addEventListener('keydown', function(event) {
+    // Ensure we're not in an input field or similar element
+    if (isTyping()) return;
+
+    // General page navigation shortcuts
+    if (event.key === '1') {
+        window.location.href = "../html/accountseng.html";
+    } else if (event.key === '2') {
+        window.location.href = "../html/transfer.html";
+    } else if (event.key === '3') {
+        window.location.href = "../html/investmenteng.html";
+    } else if (event.key === 't') {
+        window.location.href = "../html/accountschi.html";
+    } else if (event.key === 'l') {
+        window.location.href = 'logineng.html';
+    }
+});
+
+/* Still working on it*/
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Tab') {
+        event.preventDefault();
+
+        const focusableElements = [
+            document.getElementById('transfer-from'),
+            document.querySelector('.radio-button[value="mobile"]'),
+            document.querySelector('.radio-button[value="nric"]'),
+            document.getElementById('mobile'),
+            document.getElementById('nric'),
+            document.getElementById('enterBtn'),
+            document.getElementById('amount'),
+            document.getElementById('description'),
+            document.querySelector('.transfer-btn')
+        ];
+
+        const currentIndex = focusableElements.findIndex(el => el === document.activeElement);
+
+        let nextIndex;
+        if (event.shiftKey) {
+            nextIndex = currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
+        } else {
+            nextIndex = currentIndex < focusableElements.length - 1 ? currentIndex + 1 : 0;
+        }
+
+        focusableElements[nextIndex].focus();
+    }
+});
+
+
 document.addEventListener('DOMContentLoaded', async () => {
     let token = localStorage.getItem("token");
 

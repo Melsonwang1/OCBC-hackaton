@@ -1,3 +1,34 @@
+document.addEventListener('keydown', function (event) {
+    // Ensure we don't interfere with regular typing events
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+    // Shortcut for "View Accounts"
+    if (event.key === '1') {
+        window.location.href = "../html/accountseng.html";
+    }
+    
+    // Shortcut for "Transfer Money"
+    if (event.key === '2') {
+        window.location.href = "../html/transfer.html";
+    }
+
+    // Shortcut for "Investments"
+    if (event.key === '3') {
+        window.location.href = "../html/investmenteng.html";
+    }
+
+    // Shortcut for "Chinese Translation"
+    if(event.key == 'c'){
+        window.location.href = "../html/accountschi.html";
+    }
+
+    // Shortcut for "Log Out"
+    if (event.key === 'l') {
+        window.location.href = 'logineng.html';
+    }
+
+});
+
 // Event listener for DOMContentLoaded to ensure the script runs after the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token'); // Retrieve token from local storage
