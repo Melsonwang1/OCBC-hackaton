@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         // Fetch user data with authorization header
-        const userResponse = await fetch(`/user/1`, {
+        const userResponse = await fetch("/user/1", {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("user-name").innerText = user.account.name.toUpperCase();
 
         // Fetch account information with authorization header
-        const accountResponse = await fetch(`/accounts/user/1`, {
+        const accountResponse = await fetch("/accounts/user/1", {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const accounts = await accountResponse.json();
         displayAccounts(accounts);
         announceAccountDetails(accounts);  // Call this function to announce account details
+
+        // Start listening for user navigation responses
+        startListeningForNavigation();
 
     } catch (error) {
         console.error("Error:", error);
@@ -64,7 +67,6 @@ function narrate(message) {
 
 // Announce the account details dynamically
 function announceAccountDetails(accounts) {
-    // Announce the page and account information
     narrate("Welcome to your accounts page. Here are your account details:");
 
     accounts.forEach((account, index) => {
@@ -72,12 +74,54 @@ function announceAccountDetails(accounts) {
         const accountNumber = account.account_number || "Unknown Account Number";
         const balance = account.balance_have ? `${account.balance_have.toFixed(2)} SGD` : "Unknown Balance";
 
-        // Construct the message
         const message = `Account ${index + 1}: Bank name: ${bankName}. Account number: ${accountNumber}. Balance: ${balance}.`;
-
-        // Use a timeout to allow for a pause between each narration (to avoid overlapping speech)
-        setTimeout(() => narrate(message), index * 4000); // Wait 4 seconds before narrating the next account
+        setTimeout(() => narrate(message), index * 4000);
     });
+
+    setTimeout(() => narrate("Would you like to go to Transfer Money, Check Investments, or View Transactions?"), accounts.length * 4000);
+}
+
+// Initialize speech recognition and listen for navigation commands indefinitely
+function startListeningForNavigation() {
+    if (!('webkitSpeechRecognition' in window)) {
+        console.error("Speech Recognition is not supported in this browser.");
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = true; // Keep listening for continuous speech
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, ""); // Remove trailing period
+        handleUserResponse(transcript.toLowerCase());
+    };
+
+    recognition.onerror = function(event) {
+        if (event.error !== 'no-speech') {
+            narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
+        }
+    };
+
+    // Restart listening when speech ends
+    recognition.onend = function() {
+        recognition.start();
+    };
+
+    recognition.start();
+}
+
+// Handle the user's response to navigation prompt
+function handleUserResponse(response) {
+    if (response.includes("transfer")||response.includes("sending")|| response.includes("send")|| response.includes("transfers")|| response.includes("transfering")) {
+        window.location.href = "transfer.html";
+    } else if (response.includes("investments")||response.includes("investment")||response.includes("investing")||response.includes("invest")) {
+        window.location.href = "investmenteng.html";
+    } else if (response.includes(" transactions")||response.includes("transaction")||response.includes("viewing")||response.includes("view")||response.includes("account")) {
+        window.location.href = "accountsdetails.html";
+    } else {
+        narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
+    }
 }
 
 // Display account cards
@@ -90,17 +134,17 @@ function displayAccounts(accounts) {
         accountCard.href = `accountsdetails.html?accountId=${account.account_id}`;
         accountCard.className = 'account-card';
 
-        accountCard.innerHTML = `
-            <div>
+        accountCard.innerHTML = 
+            `<div>
                 <h3>${account.account_name}</h3>
                 <p>Account Number: ${account.account_number}</p>
             </div>
-            <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>
-        `;
+            <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>`;
         
         accountsList.appendChild(accountCard);
     });
 }
+
 
 // Keyboard Shortcuts
 document.addEventListener('keydown', function (event) {
@@ -132,54 +176,4 @@ document.addEventListener('keydown', function (event) {
         window.location.href = 'logineng.html';
     }
 
-});
-
-// Manage account cards with keyboard navigation
-document.addEventListener('DOMContentLoaded', function () {
-    // Find the account list and account cards
-    const accountsList = document.getElementById('accounts-list');
-
-    // Sample accounts (You can replace this with dynamically loaded data)
-    const accounts = [];
-
-    // Function to create account card elements
-    function createAccountCards() {
-        accounts.forEach(account => {
-            const accountCard = document.createElement('button');
-            accountCard.classList.add('account-card');
-            accountCard.setAttribute('aria-label', account.name);
-            accountCard.setAttribute('tabindex', '0'); // Makes it focusable with Tab
-            accountCard.innerText = account.name;
-            accountCard.addEventListener('click', () => {
-                alert(`Viewing details of: ${account.name}`);
-                // You can add logic to open the account details page here.
-            });
-
-            accountsList.appendChild(accountCard);
-        });
-    }
-
-    // Call function to create account cards
-    createAccountCards();
-
-    // Handle Tab navigation only within account selection
-    document.addEventListener('keydown', function(event) {
-        // Only process Tab key (Forward or Shift + Tab for backward)
-        if (event.key === 'Tab') {
-            const focusableElements = Array.from(accountsList.querySelectorAll('.account-card'));
-            const currentIndex = focusableElements.findIndex(el => el === document.activeElement);
-
-            if (event.shiftKey) { 
-                // If Shift + Tab, go backward
-                const prevIndex = currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
-                focusableElements[prevIndex].focus();
-                event.preventDefault(); // Prevent default tabbing behavior
-            } else {
-                // If Tab (forward), go forward
-                const nextIndex = currentIndex < focusableElements.length - 1 ? currentIndex + 1 : 0;
-                focusableElements[nextIndex].focus();
-                event.preventDefault(); // Prevent default tabbing behavior
-            }
-        }
-    });
 });

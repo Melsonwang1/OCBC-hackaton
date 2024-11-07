@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/account.css">
-    <title>OCBC 我的账户</title>
+    <title>OCBC - View Accounts</title>
 
     <!-- Import Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-</head>
+</head> 
 
 <body>
     <header class="header">
@@ -21,134 +21,65 @@
     
         <div class="header-right">
             <div class="language-switch">
-                <a href="accountseng.html" class="language-btn">English</a>
+                <a href="accountschi.html" class="language-btn">中文</a>
             </div>
     
             <div class="logout">
                 <button onclick="window.location.href='login.html'"> 
-                    登出
+                    Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
             </div>
         </div>
     </header>
-    
-
 
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome">您好！欢迎, THOMAS LIM JUN WEI</div>
+        <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
+
+        <!-- Keyboard shortcuts note-->
+        <!--<div id="keyboard-shortcut-note" class="keyboard-note">
+            <p><strong>Press the following keys to quickly navigate: </strong></p>
+            <ul>
+                <li><strong>1</strong>  → View Accounts</li>
+                <li><strong>2</strong>  → Transfer Money</li>
+                <li><strong>3</strong>  → Investments</li>
+                <li><strong>c</strong>  → Chinese Translation</li>
+                <li><strong>l</strong>  → Log Out</li>
+            </ul>
+        </div>-->
 
         <!-- What would you like to do today? -->
         <h2 class="welcome-message">您今天想做什么？</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountschi.html" class="active">
+            <a href="../html/accountseng.html" class="active">
                 <img src="../pics/view-account.png" alt="View Icon">
-                查看账户</a>
-            <a href="../html/transferchi.html">
+                View Accounts</a>
+            <a href="../html/transfer.html">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
-                转账</a>
-            <a href="../html/investmentchi.html">
+                Transfer Money</a>
+            <a href="../html/investmenteng.html">
                 <img src="../pics/investment.png" alt="Investments Icon">
-                投资</a>
+                Investments</a> 
         </div>
-
+            
     </div>
 
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
+        <!--<div class="account-selection-note">
+            <p><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
+        </div> -->       
         <h2>我的银行账户:</h2>
         <p>请选择一个账户以查看详细信息。</p>
-        <a href="accountsdetails.html" class="account-card">
-            <div>
-                <h3>我的账户</h3>
-                <p>123-456789-001</p>
-            </div>
-            <p class="balance"><span class="currency">SGD</span> $2000.00</p>
-        </a>
-        <a href="savingsBank.html" class="account-card">
-            <div>
-                <h3>我的储蓄账户</h3>
-                <p>123-456789-002</p>
-            </div>
-            <p class="balance"><span class="currency">SGD</span> $2159.63</p>
-        </a>
+        <div id="accounts-list">
+            <!-- Account cards will be inserted here by JavaScript -->
+        </div>
     </section>
 
 
-    <!-- My Account Page -->
-    <section id="myBank" class="account-details" style="display:none;">
-        <h2 id="myBankName">我的账户</h2>
-        <p id="myBankNumberDetails">123-456789-001</p>
-        <p id="myBankBranchDetails">中央分行</p>
-        <div class="account-summary">
-            <div class="balance-box green">
-                <p id="have">您的余额:</p>
-                <p id="haveamt">SGD $2000.00</p>
-            </div>
-            <div class="balance-box red">
-                <p id="owed">您的欠款:</p>
-                <p id="owedamt">SGD $0.00</p>
-            </div>
-        </div>
-        <div class="recent-transactions">
-            <h3 id="transaction">最近的转账:</h3> <!-- Changed ID to transaction -->
-            <p id="person">PayNow 来自: TOM LIM</p>
-            <p id="phonenum">+65-00000000</p>
-            <p id="amt">SGD +$65.00</p>
-            <p id="date">2024年7月28日</p>
-        </div>
-        <button onclick="goBack()" class="back-button">返回</button>
-    </section>
-
-    <!-- My Savings Account Page -->
-    <section id="savingsBank" class="account-details" style="display:none;">
-        <h2 id="savingsBankName">我的储蓄账户</h2>
-        <p id="savingsBankNumberDetails">123-456789-002</p>
-        <p id="savingsBankBranchDetails">市中心分行</p>
-        <div class="account-summary">
-            <div class="balance-box green">
-                <p id="savingshave">您的余额:</p>
-                <p id="savingshaveamt">SGD $2100.00</p>
-            </div>
-            <div class="balance-box red">
-                <p id="savingsOwed">您的欠款:</p>
-                <p id="savingsOwedamt">SGD $0.00</p>
-            </div>
-        </div>
-        <div class="recent-transactions">
-            <h3 id="savingsTransactions">最近的转账:</h3>
-            <p id="savingsTransactionsperson">PayNow 来自: JOHN DOE</p>
-            <p id="savingsTransactionsphonenum">+65-12345678</p>
-            <p id="savingsTransactionsamt">SGD +$100.00</p>
-            <p id="savingsTransactionsdate">2024年7月28日</p>
-        </div>
-        <button onclick="goBack()" class="back-button">返回</button>
-    </section>
-
-    <!-- JavaScript for handling account display -->
-    <script>
-        function showAccount(accountId) {
-            // Hide all sections first
-            document.getElementById('account-selection').style.display = 'none';
-            document.getElementById('myBank').style.display = 'none';
-            document.getElementById('savingsBank').style.display = 'none';
-
-            // Show the selected section
-            document.getElementById(accountId).style.display = 'block';
-        }
-
-        function goBack() {
-            // Hide all account details
-            document.getElementById('myBank').style.display = 'none';
-            document.getElementById('savingsBank').style.display = 'none';
-
-            // Show the account selection page
-            document.getElementById('account-selection').style.display = 'block';
-        }
-    </script>
-    <script src="../js/accountseng.js"></script>
+    <script src="../js/accountschi.js"></script>
 </body>
 
 </html>
