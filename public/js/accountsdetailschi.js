@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const transactions = await fetchTransactions(accountId);
             displayTransactions(transactions);  // Call displayTransactions to show transactions on the page
             announceAccountDetails(account, transactions);
+            startListeningForNavigation();
         } catch (error) {
             console.error("Error fetching user account:", error.message);
             handleAuthError(error);
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function narrate(message) {
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
+        utterance.lang = 'zh-CN';
         utterance.rate = 1;
         window.speechSynthesis.speak(utterance);
     } else {
@@ -143,52 +144,54 @@ function narrate(message) {
 }
 
 function announceAccountDetails(account, transactions) {
-    narrate(`Welcome to your accounts page. Here are your account details.`);
+    narrate(`欢迎来到您的账户页面。以下是您的账户详细信息。`);
 
-    const accountDetailsMessage = `User name: ${account.user_name.toUpperCase()}. 
-        Bank name: ${account.account_name}. 
-        Account number: ${account.account_number}. 
-        Balance you have: ${account.balance_have.toFixed(2)} SGD. 
-        Balance you owe: ${account.balance_owe.toFixed(2)} SGD.`;
+    const accountDetailsMessage = `用户名：${account.user_name.toUpperCase()}。 
+        银行名称：${account.account_name}。 
+        账户号码：${account.account_number}。 
+        您拥有的余额：${account.balance_have.toFixed(2)} SGD。 
+        您欠的余额：${account.balance_owe.toFixed(2)} SGD。`;
     narrate(accountDetailsMessage);
 
     if (transactions && transactions.length > 0) {
-        narrate("Here are your recent transactions:");
+        narrate("以下是您最近的交易：");
         transactions.forEach((transaction, index) => {
-            const transactionMessage = `Transaction ${index + 1}: Date: ${new Date(transaction.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}. 
-                Description: ${transaction.description}. 
-                Amount: ${transaction.transactionAmount >= 0 ? '+' : '-'}${Math.abs(transaction.transactionAmount).toFixed(2)} SGD. 
-                Status: ${transaction.status}.`;
+            const transactionMessage = `交易 ${index + 1}：日期：${new Date(transaction.date).toLocaleDateString('zh-CN', { day: '2-digit', month: 'long', year: 'numeric' })}。 
+                描述：${transaction.description}。 
+                金额：${transaction.transactionAmount >= 0 ? '+' : '-'}${Math.abs(transaction.transactionAmount).toFixed(2)} SGD。 
+                状态：${transaction.status}。`;
             setTimeout(() => narrate(transactionMessage), (index + 1) * 4000);
         });
     } else {
-        narrate("There are no recent transactions.");
+        narrate("没有最近的交易。");
     }
 
-    setTimeout(() => narrate("Would you like to go to Transfer Money, Check Investments, or View Transactions?"), (transactions.length + 1) * 4000);
+    setTimeout(() => narrate("您想去转账、查看投资还是查看交易？"), (transactions.length + 1) * 4000);
 }
 
+// Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
     if (!('webkitSpeechRecognition' in window)) {
-        console.error("Speech Recognition is not supported in this browser.");
+        console.error("此浏览器不支持语音识别。");
         return;
     }
 
     const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
+    recognition.continuous = true; // Keep listening for continuous speech
+    recognition.lang = 'zh-CN';
 
     recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, "");
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, ""); // Remove trailing period
         handleUserResponse(transcript.toLowerCase());
     };
 
     recognition.onerror = function(event) {
         if (event.error !== 'no-speech') {
-            narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
+            narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易。");
         }
     };
 
+    // Restart listening when speech ends
     recognition.onend = function() {
         recognition.start();
     };
@@ -196,17 +199,20 @@ function startListeningForNavigation() {
     recognition.start();
 }
 
+// Handle the user's response to navigation prompt
 function handleUserResponse(response) {
-    if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transfering")) {
+    if (response.includes("转账") || response.includes("发送") || response.includes("汇款") || response.includes("汇") || response.includes("转")) {
         window.location.href = "transfer.html";
-    } else if (response.includes("investments") || response.includes("investment") || response.includes("investing") || response.includes("invest")) {
+    } else if (response.includes("投资") || response.includes("查看投资") || response.includes("理财")) {
         window.location.href = "investmenteng.html";
-    } else if (response.includes("transactions") || response.includes("transaction") || response.includes("viewing") || response.includes("view") || response.includes("account")) {
-        window.location.href = "accountsdetails.html";
+    } else if (response.includes("账户") || response.includes("我的账户") || response.includes("账户信息")) {
+        window.location.href = "accountseng.html";
     } else {
-        narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
+        narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易。");
     }
 }
+
+
 
 
 
