@@ -2,19 +2,19 @@ document.addEventListener('keydown', function (event) {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
 
     if (event.key === '1') {
-        window.location.href = "../html/accountseng.html";
-    }
-    if (event.key === '2') {
-        window.location.href = "../html/transfer.html";
-    }
-    if (event.key === '3') {
-        window.location.href = "../html/investmenteng.html";
-    }
-    if (event.key == 'c') {
         window.location.href = "../html/accountschi.html";
     }
+    if (event.key === '2') {
+        window.location.href = "../html/transferchi.html";
+    }
+    if (event.key === '3') {
+        window.location.href = "../html/investmentchi.html";
+    }
+    if (event.key == 'e') {
+        window.location.href = "../html/accountseng.html";
+    }
     if (event.key === 'l') {
-        window.location.href = 'logineng.html';
+        window.location.href = 'loginchi.html';
     }
 });
 
@@ -202,11 +202,11 @@ function startListeningForNavigation() {
 // Handle the user's response to navigation prompt
 function handleUserResponse(response) {
     if (response.includes("转账") || response.includes("发送") || response.includes("汇款") || response.includes("汇") || response.includes("转")) {
-        window.location.href = "transfer.html";
+        window.location.href = "transferchi.html";
     } else if (response.includes("投资") || response.includes("查看投资") || response.includes("理财")) {
-        window.location.href = "investmenteng.html";
+        window.location.href = "investmentchi.html";
     } else if (response.includes("账户") || response.includes("我的账户") || response.includes("账户信息")) {
-        window.location.href = "accountseng.html";
+        window.location.href = "accountschi.html";
     } else {
         narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易。");
     }
