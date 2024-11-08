@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const transactions = await fetchTransactions(accountId);
             displayTransactions(transactions);  // Call displayTransactions to show transactions on the page
             announceAccountDetails(account, transactions);
+            startListeningForNavigation();
         } catch (error) {
             console.error("Error fetching user account:", error.message);
             handleAuthError(error);
@@ -168,6 +169,7 @@ function announceAccountDetails(account, transactions) {
     setTimeout(() => narrate("Would you like to go to Transfer Money, Check Investments, or View Transactions?"), (transactions.length + 1) * 4000);
 }
 
+// Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
     if (!('webkitSpeechRecognition' in window)) {
         console.error("Speech Recognition is not supported in this browser.");
@@ -175,11 +177,11 @@ function startListeningForNavigation() {
     }
 
     const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
+    recognition.continuous = true; // Keep listening for continuous speech
     recognition.lang = 'en-US';
 
     recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, "");
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, ""); // Remove trailing period
         handleUserResponse(transcript.toLowerCase());
     };
 
@@ -189,6 +191,7 @@ function startListeningForNavigation() {
         }
     };
 
+    // Restart listening when speech ends
     recognition.onend = function() {
         recognition.start();
     };
@@ -196,17 +199,19 @@ function startListeningForNavigation() {
     recognition.start();
 }
 
+// Handle the user's response to navigation prompt
 function handleUserResponse(response) {
-    if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transfering")) {
+    if (response.includes("transfer")||response.includes("sending")|| response.includes("send")|| response.includes("transfers")|| response.includes("transfering")) {
         window.location.href = "transfer.html";
-    } else if (response.includes("investments") || response.includes("investment") || response.includes("investing") || response.includes("invest")) {
+    } else if (response.includes("investments")||response.includes("investment")||response.includes("investing")||response.includes("invest")) {
         window.location.href = "investmenteng.html";
-    } else if (response.includes("transactions") || response.includes("transaction") || response.includes("viewing") || response.includes("view") || response.includes("account")) {
-        window.location.href = "accountsdetails.html";
+    } else if (response.includes(" account")||response.includes("accounts")) {
+        window.location.href = "accountseng.html";
     } else {
         narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
     }
 }
+
 
 
 
