@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware);
 
 // Login Page (Zheng Bin)
-app.post('/user/register', userController.registerUser);
+app.post('/user/register', userController.createUser);
 app.post("/user/login", userController.loginUser); //Use POST function to login for user
 
 // Transaction Page (Melson)
@@ -38,7 +38,7 @@ app.get("/accounts/account/:account_id", accountController.getAccountByAccountId
 app.get("/accounts/accountnameandnumber/:account_id", accountController.getAccountnameandnumberByAccountId);
 
 // User (Zheng Bin)
-app.get("/user/:user_id", userController.getUserById);
+app.get("/user/:user_id", authorize, userController.getUserById);
 app.get("/user", userController.getAccountByNricOrPhone);
 
 // Investment Page (Zhe Kai)

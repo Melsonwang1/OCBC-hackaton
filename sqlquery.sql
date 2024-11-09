@@ -23,12 +23,11 @@ CREATE TABLE Users (
 
 INSERT INTO Users (name, email, password, phoneNumber, nric, dob, recovery)
 VALUES 
-('John Doe', 'john.doe@example.com', 'password123', '91234567', 'S1234567A', '1990-05-15', 'john.recovery@example.com'),
-('Jane Smith', 'jane.smith@example.com', 'securePass456', '98765432', 'T2345678B', '1985-10-20', 'jane.recovery@example.com'),
-('Alex Tan', 'alex.tan@example.com', 'alexPass789', '87654321', 'F3456789C', '2000-01-30', 'alex.recovery@example.com'),
-('Emily Lim', 'emily.lim@example.com', 'emilySecret321', '96543210', 'G4567890D', '1995-12-05', 'emily.recovery@example.com'),
-('Daniel Lee', 'daniel.lee@example.com', 'danielSecure654', '93218765', 'S5678901E', '1992-03-22', 'daniel.recovery@example.com'),
-('Sophia Chia', 'sophia.chia@example.com', 'sophiaSafe987', '91827364', 'T6789012F', '1988-08-14', 'sophia.recovery@example.com');
+('John Doe', 'john.doe@example.com', '$2b$10$8mv.PvzwK.9sO4Jdr/7Z9O45nwRBSYW9e9fZzXXrFomiyoDbQteYG', '91234567', 'S1234567A', '1990-05-15', 'john.recovery@example.com'), --123456 (password)
+('Jane Smith', 'jane.smith@example.com', '$2b$10$GOP1qXywRBvmy1S.dsf3Cux1ZKQi8vtkp1qcZ1wWij2TwB2HwuYdy', '98765432', 'T2345678B', '1985-10-20', 'jane.recovery@example.com'), -- 135790
+('Alex Tan', 'alex.tan@example.com', '$2b$10$YpYdxALLH.2G4LUn9SA4Iuq5aAiUn2uNN8J5OT46d7zhexIoSIKbu', '87654321', 'T3456789C', '2000-01-30', 'alex.recovery@example.com'), -- 726282
+('Emily Lim', 'emily.lim@example.com', '$2b$10$lK0KaH/rcUU2KXoCTEhc9.Qi9f2a5Oca5G7Owg86lVZdxW9RkUU1K', '96543210', 'G4567890D', '1995-12-05', 'emily.recovery@example.com'), -- 997766
+('Daniel Lee', 'daniel.lee@example.com', '$2b$10$sypEoT7vXX8f1hXt7AxmoOn2YojBfCVvJiEGA455SamOrkeSGFNui', '93218765', 'S5678901E', '1992-03-22', 'daniel.recovery@example.com'); --246810
 
 /* Account Table */
 CREATE TABLE Account (
@@ -38,7 +37,7 @@ CREATE TABLE Account (
     user_id INT,                                    
     balance_have DECIMAL(10, 2) NOT NULL DEFAULT 0.00,  
     balance_owe DECIMAL(10, 2) NOT NULL DEFAULT 0.00,   
-    FOREIGN KEY (user_id) REFERENCES UserAccounts(user_id)  
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)  
 );
 
 INSERT INTO Account (account_number, account_name, user_id, balance_have, balance_owe)
