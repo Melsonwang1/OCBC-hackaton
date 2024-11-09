@@ -42,6 +42,7 @@ async function fetchAndPlotData(range = "ALL") {
 
         // Announce each point on the chart
         announceInvestmentGrowth(filteredData);
+        startListeningForNavigation();
     } catch (error) {
         console.error("Error fetching or updating chart data:", error);
     }
@@ -172,7 +173,7 @@ function announceInvestmentGrowth(data) {
         narrate("No investment data is available.");
     }
 
-    narrate("Would you like to go to Transfer Money, Check Investments, or View Transactions?");
+    narrate("Would you like to go to Transfer Money, check accounts, or View Transactions?");
 }
 
 // Initialize speech recognition and listen for navigation commands indefinitely
@@ -193,7 +194,7 @@ function startListeningForNavigation() {
 
     recognition.onerror = function(event) {
         if (event.error !== 'no-speech') {
-            narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
+            narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions.");
         }
     };
 
@@ -208,12 +209,12 @@ function startListeningForNavigation() {
 function handleUserResponse(response) {
     if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transferring")) {
         window.location.href = "transfer.html";
-    } else if (response.includes("investments") || response.includes("investment") || response.includes("investing") || response.includes("invest")) {
-        window.location.href = "investmenteng.html";
+    } else if (response.includes("transaction") || response.includes("transactions") || response.includes("transacting")) {
+        window.location.href = "accountsdetails.html";
     } else if (response.includes("account") || response.includes("accounts")) {
         window.location.href = "accountseng.html";
     } else {
-        narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
+        narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions");
     }
 }
 
