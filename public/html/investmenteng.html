@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/investment.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="../js/investment.js" defer></script>
     <title>OCBC - Investment</title>
 
     <!-- Import Google Fonts-->
@@ -113,103 +114,6 @@
             </div>
         </div>
     </div>
-
-    <footer class="footer">
-        Footer
-    </footer>
-
-    <!-- Embedded JavaScript with date-fns adapter -->
-    <script>
-        const account_id = 1;  // Replace with actual dynamic account_id if needed
-
-        // Fetch investment growth data and apply the selected range filter
-        async function fetchAndPlotData(range = 'ALL') {
-            try {
-                const response = await fetch(`/investments/growth/${account_id}`);
-                if (!response.ok) throw new Error("Failed to fetch investment growth data");
-
-                const data = await response.json();
-                console.log(data); // Log data to verify format
-
-                // Convert period_start to Date objects and extract profit_loss values
-                const labels = data.map(item => new Date(item.period_start));
-                const values = data.map(item => item.profit_loss);
-
-                const filteredData = filterDataByRange({ labels, values }, range);
-
-                investmentChart.data.labels = filteredData.labels;
-                investmentChart.data.datasets[0].data = filteredData.values;
-                investmentChart.update();
-            } catch (error) {
-                console.error("Error fetching or updating chart data:", error);
-            }
-        }
-
-        // Filter data based on range selection
-        function filterDataByRange(data, range) {
-            const { labels, values } = data;
-            const today = new Date();
-
-            let startIndex;
-            switch (range) {
-                case '3M':
-                    startIndex = labels.length - 3; // Assuming monthly data
-                    break;
-                case '6M':
-                    startIndex = labels.length - 6; // Assuming monthly data
-                    break;
-                case 'YTD':
-                    startIndex = labels.findIndex(date => date.startsWith(today.getFullYear()));
-                    break;
-                case '2Y':
-                    startIndex = labels.length - 24; // Assuming monthly data
-                    break;
-                case 'ALL':
-                default:
-                    return data;
-            }
-            startIndex = Math.max(0, startIndex);
-            return {
-                labels: labels.slice(startIndex),
-                values: values.slice(startIndex)
-            };
-        }
-
-        // Chart.js initialization
-        const ctx = document.getElementById("investmentChart").getContext("2d");
-        const investmentChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: [],
-                datasets: [{
-                    label: "Investment Growth",
-                    data: [],
-                    backgroundColor: "rgba(75, 192, 192, 0.2)",
-                    borderColor: "rgba(75, 192, 192, 1)",
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: { type: "time", time: { unit: "month" } },
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-
-        // Attach event listeners to range buttons
-        document.querySelectorAll("#range-buttons button").forEach(button => {
-            button.addEventListener("click", () => {
-                const range = button.textContent;
-                fetchAndPlotData(range);
-            });
-        });
-
-        function toggleDropdown(id) {
-            const content = document.getElementById(id);
-            content.style.display = content.style.display === 'block' ? 'none' : 'block';
-        }
-        fetchAndPlotData('ALL');
-    </script>
+    <script src="../js/investmenteng.js"></script>
 </body>
 </html>
