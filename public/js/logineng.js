@@ -1,55 +1,57 @@
 // login
 document.addEventListener('DOMContentLoaded', async function(){
-    const loginForm = document.querySelector('form');
-    const userIdInput = document.getElementById('user-id');
-    const pinInput = document.getElementById('pin');
-    const loginButton = document.querySelector('.login-btn');
-    
-    // Handle form submission
-    loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent default form submission
-        
-        const userId = userIdInput.value.trim();
-        const pin = pinInput.value.trim();
-        
-        // Validate inputs
-        if (!userId || !pin) {
-            alert("Please enter both User ID and PIN.");
+    document.getElementById("login-button").addEventListener("click",async function(e){
+        e.preventDefault();
+        const message = document.getElementById("message");
+        let nric = document.getElementById("user-id").value;
+        let password = document.getElementById("pin").value;
+
+        if(!nric || !password){
+            message.innerHTML = "Please input all field!";
             return;
         }
-
-        // Create the payload
-        const payload = {
-            user_id: userId,
-            password: pin 
-        };
-
-        try {
-            // On successful login in the frontend
+        else{
+            await login(nric, password);
+        }
+    });
+    
+    //Login user
+    async function login(nric,password){
+        try{
+            //fetch the endpoint with method POST
             const response = await fetch('/user/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ nric, password }), //pass in the body using JSON stringify
             });
-
-            if (!response.ok){
-                throw new Error('Error logging in')
+            // Handle specific response statuses
+            if (response.status === 404) {
+                alert("User not found!");
+                return;
             }
-
-            const data = await response.json();
+            if (response.status === 401) {
+                alert("Incorrect password!");
+                return;
+            }
+            //Throw new error is response not ok
+            if(!response.ok){
+                throw new Error('Error logging in');
+            }
+            const data = await response.json(); //await the data
             token = data.token;
-            localStorage.setItem('token', token);
-            alert('Login successful!')
-            window.location.href = 'accountseng.html';
+            localStorage.setItem("token",token); //set the token
+            alert("Login successfully!");
+            window.location.href = "accountseng.html" //direct user to patient home page
             return token;
 
-        } catch (error) {
-            console.error('Error during login:', error);
-            alert('There was an error logging in. Please try again later.');
         }
-    });
+        //Catch the error if something happen
+        catch{
+            alert("Invalid credentials!");
+        }
+    }
 });
 
 // Check if SpeechRecognition is supported in this browser
