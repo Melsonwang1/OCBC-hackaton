@@ -114,19 +114,19 @@ document.addEventListener("keydown", (event) => {
 
     switch (event.key) {
         case "1":
-            window.location.href = "../html/accountseng.html";
-            break;
-        case "2":
-            window.location.href = "../html/transfer.html";
-            break;
-        case "3":
-            window.location.href = "../html/investmenteng.html";
-            break;
-        case "c":
             window.location.href = "../html/accountschi.html";
             break;
+        case "2":
+            window.location.href = "../html/transferchi.html";
+            break;
+        case "3":
+            window.location.href = "../html/investmentchi.html";
+            break;
+        case "e":
+            window.location.href = "../html/accountseng.html";
+            break;
         case "l":
-            window.location.href = "logineng.html";
+            window.location.href = "loginchi.html";
             break;
     }
 });
@@ -134,58 +134,56 @@ document.addEventListener("keydown", (event) => {
 function narrate(message) {
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
+        utterance.lang = 'zh-CN';
         utterance.rate = 1;
         window.speechSynthesis.speak(utterance);
     } else {
-        console.error("Speech Synthesis is not supported in this browser.");
+        console.error("该浏览器不支持语音合成。");
     }
 }
 
 function announceInvestmentGrowth(data) {
-    narrate("Welcome to your investments page.");
+    narrate("欢迎来到您的投资页面。");
 
     if (data.labels && data.labels.length > 0) {
         data.labels.forEach((label, index) => {
             const day = label.getDate();
-            const month = label.toLocaleDateString('en-US', { month: 'long' });
+            const month = label.toLocaleDateString('zh-CN', { month: 'long' });
             const year = label.getFullYear();
-            const date = `${day} ${month} ${year}`;
+            const date = `${year}年${month}${day}日`;
 
             const value = data.values[index];
-            const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);  // Format without decimals if whole number
+            const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);
 
-            let message = `On ${date}, your investment was ${valueText} SGD`;
+            let message = `在${date}，您的投资为${valueText}新加坡元`;
 
-            // Announce growth only from the second data point onwards
             if (index > 0) {
                 const previousValue = data.values[index - 1];
                 const growthAmount = value - previousValue;
                 const growthPercentage = ((growthAmount / previousValue) * 100).toFixed(2);
                 const growthAmountText = growthAmount % 1 === 0 ? growthAmount.toFixed(0) : growthAmount.toFixed(2);
 
-                message += `, which is a change of ${growthAmountText} SGD, or ${growthPercentage}% from the previous point.`;
+                message += `，较前一个数据点变化为${growthAmountText}新加坡元，增长率为${growthPercentage}%。`;
             }
 
             narrate(message);
         });
     } else {
-        narrate("No investment data is available.");
+        narrate("没有可用的投资数据。");
     }
 
-    narrate("Would you like to go to Transfer Money, check accounts, or View Transactions?");
+    narrate("您想转账、查看账户，还是查看交易记录？");
 }
 
-// Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
     if (!('webkitSpeechRecognition' in window)) {
-        console.error("Speech Recognition is not supported in this browser.");
+        console.error("该浏览器不支持语音识别。");
         return;
     }
 
     const recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
-    recognition.lang = 'en-US';
+    recognition.lang = 'zh-CN';
 
     recognition.onresult = function(event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, "");
@@ -194,7 +192,7 @@ function startListeningForNavigation() {
 
     recognition.onerror = function(event) {
         if (event.error !== 'no-speech') {
-            narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions.");
+            narrate("抱歉，我没听清楚。请说转账、查看账户，或查看交易记录。");
         }
     };
 
@@ -205,16 +203,14 @@ function startListeningForNavigation() {
     recognition.start();
 }
 
-// Handle the user's response to navigation prompt
 function handleUserResponse(response) {
-    if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transferring")) {
-        window.location.href = "transfer.html";
-    } else if (response.includes("transaction") || response.includes("transactions") || response.includes("transacting")) {
-        window.location.href = "accountsdetails.html";
-    } else if (response.includes("account") || response.includes("accounts")) {
-        window.location.href = "accountseng.html";
+    if (response.includes("转账") || response.includes("发送") || response.includes("发") || response.includes("转账") || response.includes("转移")) {
+        window.location.href = "transferchi.html";
+    } else if (response.includes("交易") || response.includes("交易记录") || response.includes("进行交易")) {
+        window.location.href = "accountsdetailschi.html";
+    } else if (response.includes("账户") || response.includes("查看账户")) {
+        window.location.href = "accountsengchi.html";
     } else {
-        narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions");
+        narrate("抱歉，我没听清楚。请说转账、查看账户，或查看交易记录。");
     }
 }
-

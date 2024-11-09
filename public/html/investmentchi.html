@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/investment.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="../js/investmentchi.js" defer></script>
     <title>OCBC 我的投资</title>
 
     <!-- Import Google Fonts-->
@@ -35,39 +37,36 @@
     </header>
 
     <div class="container">
-        <!-- Welcome message -->
         <div class="welcome">欢迎, <span id="user-name"></span></div>
-
-        <!-- What would you like to do today? -->
         <h2 class="welcome-message">请问您需要什么服务呢?</h2>
-        <!-- Navigation bar -->
         <div class="navbar">
             <a href="../html/accountschi.html">
                 <img src="../pics/view-account.png" alt="View Icon">
-                查看账户</a>
+                查看账户
+            </a>
             <a href="../html/transferchi.html">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
-                转账与支付</a>
+                转账与支付
+            </a>
             <a href="../html/investmentchi.html" class="active">
                 <img src="../pics/investment.png" alt="Investments Icon">
-                投资</a> 
+                投资
+            </a> 
         </div>
     </div>
 
     <h1>投资随着时间的推移增长</h1>
-
-    <!-- Canvas element where the chart will be rendered -->
     <canvas id="investmentChart"></canvas>
     <div id="range-buttons">
-        <button onclick="updateChart('3M')">3个月</button>
-        <button onclick="updateChart('6M')">6个月</button>
-        <button onclick="updateChart('YTD')">今年</button>
-        <button onclick="updateChart('2Y')">两年</button>
-        <button onclick="updateChart('ALL')">全部</button>
+        <button onclick="fetchAndPlotData('3M')">3个月</button>
+        <button onclick="fetchAndPlotData('6M')">6个月</button>
+        <button onclick="fetchAndPlotData('YTD')">今年</button>
+        <button onclick="fetchAndPlotData('2Y')">两年</button>
+        <button onclick="fetchAndPlotData('ALL')">全部</button>
     </div>
+
     <div class="content">
         <div class="dropdown">
-            
             <button class="dropdown-btn" onclick="toggleDropdown('fixedDeposit')">定期存款账户 ▼</button>
             <div id="fixedDeposit" class="dropdown-content">
                 <div class="card">
@@ -86,8 +85,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Unit Trusts and ETFs Dropdown -->
+        
         <div class="dropdown">
             <button class="dropdown-btn" onclick="toggleDropdown('unitTrust')">单位信托基金和ETF ▼</button>
             <div id="unitTrust" class="dropdown-content">
@@ -104,8 +102,8 @@
                     <h3>AB 美国收入投资组合 AT SGD-H</h3>
                     <p>风险: 增长</p>
                     <p>环境、社会及管治: A</p>
-                    <p>参考价格: $20.55</p>
-                    <p>1年表现: 10.01%</p>
+                    <p>参考价格: $10.59</p>
+                    <p>1年表现: 9.97%</p>
                     <p>年化股息率: 4.53%</p>
                 </div>
                 <div class="card">
@@ -120,11 +118,6 @@
         </div>
     </div>
 
-    <footer class="footer">
-        Footer
-    </footer>
-
-    <!-- Only one script tag here -->
     <script src="../js/investmentchi.js"></script>
 </body>
 
