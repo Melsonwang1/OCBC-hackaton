@@ -155,3 +155,8 @@ body {
 .language-btn:hover {
     background-color: #d3d3d3;
 }
+
+/* Error message styles */
+#message {
+    color: red; /* Set text color to red */
+}
