@@ -1,65 +1,85 @@
 const Users = require("../models/user");
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
 
-
-// Example User Registration Controller
-const registerUser = async (req, res) => {
-    const { name, email, password, phoneNumber, nric, dob, recovery } = req.body;
-
-    try {
-        // Hash the password before storing it in the database
-        const hashedPassword = await bcrypt.hash(password, 10); // saltRounds = 10
-
-        // Create the user in the database (user_id is auto-generated)
-        const newUser = await Users.createUser(name, email, hashedPassword, phoneNumber, nric, dob, recovery);
-
-        res.status(201).send({ message: 'User registered successfully' });
-    } catch (error) {
-        console.error("Error registering user:", error);
-        res.status(500).send("Error registering user");
-    }
-};
-
-  
 
 const loginUser = async (req, res) => {
-    const { user_id, password } = req.body;
-    
-    try {
-        const user = await Users.getUserById(user_id);
+    const { nric, password } = req.body;
 
-        if (!user) {
+    try {
+        const user = await Users.loginUser(nric, password);
+
+        // Handle user not found
+        if(user === null){
             return res.status(404).send("User not found");
         }
 
-        const passwordMatches = await bcrypt.compare(password, user.password);
-
-        if (!passwordMatches) {
-            return res.status(401).send("Incorrect password");
+        //If user is false, password is wrong
+        if(!user){
+            return res.status(401).send("Password Wrong!");
         }
 
-        if (!process.env.JWT_SECRET) {
-            return res.status(500).send("JWT secret is not defined");
-        }
+        // If user is found and password is correct, create a payload with the user data
+        const payload = {
+            user_id: user.user_id,
+            name: user.name,
+            email: user.email
+        };
 
-        const accessToken = jwt.sign(
-            { user_id: user.user_id, name: user.name, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        // Create a new JWT token with the payload and expiration time
+        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "3600s" });
 
-        res.status(200).json({
-            message: "Login successful",
-            accessToken,
+        return res.json({
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            nric: user.nric,
+            dob: user.dob,
+            token: jwtToken,
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).send("Error logging in user");
+        console.error("Error logging in user:", error);
+        res.status(500).send("Error logging in user.");
     }
 };
 
+const createUser = async (req,res) => {
+    const userData = req.body
+
+    try{
+        const user = await Users.createUser(userData);
+        if(user === 0){
+            return res.status(409).send("Nric is already in use");
+        }
+        else if (user === 1) {
+            return res.status(409).send("Phone number is already in use");
+        }
+
+        //Create a payload with user data
+        const payload = {
+            user_id: user.user_id,
+            name: user.name,
+            email: user.email,
+        };
+        //create a jwtToken using the payload and expire in 3600seconds
+        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "3600s" });
+
+        //return the json with user data and token
+        return res.json({
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            nric: user.nric,
+            dob: user.dob,
+            token: jwtToken,
+        });
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).send("Error creating User");
+    }
+};
 
 // Get specific user associated with the specific user id. (GET)
 const getUserById = async (req, res) => {
@@ -107,5 +127,5 @@ module.exports = {
     getUserById,
     getAccountByNricOrPhone,
     loginUser,
-    registerUser
+    createUser
 };
