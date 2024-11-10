@@ -52,82 +52,94 @@ class Transaction {
 
     
 
-    static async createTransaction(account_id, amount, description, phoneNumber = null, nric = null) {
-        // Ensure exactly one of phoneNumber or nric is provided as non-null
+    static async createTransaction(user_id, amount, description, status, phoneNumber = null, nric = null) {
         if (phoneNumber === null && nric === null) {
             throw new Error("Either phone number or NRIC must be provided.");
         }
         if (phoneNumber !== null && nric !== null) {
             throw new Error("Only one of phone number or NRIC can be provided, not both.");
         }
+        if (!['completed', 'pending'].includes(status.toLowerCase())) {
+            throw new Error("Status must be either 'completed' or 'pending'.");
+        }
     
         try {
             const connection = await sql.connect(dbConfig);
     
             const sqlQuery = `
+                DECLARE @source_account_id INT;
                 DECLARE @destination_account_id INT;
-                DECLARE @source_balance_have DECIMAL(10,2);
-                DECLARE @amount DECIMAL(10,2) = @input_amount;
-        
-                -- Identify the destination account based on phoneNumber or nric
+                DECLARE @source_balance_have DECIMAL(10, 2);
+                DECLARE @input_amount DECIMAL(10, 2) = @input_amount_param;
+                DECLARE @input_status NVARCHAR(50) = @input_status_param;
+    
+                -- Get the source account ID for the provided user_id
+                SELECT @source_account_id = account_id
+                FROM Account
+                WHERE user_id = @user_id;
+    
+                -- Identify destination account based on phoneNumber or NRIC
                 SELECT @destination_account_id = a.account_id
                 FROM Users u
                 JOIN Account a ON u.user_id = a.user_id
                 WHERE (@phoneNumber IS NOT NULL AND u.phoneNumber = @phoneNumber)
                    OR (@nric IS NOT NULL AND u.nric = @nric);
-        
-                -- Check if the destination account was found
+    
+                IF @source_account_id IS NULL
+                BEGIN
+                    THROW 50000, 'Source account not found for the provided user_id.', 1;
+                END
+    
                 IF @destination_account_id IS NULL
                 BEGIN
                     THROW 50000, 'Destination account not found for the provided phone number or NRIC.', 1;
                 END
-        
-                -- Get the source account balance
-                SELECT @source_balance_have = balance_have FROM Account WHERE account_id = @account_id;
-        
-                -- Check if the source account has sufficient balance
-                IF @source_balance_have < @amount
+    
+                IF @input_status = 'completed'
                 BEGIN
-                    THROW 50000, 'Insufficient balance in the source account.', 1;
+                    -- Check balance and perform deduction for completed status
+                    SELECT @source_balance_have = balance_have FROM Account WHERE account_id = @source_account_id;
+                    IF @source_balance_have < @input_amount
+                    BEGIN
+                        THROW 50000, 'Insufficient balance in the source account.', 1;
+                    END
+                    -- Deduct from source account
+                    UPDATE Account
+                    SET balance_have = balance_have - @input_amount
+                    WHERE account_id = @source_account_id;
+    
+                    -- Add to destination account
+                    UPDATE Account
+                    SET balance_have = balance_have + @input_amount
+                    WHERE account_id = @destination_account_id;
                 END
-        
-                -- Deduct amount from the source account and update balance
-                UPDATE Account
-                SET balance_have = balance_have - @amount
-                WHERE account_id = @account_id;
-        
-                -- Add amount to the destination account and update balance
-                UPDATE Account
-                SET balance_have = balance_have + @amount
-                WHERE account_id = @destination_account_id;
-        
-                -- Insert transaction record for the source account (debit)
+    
+                -- Insert transaction records
                 INSERT INTO Transactions (account_id, amount, status, description, date_of_transaction, created_at, updated_at)
-                VALUES (@account_id, -@amount, 'completed', @description, GETDATE(), GETDATE(), GETDATE());
-        
-                -- Insert transaction record for the destination account (credit)
+                VALUES (@source_account_id, CASE WHEN @input_status = 'completed' THEN -@input_amount ELSE 0 END, @input_status, @description, GETDATE(), GETDATE(), GETDATE());
+    
                 INSERT INTO Transactions (account_id, amount, status, description, date_of_transaction, created_at, updated_at)
-                VALUES (@destination_account_id, @amount, 'completed', @description, GETDATE(), GETDATE(), GETDATE());
+                VALUES (@destination_account_id, CASE WHEN @input_status = 'completed' THEN @input_amount ELSE 0 END, @input_status, @description, GETDATE(), GETDATE(), GETDATE());
             `;
     
-            // Prepare SQL request and input parameters
             const request = connection.request();
-            request.input('account_id', sql.Int, account_id);
+            request.input('user_id', sql.Int, user_id);
             request.input('phoneNumber', sql.VarChar, phoneNumber);
             request.input('nric', sql.VarChar, nric);
-            request.input('input_amount', sql.Decimal(10, 2), amount);
+            request.input('input_amount_param', sql.Decimal(10, 2), amount);
             request.input('description', sql.VarChar, description);
+            request.input('input_status_param', sql.VarChar, status);
     
-            // Execute the query
             const result = await request.query(sqlQuery);
-    
-            // Check if rows were affected (indicating success)
             return result.rowsAffected && result.rowsAffected.length > 0 && result.rowsAffected.some(row => row > 0);
         } catch (error) {
-            console.error("Database query error:", error); // Log detailed SQL error
+            console.error("Database query error:", error);
             throw error;
         }
     }
+    
+    
+    
     
     
     

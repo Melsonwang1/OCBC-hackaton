@@ -23,21 +23,20 @@ const getTransactionsbyaccountid = async (req, res) => {
 };
 
 const createTransaction = async (req, res) => {
-    const { account_id, phoneNumber, nric, amount, description } = req.body;
+    const { user_id, phoneNumber, nric, amount, description, status } = req.body;
 
-    // Validate required fields
-    if (!account_id || !amount || !description || (phoneNumber === null && nric === null) || (phoneNumber !== null && nric !== null)) {
+    if (!user_id || !amount || !description || !status || (phoneNumber === null && nric === null) || (phoneNumber !== null && nric !== null)) {
         return res.status(400).json({
-            message: 'Please provide account_id, amount, description, and either phoneNumber or nric, with one explicitly set to null.'
+            message: 'Please provide user_id, amount, description, status, and either phoneNumber or nric, with one explicitly set to null.'
         });
     }
 
     try {
-        // Call the model function to create the transaction
         const transactionCreated = await Transaction.createTransaction(
-            account_id,
+            user_id,
             amount,
             description,
+            status,
             phoneNumber,
             nric
         );
@@ -52,6 +51,10 @@ const createTransaction = async (req, res) => {
         res.status(500).json({ message: 'Server error while creating transaction' });
     }
 };
+
+
+module.exports = createTransaction;
+
 
 
 
