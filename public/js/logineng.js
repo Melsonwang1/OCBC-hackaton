@@ -41,12 +41,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             // Store token based on rememberMe preference
             if (rememberMe) {
-                localStorage.setItem("token", token); // Store token in localStorage
+                localStorage.setItem("token", token);
             } else {
-                sessionStorage.setItem("token", token); // Store token in sessionStorage
+                sessionStorage.setItem("token", token);
             }
 
-            alert("Login successfully!");
+            alert("Login successful!");
             window.location.href = "accountseng.html";
         } catch (error) {
             alert("Invalid credentials!");

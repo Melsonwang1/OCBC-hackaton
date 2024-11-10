@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', async function() {
     var user = {}; // The current user
-    let token = localStorage.getItem("token"); // Get token from local storage
+    let token = localStorage.getItem("token") || sessionStorage.getItem("token"); // Check both storages for token
 
-    // Check if token is null before proceeding
+    // Step 1: Check if token is present on page load
     if (!token) {
         alert("Your session has expired or you are not logged in. Please log in again.");
         window.location.href = "logineng.html"; // Redirect to login page
         return; // Stop execution
     }
 
-    // Get the user data
+    // Fetch and verify user data
     async function getUserData() {
         console.log('Token:', token);  // Log the token to ensure it's valid
         try {
@@ -35,9 +35,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById("user-name").innerText = user.name.toUpperCase();
         } catch (error) {
             console.log('Error in getUserData:', error.message);
+            // Step 2: Handle invalid or expired token
             if (error.message === 'Forbidden: Invalid or expired token') {
-                alert("Times out. Please login again!");
-                localStorage.setItem("token", null); // Clear token from local storage
+                alert("Session timed out. Please login again!");
+                localStorage.removeItem("token"); // Properly remove token from local storage
+                sessionStorage.removeItem("token"); // Remove token from session storage
                 window.location.href = "logineng.html"; // Redirect to login
             } else if (error.message === 'Unauthorized') {
                 alert("Please login first!");
@@ -50,11 +52,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Log Out Button functionality
     document.getElementById("logout-btn").addEventListener("click", function() {
-        localStorage.removeItem("token"); // Properly remove the token
+        // Step 3: Clear token on logout
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         window.location.href = "logineng.html";
         history.replaceState(null, null, "logineng.html");
     });
-    
+
     // Wait for user data to load before fetching bank accounts
     await getUserData();
 
@@ -65,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.log('User ID is not available.');
     }
 });
+
 
 async function fetchBankAccounts(userId) {
     try {

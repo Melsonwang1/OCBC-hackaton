@@ -23,8 +23,8 @@ const loginUser = async (req, res) => {
             email: user.email,
         };
 
-        // Set token expiration based on rememberMe preference
-        const tokenExpiration = rememberMe ? "7d" : "1h"; // 7 days if "Remember Me" is checked, 1 hour if not
+        // Set token expiration: 7 days if "Remember Me" is checked, 1 hour if not
+        const tokenExpiration = rememberMe ? "7d" : "1h";
         const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: tokenExpiration });
 
         return res.json({
@@ -40,6 +40,7 @@ const loginUser = async (req, res) => {
         res.status(500).send("Error logging in user.");
     }
 };
+
 
 
 const createUser = async (req,res) => {
