@@ -1,57 +1,85 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    let token = localStorage.getItem("token"); // Retrieve the token from local storage
+document.addEventListener('DOMContentLoaded', async function() {
+    var user = {}; // The current user
+    let token = localStorage.getItem("token"); // Get token from local storage
 
-    try {
-        // Fetch user data with authorization header
-        const userResponse = await fetch("/user/1", {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+    // Check if token is null before proceeding
+    if (!token) {
+        alert("Your session has expired or you are not logged in. Please log in again.");
+        window.location.href = "logineng.html"; // Redirect to login page
+        return; // Stop execution
+    }
+
+    // Get the user data
+    async function getUserData() {
+        console.log('Token:', token);  // Log the token to ensure it's valid
+        try {
+            const response = await fetch(`/users`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.log('Error response:', errorData);  // Log error details
+                throw new Error(errorData.message);
             }
-        });
 
-        if (!userResponse.ok) {
-            const errorData = await userResponse.json();
-            throw new Error(errorData.message || "Failed to fetch user data");
-        }
+            const userData = await response.json();
+            console.log('User Data:', userData);  // Log the user data
 
-        const user = await userResponse.json();
-        document.getElementById("user-name").innerText = user.account.name.toUpperCase();
-
-        // Fetch account information with authorization header
-        const accountResponse = await fetch("/accounts/user/1", {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+            // Populate user object
+            user = userData;
+            // Display the user's name
+            document.getElementById("user-name").innerText = user.name.toUpperCase();
+        } catch (error) {
+            console.log('Error in getUserData:', error.message);
+            if (error.message === 'Forbidden: Invalid or expired token') {
+                alert("Times out. Please login again!");
+                localStorage.setItem("token", null); // Clear token from local storage
+                window.location.href = "logineng.html"; // Redirect to login
+            } else if (error.message === 'Unauthorized') {
+                alert("Please login first!");
+                window.location.href = "logineng.html"; // Redirect to login
+            } else {
+                console.error('Unexpected error:', error);
             }
-        });
-
-        if (!accountResponse.ok) {
-            const errorData = await accountResponse.json();
-            throw new Error(errorData.message || "Failed to fetch account data");
-        }
-
-        const accounts = await accountResponse.json();
-        displayAccounts(accounts);
-        announceAccountDetails(accounts);  // Call this function to announce account details
-
-        // Start listening for user navigation responses
-        startListeningForNavigation();
-
-    } catch (error) {
-        console.error("Error:", error);
-
-        // Handle specific error messages for token expiration or absence
-        if (error.message === 'Forbidden') {
-            alert("Session timed out. Please log in again.");
-            localStorage.setItem("token", null); // Clear token from local storage
-            window.location.href = "index.html"; // Redirect to login
-        } else if (error.message === 'Unauthorized') {
-            alert("Please log in first.");
-            window.location.href = "index.html"; // Redirect to login
         }
     }
+
+    // Log Out Button functionality
+    document.getElementById("logout-btn").addEventListener("click", function() {
+        localStorage.removeItem("token"); // Properly remove the token
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
+    });
+    
+    // Wait for user data to load before fetching bank accounts
+    await getUserData();
+
+    // Only call fetchBankAccounts after user data is available
+    if (user && user.user_id) {
+        await fetchBankAccounts(user.user_id);
+    } else {
+        console.log('User ID is not available.');
+    }
 });
+
+async function fetchBankAccounts(userId) {
+    try {
+        const response = await fetch(`/accounts/user/${userId}`); 
+        if (!response.ok) {
+            throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
+        }
+        const accounts = await response.json();
+        displayAccounts(accounts); // Display the bank records
+    } catch (error) {
+        console.error('Error fetching bank accounts:', error);
+        alert('No bank account records data found'); // Alert the user if no bank accounts are found
+    }
+}
+
 
 // Function to narrate bank account details using the Web Speech API
 function narrate(message) {
