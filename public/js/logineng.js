@@ -1,32 +1,29 @@
-// login
 document.addEventListener('DOMContentLoaded', async function(){
-    document.getElementById("login-button").addEventListener("click",async function(e){
+    document.getElementById("login-button").addEventListener("click", async function(e){
         e.preventDefault();
         const message = document.getElementById("message");
         let nric = document.getElementById("user-id").value;
         let password = document.getElementById("pin").value;
+        const rememberMe = document.getElementById("remember-me").checked;
 
-        if(!nric || !password){
-            message.innerHTML = "Please input all field!";
+        if (!nric || !password) {
+            message.innerHTML = "Please input all fields!";
             return;
-        }
-        else{
-            await login(nric, password);
+        } else {
+            await login(nric, password, rememberMe);
         }
     });
-    
-    //Login user
-    async function login(nric,password){
-        try{
-            //fetch the endpoint with method POST
+
+    async function login(nric, password, rememberMe) {
+        try {
             const response = await fetch('/user/login', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ nric, password }), //pass in the body using JSON stringify
+                body: JSON.stringify({ nric, password, rememberMe }), // Pass rememberMe to the server
             });
-            // Handle specific response statuses
+
             if (response.status === 404) {
                 alert("User not found!");
                 return;
@@ -35,24 +32,28 @@ document.addEventListener('DOMContentLoaded', async function(){
                 alert("Incorrect password!");
                 return;
             }
-            //Throw new error is response not ok
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error('Error logging in');
             }
-            const data = await response.json(); //await the data
-            token = data.token;
-            localStorage.setItem("token",token); //set the token
-            alert("Login successfully!");
-            window.location.href = "accountseng.html" //direct user to patient home page
-            return token;
 
-        }
-        //Catch the error if something happen
-        catch{
+            const data = await response.json();
+            const token = data.token;
+
+            // Store token based on rememberMe preference
+            if (rememberMe) {
+                localStorage.setItem("token", token); // Store token in localStorage
+            } else {
+                sessionStorage.setItem("token", token); // Store token in sessionStorage
+            }
+
+            alert("Login successfully!");
+            window.location.href = "accountseng.html";
+        } catch {
             alert("Invalid credentials!");
         }
     }
 });
+
 
 // Check if SpeechRecognition is supported in this browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;

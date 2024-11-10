@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
-// Function to verify the JWT token
+// Middleware to verify the JWT token
 function verifyJWT(req, res, next) {
+  // Extract the token from the Authorization header
   const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
 
   // Check if token is present
@@ -20,7 +21,8 @@ function verifyJWT(req, res, next) {
     req.userId = decoded.user_id;
     req.userName = decoded.name;
     
-    next(); // Proceed to the next middleware or controller
+    // Proceed to the next middleware or route handler
+    next();
   });
 }
 

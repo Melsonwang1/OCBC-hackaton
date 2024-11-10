@@ -4,30 +4,28 @@ require('dotenv').config()
 
 
 const loginUser = async (req, res) => {
-    const { nric, password } = req.body;
+    const { nric, password, rememberMe } = req.body; // Get the rememberMe value from the request
 
     try {
         const user = await Users.loginUser(nric, password);
 
-        // Handle user not found
-        if(user === null){
+        if (user === null) {
             return res.status(404).send("User not found");
         }
 
-        //If user is false, password is wrong
-        if(!user){
+        if (!user) {
             return res.status(401).send("Password Wrong!");
         }
 
-        // If user is found and password is correct, create a payload with the user data
         const payload = {
             user_id: user.user_id,
             name: user.name,
             email: user.email
         };
 
-        // Create a new JWT token with the payload and expiration time
-        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "3600s" });
+        // Set token expiration based on "Remember Me"
+        const tokenExpiration = rememberMe ? "7d" : "10s"; // 7 days if remembered, 1 hour if not
+        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: tokenExpiration });
 
         return res.json({
             name: user.name,
@@ -43,6 +41,7 @@ const loginUser = async (req, res) => {
         res.status(500).send("Error logging in user.");
     }
 };
+
 
 const createUser = async (req,res) => {
     const userData = req.body
