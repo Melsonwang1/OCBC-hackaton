@@ -4,7 +4,7 @@ require('dotenv').config()
 
 
 const loginUser = async (req, res) => {
-    const { nric, password, rememberMe } = req.body; // Get the rememberMe value from the request
+    const { nric, password, rememberMe } = req.body;
 
     try {
         const user = await Users.loginUser(nric, password);
@@ -14,17 +14,17 @@ const loginUser = async (req, res) => {
         }
 
         if (!user) {
-            return res.status(401).send("Password Wrong!");
+            return res.status(401).send("Incorrect password!");
         }
 
         const payload = {
             user_id: user.user_id,
             name: user.name,
-            email: user.email
+            email: user.email,
         };
 
-        // Set token expiration based on "Remember Me"
-        const tokenExpiration = rememberMe ? "7d" : "10s"; // 7 days if remembered, 1 hour if not
+        // Set token expiration based on rememberMe preference
+        const tokenExpiration = rememberMe ? "7d" : "1h"; // 7 days if "Remember Me" is checked, 1 hour if not
         const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: tokenExpiration });
 
         return res.json({
@@ -35,7 +35,6 @@ const loginUser = async (req, res) => {
             dob: user.dob,
             token: jwtToken,
         });
-
     } catch (error) {
         console.error("Error logging in user:", error);
         res.status(500).send("Error logging in user.");

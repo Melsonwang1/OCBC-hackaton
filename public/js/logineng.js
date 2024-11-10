@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', async function(){
-    document.getElementById("login-button").addEventListener("click", async function(e){
+document.addEventListener('DOMContentLoaded', async function() {
+    document.getElementById("login-button").addEventListener("click", async function(e) {
         e.preventDefault();
         const message = document.getElementById("message");
         let nric = document.getElementById("user-id").value;
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function(){
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ nric, password, rememberMe }), // Pass rememberMe to the server
+                body: JSON.stringify({ nric, password, rememberMe }),
             });
 
             if (response.status === 404) {
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
             alert("Login successfully!");
             window.location.href = "accountseng.html";
-        } catch {
+        } catch (error) {
             alert("Invalid credentials!");
         }
     }
