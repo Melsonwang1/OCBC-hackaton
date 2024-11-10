@@ -116,7 +116,7 @@ class Transaction {
     
                 -- Insert transaction records
                 INSERT INTO Transactions (account_id, amount, status, description, date_of_transaction, created_at, updated_at)
-                VALUES (@source_account_id, CASE WHEN @input_status = 'completed' THEN -@input_amount ELSE 0 END, @input_status, @description, GETDATE(), GETDATE(), GETDATE());
+                VALUES (@source_account_id, CASE WHEN @input_status = 'completed' THEN -@input_amount ELSE @input_amount END, @input_status, @description, GETDATE(), GETDATE(), GETDATE());
     
                 INSERT INTO Transactions (account_id, amount, status, description, date_of_transaction, created_at, updated_at)
                 VALUES (@destination_account_id, CASE WHEN @input_status = 'completed' THEN @input_amount ELSE 0 END, @input_status, @description, GETDATE(), GETDATE(), GETDATE());

@@ -175,130 +175,86 @@ async function fetchAccDetails(userId){
         }
     }
 
-    // Fetch user data and display recipient name or error
-    function fetchUserData() {
-        const mobileInput = document.getElementById("mobile");
-        const nricInput = document.getElementById("nric");
-        let url = 'http://localhost:3000/user';
+    // Add event listener to the form for transaction submission
+const form = document.querySelector('.transfer-container form');
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-        if (mobileInput.style.display === 'block' && mobileInput.value) {
-            url += `?phoneNumber=${encodeURIComponent(mobileInput.value)}`;
-        } else if (nricInput.style.display === 'block' && nricInput.value) {
-            url += `?nric=${encodeURIComponent(nricInput.value)}`;
-        } else {
-            // Hide error message and recipient name if nothing is entered
-            document.getElementById("name").style.display = 'none';
-            document.getElementById("error").style.display = 'none';
-            alert("Please enter a valid phone number or NRIC.");
-            return;
+    // Get form data
+    const transferFrom = parseInt(document.getElementById('transfer-from').value, 10);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const description = document.getElementById('description').value || '';
+    
+    // Check the "Set as Pending" checkbox status
+    const statusCheckbox = document.getElementById('status-checkbox');
+    const status = statusCheckbox.checked ? 'pending' : 'completed';
+
+    // Determine transfer method (mobile or NRIC)
+    let phoneNumber = null;
+    let nric = null;
+    const transferMethodElement = document.querySelector('input[name="transfer-to"]:checked');
+    
+    if (transferMethodElement) {
+        const transferMethod = transferMethodElement.value;
+        if (transferMethod === 'mobile') {
+            phoneNumber = document.getElementById('mobile').value;
+        } else if (transferMethod === 'nric') {
+            nric = document.getElementById('nric').value;
         }
-
-        // Make an API call to fetch the user data
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // Log the full response to see its structure
-
-                // If user data exists and has a name, show the recipient name
-                if (data && data.name) {
-                    document.getElementById("user-namee").textContent = data.name;
-                    document.getElementById("name").style.display = 'block'; // Show recipient name
-                    document.getElementById("error").style.display = 'none'; // Hide error message if successful
-                } else {
-                    // Show error if user is not found
-                    document.getElementById("user-namee").textContent = "";
-                    document.getElementById("name").style.display = 'none'; // Hide recipient name if no user
-                    document.getElementById("error").textContent = "User not found."; // Display error message
-                    document.getElementById("error").style.display = 'block'; // Show error
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching user data:", error);
-                document.getElementById("user-namee").textContent = "";
-                document.getElementById("name").style.display = 'none'; // Hide recipient name if error occurs
-                document.getElementById("error").textContent = "Error fetching user data."; // Display error message
-                document.getElementById("error").style.display = 'block'; // Show error
-            });
+    } else {
+        alert("Please select a transfer method.");
+        return;
     }
 
-    // Add event listener to the form for transaction submission
-    const form = document.querySelector('.transfer-container form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    // Validate form fields
+    if (!transferFrom || isNaN(amount) || amount <= 0) {
+        alert("Please select an account, enter a valid amount, and choose a transfer method.");
+        return;
+    }
 
-        // Get form data
-        const transferFrom = parseInt(document.getElementById('transfer-from').value, 10);
-        const amount = parseFloat(document.getElementById('amount').value);
-        const description = document.getElementById('description').value || '';
+    console.log("Transaction data being sent:", {
+        user_id: transferFrom,
+        amount,
+        description,
+        phoneNumber,
+        nric,
+        status
+    });
 
-        // Determine transfer method (mobile or NRIC)
-        let phoneNumber = null;
-        let nric = null;
-        const transferMethodElement = document.querySelector('input[name="transfer-to"]:checked');
-        
-        if (transferMethodElement) {
-            const transferMethod = transferMethodElement.value;
-            if (transferMethod === 'mobile') {
-                phoneNumber = document.getElementById('mobile').value;
-            } else if (transferMethod === 'nric') {
-                nric = document.getElementById('nric').value;
-            }
-        } else {
-            alert("Please select a transfer method.");
-            return;
-        }
-
-        // Validate form fields
-        if (!transferFrom || isNaN(amount) || amount <= 0) {
-            alert("Please select an account, enter a valid amount, and choose a transfer method.");
-            return;
-        }
-
-        console.log("Transaction data being sent:", {
-            account_id: transferFrom,
-            amount,
+    try {
+        const requestData = {
+            user_id: transferFrom,
+            amount: parseFloat(amount),
             description,
             phoneNumber,
-            nric
+            nric,
+            status
+        };
+
+        const response = await fetch('/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
         });
 
-        try {
-            const requestData = {
-                account_id: transferFrom,
-                amount: parseFloat(amount),
-                description,
-                phoneNumber,
-                nric
-            };
-
-            const response = await fetch('/transactions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            // Ensure response is JSON and handle response accordingly
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert("Transaction completed successfully!");
-                // Reset the recipient name display (clear name and hide the element)
-                document.getElementById("user-namee").textContent = ""; // Clear the recipient name
-                document.getElementById("name").style.display = 'none'; // Hide the recipient name paragraph
-                
-                // Optional: Clear form fields
-                form.reset();
-                document.getElementById('balance').style.display = 'none'; // Hide balance after successful transaction
-            } else {
-                throw new Error(result.error || "Transaction failed");
-            }
-        } catch (error) {
-            console.error("Error creating transaction:", error);
-            alert("Transaction error: " + error.message);
+        // Ensure response is JSON and handle response accordingly
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert("Transaction completed successfully!");
+            // Optional: Clear form fields
+            form.reset();
+            document.getElementById('balance').style.display = 'none'; // Hide balance after successful transaction
+        } else {
+            throw new Error(result.error || "Transaction failed");
         }
-    });
+    } catch (error) {
+        console.error("Error creating transaction:", error);
+        alert("Transaction error: " + error.message);
+    }
+});
 
 
 // Function to toggle input fields based on selected transfer method
