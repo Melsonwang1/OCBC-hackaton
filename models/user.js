@@ -132,6 +132,53 @@ class Users {
             if (connection) await connection.close();
         }
     }
+
+    // Users Model: getUserByNric
+    static async getUserByNric(nric) {
+        const connection = await sql.connect(dbConfig);
+        const query = `SELECT user_id, name, email, phoneNumber, nric, dob FROM Users WHERE nric = @nric`;
+        const request = connection.request();
+        request.input("nric", nric);
+        const result = await request.query(query);
+
+        await connection.close();
+
+        if (result.recordset[0]) {
+            return {
+                user_id: result.recordset[0].user_id,
+                name: result.recordset[0].name,
+                email: result.recordset[0].email,
+                phoneNumber: result.recordset[0].phoneNumber,
+                nric: result.recordset[0].nric,
+                dob: result.recordset[0].dob,
+            };
+        }
+        return null;
+    }
+
+    // Users Model: getUserByPhoneNumber
+    static async getUserByPhoneNumber(phoneNumber) {
+        const connection = await sql.connect(dbConfig);
+        const query = `SELECT user_id, name, email, phoneNumber, nric, dob FROM Users WHERE phoneNumber = @phoneNumber`;
+        const request = connection.request();
+        request.input("phoneNumber", phoneNumber);
+        const result = await request.query(query);
+
+        await connection.close();
+
+        if (result.recordset[0]) {
+            return {
+                user_id: result.recordset[0].user_id,
+                name: result.recordset[0].name,
+                email: result.recordset[0].email,
+                phoneNumber: result.recordset[0].phoneNumber,
+                nric: result.recordset[0].nric,
+                dob: result.recordset[0].dob,
+            };
+        }
+        return null;
+    }
+
 }    
 
 module.exports = Users;

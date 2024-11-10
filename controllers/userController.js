@@ -115,10 +115,67 @@ const getAccountByNricOrPhone = async (req, res) => {
     }
 };
 
+// Controller for retrieving user by NRIC
+const getUserByNric = async (req, res) => {
+    const nric = req.query.nric;
+
+    if (!nric) {
+        return res.status(400).json({ message: "Please provide an NRIC." });
+    }
+
+    try {
+        const user = await Users.getUserByNric(nric);
+        if (user) {
+            res.json(user);  // Sends user data back
+        } else {
+            res.status(404).json({ message: "User not found." });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error retrieving User");
+    }
+};
+
+// Controller for retrieving user by phone number
+const getUserByPhoneNumber = async (req, res) => {
+    const phoneNumber = req.query.phoneNumber;
+
+    if (!phoneNumber) {
+        return res.status(400).json({ message: "Please provide a phone number." });
+    }
+
+    try {
+        const user = await Users.getUserByPhoneNumber(phoneNumber);
+        if (user) {
+            res.json(user);  // Sends user data back
+        } else {
+            res.status(404).json({ message: "User not found." });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error retrieving User");
+    }
+};
+
+// Controller to handle either NRIC or phone number
+const getUserByPhoneorNric = async (req, res) => {
+    const { nric, phoneNumber } = req.query;
+
+    if (nric) {
+        await getUserByNric(req, res);  // Calls the NRIC handler
+    } else if (phoneNumber) {
+        await getUserByPhoneNumber(req, res);  // Calls the phone number handler
+    } else {
+        res.status(400).json({ message: "Please provide either an NRIC or phone number." });
+    }
+};
 
 module.exports = {
     getUserById,
     getAccountByNricOrPhone,
     loginUser,
-    createUser
+    createUser,
+    getUserByNric,
+    getUserByPhoneNumber,
+    getUserByPhoneorNric
 };

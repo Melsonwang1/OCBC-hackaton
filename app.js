@@ -39,7 +39,7 @@ app.get("/accounts/accountnameandnumber/:account_id", accountController.getAccou
 
 // User (Zheng Bin)
 app.get("/users", authorize, userController.getUserById);
-app.get("/user", userController.getAccountByNricOrPhone);
+app.get("/user", userController.getUserByPhoneorNric);
 
 // Investment Page (Zhe Kai)
 app.get("/investments/:account_id", investmentController.getInvestmentsByAccountId);
