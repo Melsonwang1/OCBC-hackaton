@@ -152,7 +152,7 @@ function handleUserResponse(response) {
     }
 }
 
-// Display account cards
+// Display account cards and set up narration and listening
 function displayAccounts(accounts) {
     const accountsList = document.getElementById("accounts-list");
     accountsList.innerHTML = ''; // Clear previous content
@@ -171,7 +171,14 @@ function displayAccounts(accounts) {
         
         accountsList.appendChild(accountCard);
     });
+
+    // Announce account details
+    announceAccountDetails(accounts);
+
+    // Start listening for navigation commands after announcement
+    startListeningForNavigation();
 }
+
 
 
 // Keyboard Shortcuts
