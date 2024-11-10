@@ -85,15 +85,19 @@
                     
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;">
                         <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;">
-                        <button type="button" id="enterBtn" class="enter-btn" style="display: none;">Enter</button>
+                        <button type="button" id="enterBtn" class="enter-btn" onclick="fetchUserData()">Verify</button>
                     </div>
+
+                    <!-- Display recipient name below the input group -->
+                    <p id="name" style="display: none;">Recipient Name: <span id="user-namee" style="font-weight: bold;"></span></p>
+                    <p id="error" style="display: none; color: red; font-weight: bold;"></p>
                 </div>
 
                 <!-- Amount and Description -->
                 <div class="form-group">
-                    <label for="amount">3. Amount transferring</label>
+                    <label for="amount">3. Amount to Transfer:</label>
                     <div id="balance" class="balance-display" style="display: none;">
                         Current Balance: <b><span id="balance-amount"></span> SGD</b>
                     </div>

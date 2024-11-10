@@ -306,6 +306,7 @@ select, input[type="text"] {
     margin-top: 10px; /* Add some space above the input fields */
 }
 
+/* Style for the input box */
 .input-box {
     flex: 1;
     padding: 10px;
@@ -313,6 +314,7 @@ select, input[type="text"] {
     border-radius: 5px;
 }
 
+/* Style for the Enter button */
 .enter-btn {
     padding: 10px 20px;
     background-color: red;
@@ -322,8 +324,22 @@ select, input[type="text"] {
     cursor: pointer;
 }
 
+/* Change button color when hovered */
 .enter-btn:hover {
     background-color: darkred;
+}
+
+/* Styling for the recipient name below the input group */
+#user-namee {
+    font-weight: bold;
+    color: #333; /* Adjust color as needed */
+    font-size: 1.2em;
+    margin-top: 10px; /* Space between input group and recipient name */
+}
+
+.form-group #name, .form-group #error{
+    margin-top: 10px;
+    margin-bottom: 15px;
 }
 
 /* Amount and description section */
