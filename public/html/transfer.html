@@ -35,30 +35,11 @@
         </div>
     </header>
 
-
     <!-- Main Content Section -->
     <main>
         <div class="container">
             <!-- Welcome message -->
             <div class="welcome">Welcome, <span id="user-name"></span></div>
-
-            <!-- Keyboard Shortcuts Note -->
-            <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
-                <p id="keyboard-shortcut-header">
-                    <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
-                </p>
-                <ul id="shortcut-list">
-                    <li><span class="shortcut-key">1</span> → View Accounts</li>
-                    <li><span class="shortcut-key">2</span> → Transfer Money</li>
-                    <li><span class="shortcut-key">3</span> → Investments</li>
-                    <li><span class="shortcut-key">c</span> → Chinese Translation</li>
-                    <li><span class="shortcut-key">l</span> → Log Out</li>
-                    <li><span class="shortcut-key">←</span> → Previous Page</li>
-                    <li><span class="shortcut-key">→</span> → Next Page</li>
-                    <li><span class="shortcut-key">↑</span> → Scroll Up</li>
-                    <li><span class="shortcut-key">↓</span> → Scroll Down</li>
-                </ul>
-            </div>
 
             <!-- What would you like to do today? -->
             <h2 class="welcome-message">What would you like to do today?</h2>
@@ -116,11 +97,14 @@
                     <div id="balance" class="balance-display" style="display: none;">
                         Current Balance: <b><span id="balance-amount"></span> SGD</b>
                     </div>
-                    <checkbox id="pending" style="display: none;">
-                        <label for="balance-checkbox">Do you want it to be pending?</label>
                     <div class="amount-transfer">
                         <input type="text" id="amount" placeholder="Amount (SGD)">
                         <input type="text" id="description" placeholder="Description (optional)">
+                    </div>
+                    <!-- New checkbox for saving as a favorite transaction -->
+                    <div class="save-favorite">
+                        <input type="checkbox" id="save-as-favorite" name="save-as-favorite">
+                        <label for="save-as-favorite">pending </label>
                     </div>
                 </div>
 
