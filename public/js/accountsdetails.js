@@ -1,136 +1,168 @@
-document.addEventListener('keydown', function (event) {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
+document.addEventListener('DOMContentLoaded', async function() {
+    var user = {}; 
+    let token = localStorage.getItem("token"); // Get token from local storage
 
-    if (event.key === '1') {
-        window.location.href = "../html/accountseng.html";
+    if (!token) {
+        alert("Your session has expired or you are not logged in. Please log in again.");
+        window.location.href = "logineng.html"; 
+        return; 
     }
-    if (event.key === '2') {
-        window.location.href = "../html/transfer.html";
-    }
-    if (event.key === '3') {
-        window.location.href = "../html/investmenteng.html";
-    }
-    if (event.key == 'c') {
-        window.location.href = "../html/accountschi.html";
-    }
-    if (event.key === 'l') {
-        window.location.href = 'logineng.html';
-    }
-});
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('token');
-
-    async function fetchUserAccount() {
+    // Get the user data
+    async function getUserData() {
+        console.log('Token:', token);  // Log the token to ensure it's valid
         try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const accountId = urlParams.get('accountId');
-
-            const accountResponse = await fetch(`/accounts/account/${accountId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!accountResponse.ok) {
-                const errorData = await accountResponse.json();
-                throw new Error(errorData.message || "Failed to fetch account data");
-            }
-
-            const accountData = await accountResponse.json();
-            const account = accountData.account;
-
-            document.getElementById("user-name").innerText = account.user_name.toUpperCase();
-            document.querySelector('.account-details h2').innerText = account.account_name;
-            document.querySelector('.account-details .account-number').innerText = account.account_number;
-            document.querySelector('.balance-summary .balance-item.positive .value').innerText = account.balance_have.toFixed(2);
-            document.querySelector('.balance-summary .balance-item.negative .value').innerText = account.balance_owe.toFixed(2);
-
-            const transactions = await fetchTransactions(accountId);
-            displayTransactions(transactions);  // Call displayTransactions to show transactions on the page
-            announceAccountDetails(account, transactions);
-            startListeningForNavigation();
-        } catch (error) {
-            console.error("Error fetching user account:", error.message);
-            handleAuthError(error);
-        }
-    }
-
-    async function fetchTransactions(accountId) {
-        try {
-            const response = await fetch(`/transactions/${accountId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch(`/users`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to fetch transactions");
+                console.log('Error response:', errorData);  // Log error details
+                throw new Error(errorData.message);
             }
 
-            return await response.json();
+            const userData = await response.json();
+            console.log('User Data:', userData);  // Log the user data
+
+            // Populate user object
+            user = userData;
+            // Display the user's name
+            document.getElementById("user-name").innerText = user.name.toUpperCase();
         } catch (error) {
-            console.error('Error fetching transactions:', error.message);
-            handleAuthError(error);
-            return [];
+            console.log('Error in getUserData:', error.message);
+            if (error.message === 'Forbidden: Invalid or expired token') {
+                alert("Times out. Please login again!");
+                localStorage.setItem("token", null); // Clear token from local storage
+                window.location.href = "logineng.html"; // Redirect to login
+            } else if (error.message === 'Unauthorized') {
+                alert("Please login first!");
+                window.location.href = "logineng.html"; // Redirect to login
+            } else {
+                console.error('Unexpected error:', error);
+            }
         }
     }
 
-    function displayTransactions(transactions) {
-        const container = document.getElementById('transaction-list');
-        if (container) {
-            container.innerHTML = '';
+    // Log Out Button functionality
+    document.getElementById("logout-btn").addEventListener("click", function() {
+        localStorage.removeItem("token"); // Properly remove the token
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
+    });
 
-            transactions.forEach(transaction => {
-                const amountClass = transaction.transactionAmount >= 0 ? 'value-positive' : 'value-negative';
-                const amountSign = transaction.transactionAmount >= 0 ? '+' : '-';
-
-                let statusClass;
-                switch (transaction.status.toLowerCase()) {
-                    case 'completed':
-                        statusClass = 'status-completed';
-                        break;
-                    case 'pending':
-                        statusClass = 'status-pending';
-                        break;
-                    case 'failed':
-                        statusClass = 'status-failed';
-                        break;
-                    default:
-                        statusClass = '';
-                }
-
-                container.innerHTML += `
-                    <div class="transaction">
-                        <p class="transaction-date">${new Date(transaction.date).toLocaleDateString('en-GB', {
-                            day: '2-digit', month: 'long', year: 'numeric'
-                        })}</p>
-                        <p class="transaction-description">${transaction.description}</p>
-                        <p class="transaction-amount ${amountClass}">
-                            <span class="currency">SGD</span> 
-                            <span class="${amountClass}">${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}</span>
-                        </p>
-                        <p class="transaction-status ${statusClass}">${transaction.status}</p>
-                    </div>
-                `;
-            });
-        } else {
-            console.warn('Transaction list container not found');
-        }
-    }
-
-    function handleAuthError(error) {
-        if (error.message === 'Forbidden') {
-            alert("Session expired. Please log in again!");
-            localStorage.setItem("token", null);
-            window.location.href = "index.html";
-        } else if (error.message === 'Unauthorized') {
-            alert("Please log in first!");
-            window.location.href = "index.html";
-        } else {
-            alert("An error occurred. Please try again later.");
-        }
-    }
-
-    await fetchUserAccount();
+    // Get the user data
+    await getUserData(); // Pass token here
+    await fetchUserAccount(); // Pass token here
 });
+
+async function fetchUserAccount(token) { 
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accountId = urlParams.get('accountId');
+
+        const accountResponse = await fetch(`/accounts/account/${accountId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!accountResponse.ok) {
+            const errorData = await accountResponse.json();
+            throw new Error(errorData.message || "Failed to fetch account data");
+        }
+
+        const accountData = await accountResponse.json();
+        const account = accountData.account;
+
+        document.getElementById("user-name").innerText = account.user_name.toUpperCase();
+        document.querySelector('.account-details h2').innerText = account.account_name;
+        document.querySelector('.account-details .account-number').innerText = account.account_number;
+        document.querySelector('.balance-summary .balance-item.positive .value').innerText = account.balance_have.toFixed(2);
+        document.querySelector('.balance-summary .balance-item.negative .value').innerText = account.balance_owe.toFixed(2);
+
+        const transactions = await fetchTransactions(accountId, token); // Pass token here
+        displayTransactions(transactions); 
+        announceAccountDetails(account, transactions);
+        startListeningForNavigation();
+    } catch (error) {
+        console.error("Error fetching user account:", error.message);
+        handleAuthError(error);  // Make sure handleAuthError is defined
+    }
+}
+
+async function fetchTransactions(accountId, token) { 
+    try {
+        const response = await fetch(`/transactions/${accountId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to fetch transactions");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching transactions:', error.message);
+        handleAuthError(error);  // Make sure handleAuthError is defined
+        return [];
+    }
+}
+
+function handleAuthError(error) {
+    if (error.message.includes("Unauthorized") || error.message.includes("Forbidden")) {
+        alert("Your session has expired or you are not logged in. Please log in again.");
+        localStorage.setItem("token", null); // Clear token from local storage
+        window.location.href = "logineng.html"; // Redirect to login page
+    } else {
+        alert("An error occurred. Please try again later.");
+    }
+}
+
+function displayTransactions(transactions) {
+    const container = document.getElementById('transaction-list');
+    if (container) {
+        container.innerHTML = '';
+        transactions.forEach(transaction => {
+            const amountClass = transaction.transactionAmount >= 0 ? 'value-positive' : 'value-negative';
+            const amountSign = transaction.transactionAmount >= 0 ? '+' : '-';
+
+            let statusClass;
+            switch (transaction.status.toLowerCase()) {
+                case 'completed':
+                    statusClass = 'status-completed';
+                    break;
+                case 'pending':
+                    statusClass = 'status-pending';
+                    break;
+                case 'failed':
+                    statusClass = 'status-failed';
+                    break;
+                default:
+                    statusClass = '';
+            }
+
+            container.innerHTML += `
+                <div class="transaction">
+                    <p class="transaction-date">${new Date(transaction.date).toLocaleDateString('en-GB', {
+                        day: '2-digit', month: 'long', year: 'numeric'
+                    })}</p>
+                    <p class="transaction-description">${transaction.description}</p>
+                    <p class="transaction-amount ${amountClass}">
+                        <span class="currency">SGD</span> 
+                        <span class="${amountClass}">${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}</span>
+                    </p>
+                    <p class="transaction-status ${statusClass}">${transaction.status}</p>
+                </div>
+            `;
+        });
+    } else {
+        console.warn('Transaction list container not found');
+    }
+}
+
 
 function narrate(message) {
     if ('speechSynthesis' in window) {
@@ -212,6 +244,26 @@ function handleUserResponse(response) {
     }
 }
 
+// Keyboard Navigation
+document.addEventListener('keydown', function (event) {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+    if (event.key === '1') {
+        window.location.href = "../html/accountseng.html";
+    }
+    if (event.key === '2') {
+        window.location.href = "../html/transfer.html";
+    }
+    if (event.key === '3') {
+        window.location.href = "../html/investmenteng.html";
+    }
+    if (event.key == 'c') {
+        window.location.href = "../html/accountschi.html";
+    }
+    if (event.key === 'l') {
+        window.location.href = 'logineng.html';
+    }
+});
 
 
 
