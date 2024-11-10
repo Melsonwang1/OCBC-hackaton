@@ -176,79 +176,85 @@ async function fetchAccDetails(userId){
     }
 
     // Add event listener to the form for transaction submission
-    const form = document.querySelector('.transfer-container form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+const form = document.querySelector('.transfer-container form');
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-        // Get form data
-        const transferFrom = parseInt(document.getElementById('transfer-from').value, 10);
-        const amount = parseFloat(document.getElementById('amount').value);
-        const description = document.getElementById('description').value || '';
+    // Get form data
+    const transferFrom = parseInt(document.getElementById('transfer-from').value, 10);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const description = document.getElementById('description').value || '';
+    
+    // Check the "Set as Pending" checkbox status
+    const statusCheckbox = document.getElementById('status-checkbox');
+    const status = statusCheckbox.checked ? 'pending' : 'completed';
 
-        // Determine transfer method (mobile or NRIC)
-        let phoneNumber = null;
-        let nric = null;
-        const transferMethodElement = document.querySelector('input[name="transfer-to"]:checked');
-        
-        if (transferMethodElement) {
-            const transferMethod = transferMethodElement.value;
-            if (transferMethod === 'mobile') {
-                phoneNumber = document.getElementById('mobile').value;
-            } else if (transferMethod === 'nric') {
-                nric = document.getElementById('nric').value;
-            }
-        } else {
-            alert("Please select a transfer method.");
-            return;
+    // Determine transfer method (mobile or NRIC)
+    let phoneNumber = null;
+    let nric = null;
+    const transferMethodElement = document.querySelector('input[name="transfer-to"]:checked');
+    
+    if (transferMethodElement) {
+        const transferMethod = transferMethodElement.value;
+        if (transferMethod === 'mobile') {
+            phoneNumber = document.getElementById('mobile').value;
+        } else if (transferMethod === 'nric') {
+            nric = document.getElementById('nric').value;
         }
+    } else {
+        alert("Please select a transfer method.");
+        return;
+    }
 
-        // Validate form fields
-        if (!transferFrom || isNaN(amount) || amount <= 0) {
-            alert("Please select an account, enter a valid amount, and choose a transfer method.");
-            return;
-        }
+    // Validate form fields
+    if (!transferFrom || isNaN(amount) || amount <= 0) {
+        alert("Please select an account, enter a valid amount, and choose a transfer method.");
+        return;
+    }
 
-        console.log("Transaction data being sent:", {
-            account_id: transferFrom,
-            amount,
+    console.log("Transaction data being sent:", {
+        user_id: transferFrom,
+        amount,
+        description,
+        phoneNumber,
+        nric,
+        status
+    });
+
+    try {
+        const requestData = {
+            user_id: transferFrom,
+            amount: parseFloat(amount),
             description,
             phoneNumber,
-            nric
+            nric,
+            status
+        };
+
+        const response = await fetch('/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
         });
 
-        try {
-            const requestData = {
-                account_id: transferFrom,
-                amount: parseFloat(amount),
-                description,
-                phoneNumber,
-                nric
-            };
-
-            const response = await fetch('/transactions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            // Ensure response is JSON and handle response accordingly
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert("Transaction completed successfully!");
-                // Optional: Clear form fields
-                form.reset();
-                document.getElementById('balance').style.display = 'none'; // Hide balance after successful transaction
-            } else {
-                throw new Error(result.error || "Transaction failed");
-            }
-        } catch (error) {
-            console.error("Error creating transaction:", error);
-            alert("Transaction error: " + error.message);
+        // Ensure response is JSON and handle response accordingly
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert("Transaction completed successfully!");
+            // Optional: Clear form fields
+            form.reset();
+            document.getElementById('balance').style.display = 'none'; // Hide balance after successful transaction
+        } else {
+            throw new Error(result.error || "Transaction failed");
         }
-    });
+    } catch (error) {
+        console.error("Error creating transaction:", error);
+        alert("Transaction error: " + error.message);
+    }
+});
 
 
 // Function to toggle input fields based on selected transfer method
