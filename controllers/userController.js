@@ -24,7 +24,7 @@ const loginUser = async (req, res) => {
         };
 
         // Set token expiration based on "Remember Me"
-        const tokenExpiration = rememberMe ? "7d" : "10s"; // 7 days if remembered, 1 hour if not
+        const tokenExpiration = rememberMe ? "7d" : "1h"; // 7 days if remembered, 1 hour if not
         const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: tokenExpiration });
 
         return res.json({
