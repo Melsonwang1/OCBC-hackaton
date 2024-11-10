@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCBC 语音登录</title>
+    <title>OCBC Login Page with Voice Control</title>
     <link rel="stylesheet" href="../css/login.css">
     <link rel="icon" type="image/png" sizes="128x128" href="../pics/ocbc-title-logo.png">
 
-        <!-- Import Google Fonts-->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -20,6 +20,7 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
+        <!-- Language Switch Button -->
         <div class="language-switch">
             <a href="logineng.html" class="language-btn">English</a>
         </div>
@@ -45,17 +46,17 @@
                     <label for="remember-me">记住我</label>
                 </div>
 
-                <a href="rememberpassword.html" class="forgot-password">忘记密码</a>
+                <a href="rememberpassword.html" class="forgot-password">忘记密码？</a>
 
-                <button type="submit" class="login-btn">登录</button>
+                <!-- Empty message area to display login status -->
+                <h3 id="message"><b></b></h3>
+                
+                <button type="submit" class="login-btn" id="login-button">登录</button>
 
-                <div class="or">或</div>
+                <div class="or">OR</div>
 
                 <button type="button" class="singpass-btn">Singpass 登录</button>
             </form>
-
-            
-            
         </div>
     </main>
 

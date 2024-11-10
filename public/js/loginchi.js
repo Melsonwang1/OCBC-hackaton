@@ -1,3 +1,59 @@
+// login
+document.addEventListener('DOMContentLoaded', async function(){
+    document.getElementById("login-button").addEventListener("click",async function(e){
+        e.preventDefault();
+        const message = document.getElementById("message");
+        let nric = document.getElementById("user-id").value;
+        let password = document.getElementById("pin").value;
+
+        if(!nric || !password){
+            message.innerHTML = "请填写所有空格!";
+            return;
+        }
+        else{
+            await login(nric, password);
+        }
+    });
+    
+    //Login user
+    async function login(nric,password){
+        try{
+            //fetch the endpoint with method POST
+            const response = await fetch('/user/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nric, password }), //pass in the body using JSON stringify
+            });
+            // Handle specific response statuses
+            if (response.status === 404) {
+                alert("未找到用户!");
+                return;
+            }
+            if (response.status === 401) {
+                alert("密码错误!");
+                return;
+            }
+            //Throw new error is response not ok
+            if(!response.ok){
+                throw new Error('登录失败');
+            }
+            const data = await response.json(); //await the data
+            token = data.token;
+            localStorage.setItem("token",token); //set the token
+            alert("登录成功!");
+            window.location.href = "accountschi.html" //direct user to patient home page
+            return token;
+
+        }
+        //Catch the error if something happen
+        catch{
+            alert("账号或密码错误!");
+        }
+    }
+});
+
 // Check if SpeechRecognition is supported in this browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (!SpeechRecognition) {
