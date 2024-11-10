@@ -292,3 +292,15 @@ function selectOption(value) {
     // Call your existing toggleInput function
     toggleInput(value);
 }
+
+// Event listener for keydown event
+document.addEventListener('keydown', function(event) {
+    // Check if the left or right arrow key is pressed
+    if (event.key === 'ArrowLeft') {
+        // Go to the previous page (like undo)
+        window.history.back();
+    } else if (event.key === 'ArrowRight') {
+        // Go to the next page (like redo)
+        window.history.forward();
+    }
+});

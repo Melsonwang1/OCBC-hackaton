@@ -37,17 +37,21 @@
         <!-- Welcome message -->
         <div class="welcome">Welcome, <span id="user-name"></span></div>
 
-        <!-- Keyboard shortcuts note-->
-        <!--<div id="keyboard-shortcut-note" class="keyboard-note">
-            <p><strong>Press the following keys to quickly navigate: </strong></p>
+        <!-- Keyboard Shortcuts Note -->
+        <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+            <p><strong>Keyboard Shortcuts:</strong></p>
             <ul>
-                <li><strong>1</strong>  → View Accounts</li>
-                <li><strong>2</strong>  → Transfer Money</li>
-                <li><strong>3</strong>  → Investments</li>
-                <li><strong>c</strong>  → Chinese Translation</li>
-                <li><strong>l</strong>  → Log Out</li>
+                <li><span class="shortcut-key">1</span> → View Accounts</li>
+                <li><span class="shortcut-key">2</span> → Transfer Money</li>
+                <li><span class="shortcut-key">3</span> → Investments</li>
+                <li><span class="shortcut-key">c</span> → Chinese Translation</li>
+                <li><span class="shortcut-key">l</span> → Log Out</li>
+                <li><span class="shortcut-key">←</span> → Previous Page</li>
+                <li><span class="shortcut-key">→</span> → Next Page</li>
+                <li><span class="shortcut-key">↑</span> → Scroll Up</li>
+                <li><span class="shortcut-key">↓</span> → Scroll Down</li>
             </ul>
-        </div>-->
+        </div>
 
         <!-- What would you like to do today? -->
         <h2 class="welcome-message">What would you like to do today?</h2>
@@ -68,9 +72,9 @@
 
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
-        <!--<div class="account-selection-note">
+        <div class="account-selection-note">
             <p><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
-        </div> -->       
+        </div>      
         <h2>Your Bank Accounts:</h2>
         <p>Select an account below to view detailed information.</p>
         <div id="accounts-list">
