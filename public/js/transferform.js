@@ -58,7 +58,7 @@ document.addEventListener('keydown', function(event) {
 // Get user token
 document.addEventListener('DOMContentLoaded', async function() {
     var user = {}; // The current user
-    let token = localStorage.getItem("token"); // Get token from local storage
+    let token = localStorage.getItem("token") || sessionStorage.getItem("token"); // Get token from local storage
 
     // Check if token is null before proceeding
     if (!token) {
@@ -302,5 +302,33 @@ document.addEventListener('keydown', function(event) {
     } else if (event.key === 'ArrowRight') {
         // Go to the next page (like redo)
         window.history.forward();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Show the list by default on page load
+    shortcutList.style.display = "block";
+    icon.classList.add("up");  // Initially show the downward arrow
+    keyboardNote.style.maxHeight = "500px"; // Adjust to accommodate the expanded list
+});
+
+document.getElementById("keyboard-shortcut-header").addEventListener("click", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Toggle the visibility of the shortcut list with animation
+    if (shortcutList.classList.contains("collapsed")) {
+        shortcutList.classList.remove("collapsed");
+        icon.classList.add("up");
+        keyboardNote.style.maxHeight = "500px"; // Adjust based on content
+    } else {
+        shortcutList.classList.add("collapsed");
+        icon.classList.remove("up");
+        keyboardNote.style.maxHeight = "50px"; // Collapse back
     }
 });

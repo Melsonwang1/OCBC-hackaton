@@ -76,6 +76,8 @@ header .logout button .login-icon {
     max-width: 240px;
     text-align: left;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    transition: max-height 0.3s ease-in-out;
+    overflow: hidden;
 }
 
 /* Heading styling */
@@ -84,6 +86,7 @@ header .logout button .login-icon {
     font-size: 16px;
     margin-bottom: 10px;
     font-weight: bold;
+    cursor: pointer; /* Indicating it's clickable */
 }
 
 /* List styling */
@@ -91,6 +94,7 @@ header .logout button .login-icon {
     list-style-type: none;
     padding-left: 0;
     margin: 0;
+    display: block; /* Initially visible */
 }
 
 /* Item styling */
@@ -117,6 +121,39 @@ header .logout button .login-icon {
     font-weight: bold;
     border-radius: 5px;
     text-align: center;
+}
+
+/* Style for the dropdown icon */
+#dropdown-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent; /* Wider left side for bigger arrow */
+    border-right: 8px solid transparent; /* Wider right side for bigger arrow */
+    border-top: 16px solid black;  /* Larger top border for bigger arrow */
+    cursor: pointer;
+    transition: transform 0.3s ease, border-top 0.3s ease;
+    margin-left: 8px; /* Space between the label and the arrow */
+}
+
+/* Rotate the arrow to point up when clicked */
+#dropdown-icon.up {
+    transform: rotate(180deg); /* Rotate the arrow to point up */
+}
+
+/* Initial state for the shortcut list */
+#shortcut-list {
+    display: block;
+    opacity: 1;
+    max-height: 500px; /* Adjust to accommodate the expanded list */
+    overflow: hidden;
+    transition: opacity 0.5s ease, max-height 0.5s ease; /* Smooth transition */
+}
+
+/* Initially hide the shortcut list */
+#shortcut-list.collapsed {
+    opacity: 0;
+    max-height: 0;
 }
 
 /* Main content */
