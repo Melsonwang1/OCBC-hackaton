@@ -175,6 +175,49 @@ async function fetchAccDetails(userId){
         }
     }
 
+    // Fetch user data and display recipient name or error
+    function fetchUserData() {
+        const mobileInput = document.getElementById("mobile");
+        const nricInput = document.getElementById("nric");
+        let url = 'http://localhost:3000/user';
+        if (mobileInput.style.display === 'block' && mobileInput.value) {
+            url += `?phoneNumber=${encodeURIComponent(mobileInput.value)}`;
+        } else if (nricInput.style.display === 'block' && nricInput.value) {
+            url += `?nric=${encodeURIComponent(nricInput.value)}`;
+        } else {
+            // Hide error message and recipient name if nothing is entered
+            document.getElementById("name").style.display = 'none';
+            document.getElementById("error").style.display = 'none';
+            alert("Please enter a valid phone number or NRIC.");
+            return;
+        }
+        // Make an API call to fetch the user data
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Log the full response to see its structure
+                // If user data exists and has a name, show the recipient name
+                if (data && data.name) {
+                    document.getElementById("user-namee").textContent = data.name;
+                    document.getElementById("name").style.display = 'block'; // Show recipient name
+                    document.getElementById("error").style.display = 'none'; // Hide error message if successful
+                } else {
+                    // Show error if user is not found
+                    document.getElementById("user-namee").textContent = "";
+                    document.getElementById("name").style.display = 'none'; // Hide recipient name if no user
+                    document.getElementById("error").textContent = "User not found."; // Display error message
+                    document.getElementById("error").style.display = 'block'; // Show error
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error);
+                document.getElementById("user-namee").textContent = "";
+                document.getElementById("name").style.display = 'none'; // Hide recipient name if error occurs
+                document.getElementById("error").textContent = "Error fetching user data."; // Display error message
+                document.getElementById("error").style.display = 'block'; // Show error
+            });
+    }
+
     // Add event listener to the form for transaction submission
 const form = document.querySelector('.transfer-container form');
 form.addEventListener('submit', async (event) => {
