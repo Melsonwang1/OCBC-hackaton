@@ -19,17 +19,23 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
-        <div class="logout">
-            <button onclick="window.location.href='login.html'">
-                注销
-                <img src="../pics/logout.png" alt="Log Out Icon" class="login-icon">
-            </button>
+    
+        <div class="header-right">
+            <div class="language-switch">
+                <a href="accountschi.html" class="language-btn">中文</a>
+            </div>
+    
+            <div class="logout">
+                <button id="logout-btn"> 
+                    登出
+                    <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
+                </button>
+            </div>
         </div>
     </header>
-
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome">您好！欢迎,, <span id="user-name"></span></div>
+        <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
 
         <!-- Keyboard shortcuts note-->
         <!--<div id="keyboard-shortcut-note" class="keyboard-note">
