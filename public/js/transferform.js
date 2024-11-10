@@ -19,7 +19,9 @@ document.addEventListener('keydown', function(event) {
     } else if (event.key === 't') {
         window.location.href = "../html/accountschi.html";
     } else if (event.key === 'l') {
-        window.location.href = 'logineng.html';
+        localStorage.removeItem("token"); // Properly remove the token
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
     }
 });
 
@@ -53,34 +55,76 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+// Get user token
+document.addEventListener('DOMContentLoaded', async function() {
+    var user = {}; // The current user
+    let token = localStorage.getItem("token"); // Get token from local storage
 
-document.addEventListener('DOMContentLoaded', async () => {
-    let token = localStorage.getItem("token");
+    // Check if token is null before proceeding
+    if (!token) {
+        alert("Your session has expired or you are not logged in. Please log in again.");
+        window.location.href = "logineng.html"; // Redirect to login page
+        return; // Stop execution
+    }
 
-    // User Id = 1
-    try {
-        // Fetch user data (zb)
-        const userResponse = await fetch(`/user/1`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+    // Get the user data
+    async function getUserData() {
+        console.log('Token:', token);  // Log the token to ensure it's valid
+        try {
+            const response = await fetch(`/users`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.log('Error response:', errorData);  // Log error details
+                throw new Error(errorData.message);
             }
-        });
-        
-        if (!userResponse.ok) {
-            const errorData = await userResponse.json();
-            throw new Error(errorData.message || "Failed to fetch user data");
+
+            const userData = await response.json();
+            console.log('User Data:', userData);  // Log the user data
+
+            // Populate user object
+            user = userData;
+            // Display the user's name
+            document.getElementById("user-name").innerText = user.name.toUpperCase();
+        } catch (error) {
+            console.log('Error in getUserData:', error.message);
+            if (error.message === 'Forbidden: Invalid or expired token') {
+                alert("Times out. Please login again!");
+                localStorage.setItem("token", null); // Clear token from local storage
+                window.location.href = "logineng.html"; // Redirect to login
+            } else if (error.message === 'Unauthorized') {
+                alert("Please login first!");
+                window.location.href = "logineng.html"; // Redirect to login
+            } else {
+                console.error('Unexpected error:', error);
+            }
         }
+    }
 
-        const user = await userResponse.json();
-        document.getElementById("user-name").innerText = user.account.name.toUpperCase();
+    // Log Out Button functionality
+    document.getElementById("logout-btn").addEventListener("click", function() {
+        localStorage.removeItem("token"); // Properly remove the token
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
+    });
 
-        // Fetch account names and numbers
-        const response = await fetch(`/accounts/accountnameandnumber/1`); // Replace 1 with the actual user ID
+    // Wait for user data to load before fetching bank accounts
+    await getUserData();
+    await fetchAccDetails(user.user_id)
+
+});
+
+async function fetchAccDetails(userId){
+    try {
+        const response = await fetch(`/accounts/accountnameandnumber/${userId}`); 
         if (!response.ok) {
-            throw new Error('Failed to fetch account data');
+            throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
         }
-
         const accountsData = await response.json();
 
         // Check if accountsData.account exists and is an array
@@ -109,30 +153,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('balance').style.display = 'none'; // Hide balance if no account is selected
             }
         });
-
     } catch (error) {
-        console.error('Error fetching account data:', error);
+        console.error('Error fetching bank accounts:', error);
+        alert('No bank account records data found'); // Alert the user if no bank accounts are found
     }
+}
 
     // Function to fetch and display the balance (zb)
-    async function fetchAndDisplayBalance(accountId) {
-        let token = localStorage.getItem("token");
-        
+    async function fetchAndDisplayBalance(accountId) {       
         try {
-            const accountResponse = await fetch(`/accounts/account/${accountId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
+            const accountResponse = await fetch(`/accounts/account/${accountId}`);
             if (!accountResponse.ok) {
                 const errorData = await accountResponse.json();
                 throw new Error(errorData.message || "Failed to fetch account data");
             }
-
             const accountData = await accountResponse.json();
-
             const balanceHave = accountData.account.balance_have.toFixed(2);
             document.getElementById('balance-amount').innerText = balanceHave; // Display balance
         } catch (error) {
@@ -214,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert("Transaction error: " + error.message);
         }
     });
-});
+
 
 // Function to toggle input fields based on selected transfer method
 function toggleInput(selected) {
