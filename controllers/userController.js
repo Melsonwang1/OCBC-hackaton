@@ -4,30 +4,29 @@ require('dotenv').config()
 
 
 const loginUser = async (req, res) => {
-    const { nric, password } = req.body;
+    const { nric, password, rememberMe } = req.body;
 
     try {
         const user = await Users.loginUser(nric, password);
 
-        // Handle user not found
-        if(user === null){
+        if (user === null) {
             return res.status(404).send("User not found");
         }
 
-        //If user is false, password is wrong
-        if(!user){
-            return res.status(401).send("Password Wrong!");
+        if (!user) {
+            return res.status(401).send("Password is incorrect");
         }
 
-        // If user is found and password is correct, create a payload with the user data
         const payload = {
             user_id: user.user_id,
             name: user.name,
-            email: user.email
+            email: user.email,
         };
 
-        // Create a new JWT token with the payload and expiration time
-        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "3600s" });
+        // Set token expiration based on rememberMe
+        const tokenExpiration = rememberMe ? '7d' : '1h';  // Example: 7 days if "Remember Me" is checked
+
+        const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: tokenExpiration });
 
         return res.json({
             name: user.name,
@@ -37,12 +36,12 @@ const loginUser = async (req, res) => {
             dob: user.dob,
             token: jwtToken,
         });
-
     } catch (error) {
         console.error("Error logging in user:", error);
         res.status(500).send("Error logging in user.");
     }
 };
+
 
 const createUser = async (req,res) => {
     const userData = req.body
