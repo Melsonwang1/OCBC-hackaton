@@ -88,37 +88,27 @@ class Users {
     
     // Method to find user by ID
     static async getUserById(user_id) {
-        let connection;
+        const connection = await sql.connect(dbConfig);
+        const query = `SELECT * FROM Users WHERE user_id = @user_id`; //select patient with the id passed by controller
+        const request = connection.request();
+        request.input("user_id",user_id);
+        const result = await request.query(query);
 
-        try {
-            connection = await sql.connect(dbConfig);
-            const sqlQuery = `SELECT * FROM users WHERE user_id = @user_id`;
-            const request = connection.request();
-            request.input('user_id', sql.Int, user_id);
+        await connection.close();
 
-            const result = await request.query(sqlQuery);
-
-            return result.recordset.length > 0
-                ? new Users(
-                    result.recordset[0].user_id,
-                    result.recordset[0].name,
-                    result.recordset[0].email,
-                    result.recordset[0].password,
-                    result.recordset[0].phoneNumber,
-                    result.recordset[0].nric,
-                    result.recordset[0].dob,
-                    result.recordset[0].recovery
-                )
-                : null;
-        } catch (error) {
-            console.error("Error fetching user:", error);
-            throw error;
-        } finally {
-            if (connection) {
-                await connection.close();
-            }
-        }
+        //return the new User if user is found, else null
+        return result.recordset[0]
+        ? new Users(
+            result.recordset[0].user_id,
+            result.recordset[0].name,
+            result.recordset[0].email,
+            result.recordset[0].phoneNumber,
+            result.recordset[0].nric,
+            result.recordset[0].dob
+        )
+        : null;
     }
+
     static async getAccountIdByPhoneOrNric(phoneNumber, nric) {
         let connection;
         try {
