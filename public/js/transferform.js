@@ -116,48 +116,49 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Wait for user data to load before fetching bank accounts
     await getUserData();
     await fetchAccDetails(user.user_id)
+    announceAccountsAndListen(user.user_id);
 
 });
 
-async function fetchAccDetails(userId){
-    try {
-        const response = await fetch(`/accounts/accountnameandnumber/${userId}`); 
-        if (!response.ok) {
-            throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
-        }
-        const accountsData = await response.json();
-
-        // Check if accountsData.account exists and is an array
-        if (!accountsData.account || !Array.isArray(accountsData.account)) {
-            console.error('Expected an array but received:', accountsData);
-            return;
-        }
-
-        const transferFromDropdown = document.getElementById('transfer-from');
-        
-        // Populate the dropdown with account data
-        accountsData.account.forEach(account => {
-            const option = document.createElement('option');
-            option.value = account.account_id; // Set account ID as value
-            option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
-            transferFromDropdown.appendChild(option);
-        });
-
-        // Display and show balance when an account is selected (zb)
-        transferFromDropdown.addEventListener('change', async (event) => {
-            const selectedAccountId = event.target.value;
-            if (selectedAccountId) {
-                document.getElementById('balance').style.display = 'block'; // Show balance display
-                await fetchAndDisplayBalance(selectedAccountId); // Fetch and show balance
-            } else {
-                document.getElementById('balance').style.display = 'none'; // Hide balance if no account is selected
+    async function fetchAccDetails(userId){
+        try {
+            const response = await fetch(`/accounts/accountnameandnumber/${userId}`); 
+            if (!response.ok) {
+                throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
             }
-        });
-    } catch (error) {
-        console.error('Error fetching bank accounts:', error);
-        alert('No bank account records data found'); // Alert the user if no bank accounts are found
+            const accountsData = await response.json();
+
+            // Check if accountsData.account exists and is an array
+            if (!accountsData.account || !Array.isArray(accountsData.account)) {
+                console.error('Expected an array but received:', accountsData);
+                return;
+            }
+
+            const transferFromDropdown = document.getElementById('transfer-from');
+            
+            // Populate the dropdown with account data
+            accountsData.account.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.account_id; // Set account ID as value
+                option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
+                transferFromDropdown.appendChild(option);
+            });
+
+            // Display and show balance when an account is selected (zb)
+            transferFromDropdown.addEventListener('change', async (event) => {
+                const selectedAccountId = event.target.value;
+                if (selectedAccountId) {
+                    document.getElementById('balance').style.display = 'block'; // Show balance display
+                    await fetchAndDisplayBalance(selectedAccountId); // Fetch and show balance
+                } else {
+                    document.getElementById('balance').style.display = 'none'; // Hide balance if no account is selected
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching bank accounts:', error);
+            alert('No bank account records data found'); // Alert the user if no bank accounts are found
+        }
     }
-}
 
     // Function to fetch and display the balance (zb)
     async function fetchAndDisplayBalance(accountId) {       
@@ -393,3 +394,262 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
         keyboardNote.style.maxHeight = "50px"; // Collapse back
     }
 });
+
+
+
+async function narrate(message) {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        window.speechSynthesis.speak(utterance);
+    } else {
+        console.error("Speech Synthesis is not supported in this browser.");
+    }
+}
+
+async function announceAccountsAndListen(userId) {
+    const accountsData = await fetchAccounts(userId);
+
+    if (accountsData && accountsData.account && accountsData.account.length > 0) {
+        narrate(`Welcome to your accounts page. You have the following accounts:`);
+
+        accountsData.account.forEach((account, index) => {
+            const accountEnding = account.account_number.slice(-3);
+            narrate(`Account ${index + 1}: ${account.account_name} ending in ${accountEnding}.`);
+        });
+
+        narrate("Please say the number of the account you'd like to check the balance for.");
+        startListeningForAccountSelection(accountsData.account);
+    } else {
+        narrate("No accounts found.");
+    }
+}
+
+async function fetchAccounts(userId) {
+    try {
+        const response = await fetch(`/accounts/accountnameandnumber/${userId}`);
+        if (!response.ok) throw new Error(`Error status: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching accounts data:', error);
+        return null;
+    }
+}
+
+function startListeningForAccountSelection(accounts) {
+    if (!('webkitSpeechRecognition' in window)) {
+        console.error("Speech Recognition is not supported in this browser.");
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        const numberMatch = transcript.match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\b/);
+
+        if (numberMatch) {
+            let accountIndex;
+            const numberWord = numberMatch[1];
+            switch (numberWord) {
+                case "one": accountIndex = 0; break;
+                case "two": accountIndex = 1; break;
+                case "three": accountIndex = 2; break;
+                case "four": accountIndex = 3; break;
+                case "five": accountIndex = 4; break;
+                case "six": accountIndex = 5; break;
+                case "seven": accountIndex = 6; break;
+                case "eight": accountIndex = 7; break;
+                case "nine": accountIndex = 8; break;
+                case "ten": accountIndex = 9; break;
+                default: accountIndex = parseInt(numberWord) - 1;
+            }
+
+            if (accountIndex >= 0 && accountIndex < accounts.length) {
+                const selectedAccount = accounts[accountIndex];
+                narrate(`Fetching balance for ${selectedAccount.account_name} ending in ${selectedAccount.account_number.slice(-3)}.`);
+
+                const transferFromDropdown = document.getElementById("transfer-from");
+                transferFromDropdown.value = selectedAccount.account_id;
+
+                fetchAndAnnounceBalance(selectedAccount.account_id).then(() => {
+                    startListeningForTransferMethod();
+                });
+            } else {
+                narrate("Invalid selection. Please say a number corresponding to the account you want.");
+            }
+        } else {
+            narrate("Sorry, I didn't understand that. Please say the number of the account you want to check.");
+        }
+    };
+
+    recognition.start();
+}
+
+async function fetchAndAnnounceBalance(accountId) {
+    try {
+        const response = await fetch(`/accounts/account/${accountId}`);
+        if (!response.ok) throw new Error(`Error status: ${response.status}`);
+        
+        const accountData = await response.json();
+        const balanceHave = accountData.account.balance_have.toFixed(2);
+
+        narrate(`The balance for this account is ${balanceHave} SGD.`);
+        document.getElementById('balance-amount').innerText = balanceHave;
+    } catch (error) {
+        console.error('Error fetching account balance:', error);
+        narrate("There was an error fetching the balance for this account.");
+    }
+}
+
+function startListeningForTransferMethod() {
+    if (!('webkitSpeechRecognition' in window)) {
+        console.error("Speech Recognition is not supported in this browser.");
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+
+        if (transcript.includes("mobile")) {
+            document.querySelector("input[value='mobile']").checked = true;
+            toggleInput("mobile");
+            narrate("Please enter the mobile number character by character.");
+            startListeningForCharacterEntry();
+        } else if (transcript.includes("nric")) {
+            document.querySelector("input[value='nric']").checked = true;
+            toggleInput("nric");
+            narrate("Please enter the NRIC character by character.");
+            startListeningForCharacterEntry();
+        } else {
+            narrate("Sorry, I didn't understand. Please say mobile number or NRIC.");
+        }
+    };
+
+    recognition.start();
+}
+
+function startListeningForAccountSelection(accounts) {
+    if (!('webkitSpeechRecognition' in window)) {
+        console.error("Speech Recognition is not supported in this browser.");
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        // Improved pattern to catch words and digits from one to ten
+        const numberMatch = transcript.match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\b/);
+
+        if (numberMatch) {
+            let accountIndex;
+            const numberWord = numberMatch[1];
+            switch (numberWord) {
+                case "one": accountIndex = 0; break;
+                case "two": accountIndex = 1; break;
+                case "three": accountIndex = 2; break;
+                case "four": accountIndex = 3; break;
+                case "five": accountIndex = 4; break;
+                case "six": accountIndex = 5; break;
+                case "seven": accountIndex = 6; break;
+                case "eight": accountIndex = 7; break;
+                case "nine": accountIndex = 8; break;
+                case "ten": accountIndex = 9; break;
+                default: accountIndex = parseInt(numberWord) - 1;
+            }
+
+            if (accountIndex >= 0 && accountIndex < accounts.length) {
+                const selectedAccount = accounts[accountIndex];
+                narrate(`Fetching balance for ${selectedAccount.account_name} ending in ${selectedAccount.account_number.slice(-3)}.`);
+
+                // Set the selected account in the transfer form dropdown
+                const transferFromDropdown = document.getElementById("transfer-from");
+                transferFromDropdown.value = selectedAccount.account_id;
+
+                // Announce the balance for the selected account
+                fetchAndAnnounceBalance(selectedAccount.account_id).then(() => {
+                    // Start listening for transfer method after announcing balance
+                    startListeningForTransferMethod();
+                });
+            } else {
+                narrate("Invalid selection. Please say a number corresponding to the account you want.");
+            }
+        } else {
+            narrate("Sorry, I didn't understand that. Please say the number of the account you want to check.");
+        }
+    };
+
+    recognition.start();
+}
+
+function toggleInput(type) {
+    const mobileInput = document.getElementById('mobile');
+    const nricInput = document.getElementById('nric');
+    const transferInputGroup = document.querySelector('.transfer-input-group');
+
+    transferInputGroup.style.display = 'block';
+
+    if (type === 'mobile') {
+        mobileInput.style.display = 'block';
+        nricInput.style.display = 'none';
+        mobileInput.value = '';
+        mobileInput.addEventListener('input', validateMobileNumber);
+        nricInput.removeEventListener('input', validateNRIC);
+    } else if (type === 'nric') {
+        mobileInput.style.display = 'none';
+        nricInput.style.display = 'block';
+        nricInput.value = '';
+        nricInput.addEventListener('input', validateNRIC);
+        mobileInput.removeEventListener('input', validateMobileNumber);
+    }
+}
+
+function validateMobileNumber(event) {
+    const input = event.target;
+    const value = input.value;
+
+    // Check that the first character is 8 or 9
+    if (value.length === 1 && !/[89]/.test(value[0])) {
+        input.value = ''; // Clear input if first character is not 8 or 9
+        narrate("Mobile number must start with 8 or 9.");
+        return;
+    }
+
+    // Ensure input is a digit and length doesn't exceed 8
+    if (!/^\d+$/.test(value) || value.length > 8) {
+        input.value = value.slice(0, -1); // Remove invalid character
+        narrate("Mobile number can only be 8 digits.");
+    }
+}
+
+function validateNRIC(event) {
+    const input = event.target;
+    const value = input.value.toUpperCase(); // Convert to uppercase for consistency
+    input.value = value; // Update the input to reflect uppercase letters
+
+    // Validate the NRIC format: start with a letter, middle characters are digits, last character is a letter
+    if (value.length === 1 && !/[A-Z]/.test(value[0])) {
+        input.value = ''; // Clear input if first character is not a letter
+        narrate("NRIC must start with an alphabet.");
+        return;
+    }
+    if (value.length > 1 && value.length < 9 && !/\d/.test(value[value.length - 1])) {
+        input.value = value.slice(0, -1); // Clear input if middle characters are not digits
+        narrate("NRIC middle characters must be digits.");
+        return;
+    }
+    if (value.length === 9 && !/[A-Z]/.test(value[8])) {
+        input.value = value.slice(0, -1); // Clear input if last character is not a letter
+        narrate("NRIC must end with an alphabet.");
+    }
+}
