@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../css/investment.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    <script src="../js/investment.js" defer></script>
     <title>OCBC - Investment</title>
 
     <!-- Import Google Fonts-->
@@ -28,7 +27,7 @@
             </div>
     
             <div class="logout">
-                <button onclick="window.location.href='login.html'"> 
+                <button id="logout-btn">
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -54,13 +53,6 @@
 
     <h1>Investment Growth Over Time</h1>
     <canvas id="investmentChart"></canvas>
-    <div id="range-buttons">
-        <button onclick="updateChart('3M')">3 Months</button>
-        <button onclick="updateChart('6M')">6 Months</button>
-        <button onclick="updateChart('YTD')">Year-to-Date</button>
-        <button onclick="updateChart('2Y')">2 Years</button>
-        <button onclick="updateChart('ALL')">All-time</button>
-    </div>
     
     <div class="content">
         <div class="dropdown">
