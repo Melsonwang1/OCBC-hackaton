@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,20 +13,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
 </head>
-<body> 
+
+<body>
     <!-- Header Section -->
     <header class="header">
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
-    
+
         <div class="header-right">
             <div class="language-switch">
                 <a href="transfer.html" class="language-btn">English</a>
             </div>
-    
+
             <div class="logout">
-                <button onclick="window.location.href='login.html'"> 
+                <button id="logout-btn">
                     登出
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -37,23 +39,23 @@
     <main>
         <div class="container">
             <!-- Welcome message -->
-            <div class="welcome">您好！欢迎, THOMAS LIM JUN WEI</div>
-    
+            <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
+
             <!-- What would you like to do today? -->
-            <h2 class="welcome-message">您今天想做什么？</h2>
+            <h2 class="welcome-message">请问您需要什么服务呢?</h2>
             <!-- Navigation bar -->
             <div class="navbar">
-                <a href="../html/accountschi.html" class="active">
+                <a href="../html/accountseng.html">
                     <img src="../pics/view-account.png" alt="View Icon">
                     查看账户</a>
-                <a href="../html/transferchi.html">
+                <a href="../html/transfer.html" class="active">
                     <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
-                    转账</a>
-                <a href="../html/investmentchi.html">
+                    转账与支付</a>
+                <a href="../html/investmenteng.html">
                     <img src="../pics/investment.png" alt="Investments Icon">
-                    投资</a> 
+                    投资</a>
             </div>
-                
+
         </div>
         <div class="transfer-container">
             <h2>转账与支付</h2>
@@ -63,8 +65,7 @@
                     <label for="transfer-from">1. 请选择您想要用的账户</label>
                     <select id="transfer-from">
                         <option value="" disabled selected>选择账户</option>
-                        <option value="account1">我的账户 (123-456789-001)</option>
-                        <option value="account2">我的储蓄账户 (123-456789-002)</option>
+                        <!-- Options will be populated dynamically -->
                     </select>
                 </div>
 
@@ -84,32 +85,39 @@
                     
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;">
                         <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;">
-                        <button type="button" id="enterBtn" class="enter-btn" style="display: none;">Enter</button>
+                        <button type="button" id="enterBtn" class="enter-btn" onclick="fetchUserData()">验证</button>
                     </div>
-                </div>
 
+                    <!-- Display recipient name below the input group -->
+                    <p id="name" style="display: none;">收款人: <span id="user-namee" style="font-weight: bold;"></span></p>
+                    <p id="error" style="display: none; color: red; font-weight: bold;"></p>
+                </div>
 
                 <!-- Amount and Description -->
                 <div class="form-group">
-                    <label for="amount">3. 请输入转账金额</label>
+                    <label for="amount">3. 请输入转账金额:</label>
+                    <div id="balance" class="balance-display" style="display: none;">
+                        现有余额: <b><span id="balance-amount"></span> SGD</b>
+                    </div>
                     <div class="amount-transfer">
-                        <input type="text" id="amount" placeholder="金额 (SGD)">
-                        <input type="text" id="description" placeholder="如有附加信息">
+                        <input type="text" id="amount" placeholder="Amount (SGD)">
                     </div>
                 </div>
 
-                <!-- Purpose of transfer -->
                 <div class="form-group">
-                    <label for="purpose">请输入转账的目的</label>
-                    <select id="purpose">
-                        <option value="" disabled selected>选择目的</option>
-                        <option value="bills">账单支付</option>
-                        <option value="gift">礼物</option>
-                        <option value="others">其他</option>
-                    </select>
+                    <label for="description">4. 转账用途:</label>
+                    <p style="padding-bottom:5px;">请写下转账的目的以及名子
+                        <br>例如: 用于支付学费, 付款人: JANE SMITH</p>
+                    <!-- Description input field to be filled with dynamic value -->
+                    <input type="text" id="description" placeholder="Description">
+                    <!-- Checkbox for saving as a favorite transaction -->
+                    <label>
+                        <br><input type="checkbox" id="status-checkbox"> 设为待完成
+                    </label> 
                 </div>
+
                 <!-- Transfer button -->
                 <div class="form-group">
                     <button type="submit" class="transfer-btn">转账</button>
@@ -118,6 +126,7 @@
         </div>
     </main>
 
+<<<<<<< HEAD
     <!-- Leave it here first -->
     <script>
         function toggleInput(selected) {
@@ -158,5 +167,8 @@
           document.head.appendChild(t);
         });
       </script>
+=======
+    <script src="../js/transferform.js"></script>
+>>>>>>> 2d143b5a9be60a4fed04cbb99b36ce088c30c16e
 </body>
 </html>

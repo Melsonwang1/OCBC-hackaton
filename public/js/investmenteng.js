@@ -1,27 +1,71 @@
-const account_id = 1;
+document.addEventListener('DOMContentLoaded', async function() {
+    var user = {}; // The current user
+    let token = localStorage.getItem("token") || sessionStorage.getItem("token"); // Get token from local storage
 
-document.addEventListener("DOMContentLoaded", async () => {
-    let token = localStorage.getItem("token");
-
-    try {
-        const userResponse = await fetch(`/user/1`, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-
-        if (!userResponse.ok) {
-            const errorData = await userResponse.json();
-            throw new Error(errorData.message || "Failed to fetch user data");
-        }
-
-        const user = await userResponse.json();
-        document.getElementById("user-name").innerText = user.account.name.toUpperCase();
-    } catch (error) {
-        console.error("Error fetching account data:", error);
+    // Check if token is null before proceeding
+    if (!token) {
+        alert("Your session has expired or you are not logged in. Please log in again.");
+        window.location.href = "logineng.html"; // Redirect to login page
+        return; // Stop execution
     }
+
+    // Get the user data
+    async function getUserData() {
+        console.log('Token:', token);  // Log the token to ensure it's valid
+        try {
+            const response = await fetch(`/users`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.log('Error response:', errorData);  // Log error details
+                throw new Error(errorData.message);
+            }
+
+            const userData = await response.json();
+            console.log('User Data:', userData);  // Log the user data
+
+            // Populate user object
+            user = userData;
+            // Display the user's name
+            document.getElementById("user-name").innerText = user.name.toUpperCase();
+        } catch (error) {
+            console.log('Error in getUserData:', error.message);
+            // Step 2: Handle invalid or expired token
+            if (error.message === 'Forbidden: Invalid or expired token') {
+                alert("Times out. Please login again!");
+                localStorage.setItem("token", null); // Properly remove token from local storage
+                sessionStorage.removeItem("token"); // Remove token from session storage
+                window.location.href = "logineng.html"; // Redirect to login
+            } else if (error.message === 'Unauthorized') {
+                alert("Please login first!");
+                window.location.href = "logineng.html"; // Redirect to login
+            } else {
+                console.error('Unexpected error:', error);
+            }
+        }
+    }
+
+    // Log Out Button functionality
+    document.getElementById("logout-btn").addEventListener("click", function() {
+        // Step 3: Clear token on logout
+        localStorage.removeItem("token");
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
+    });
+
+    let account_id = "ALL";
+
+    // Wait for user data to load before fetching bank accounts
+    await getUserData();
+    await fetchAndPlotData(account_id);
 });
 
-async function fetchAndPlotData(range = "ALL") {
+async function fetchAndPlotData(account_id) {
     try {
         const response = await fetch(`/investments/growth/${account_id}`);
         if (!response.ok) throw new Error("Failed to fetch investment growth data");
@@ -95,19 +139,10 @@ const investmentChart = new Chart(ctx, {
     }
 });
 
-document.querySelectorAll("#range-buttons button").forEach(button => {
-    button.addEventListener("click", () => {
-        const range = button.textContent;
-        fetchAndPlotData(range);
-    });
-});
-
 function toggleDropdown(id) {
     const content = document.getElementById(id);
     content.style.display = content.style.display === "block" ? "none" : "block";
 }
-
-fetchAndPlotData("ALL");
 
 document.addEventListener("keydown", (event) => {
     if (event.altKey || event.ctrlKey || event.metaKey) return;

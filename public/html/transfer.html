@@ -107,13 +107,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="description">3. Description of Transfer:</label>
-                    <p style="padding-bottom:5px;">Include the purpose and name, e.g. Pay for tuition by JANE SMITH. </p>
+                    <label for="description">4. Description of Transfer:</label>
+                    <p style="padding-bottom:5px;">Can include the purpose and your name (e.g. Tuition payment - JANE SMITH).</p>
                     <!-- Description input field to be filled with dynamic value -->
                     <input type="text" id="description" placeholder="Description">
                     <!-- Checkbox for saving as a favorite transaction -->
                     <label>
-                        <input type="checkbox" id="status-checkbox"> Set as Pending
+                        <input type="checkbox" id="status-checkbox"> Enable 24-Hour Delay Transfer (Optional)
+                        <span class="info-icon">What is this?
+                            <span class="tooltip-text">This option delays the transfer by 24 hours. During this period, you can cancel the transaction 
+                                if needed. After 24 hours, the funds will be sent and deducted from your account automatically.</span>
+                        </span>
                     </label> 
                 </div>
 
@@ -122,9 +126,16 @@
                     <button type="submit" class="transfer-btn">Transfer</button>
                 </div>
             </form>
+            <div id="update-msg" style="display: none;">
+                <div class="alert alert-success" role="alert">
+                    <dotlottie-player src="https://lottie.host/3a0e448a-e059-491a-ba78-53734f104751/5XWEjdqtkJ.json" background="transparent" speed="0.7" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+                </div>
+            </div>
+            
         </div>
     </main>
 
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
         window.watsonAssistantChatOptions = {
