@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             user = userData;
             // Display the user's name
             document.getElementById("user-name").innerText = user.name.toUpperCase();
+
+            let user_id = user.user_id;
+            console.log(user_id);
+            await fetchAndPlotData(user_id);
         } catch (error) {
             console.log('Error in getUserData:', error.message);
             // Step 2: Handle invalid or expired token
@@ -58,78 +62,67 @@ document.addEventListener('DOMContentLoaded', async function() {
         history.replaceState(null, null, "logineng.html");
     });
 
-    let account_id = "ALL";
-
-    // Wait for user data to load before fetching bank accounts
     await getUserData();
-    await fetchAndPlotData(account_id);
 });
 
-async function fetchAndPlotData(account_id) {
+async function fetchAndPlotData(user_id) {
     try {
-        const response = await fetch(`/investments/growth/${account_id}`);
+        const response = await fetch(`/investments/growth/${user_id}`);
         if (!response.ok) throw new Error("Failed to fetch investment growth data");
 
         const data = await response.json();
         console.log(data);
 
-        // Adjust the starting value to 100 instead of zero
+        // Check if data array is empty
+        if (data.length === 0) {
+            alert("No investment growth data found for this account.");
+            return; // Exit the function if there's no data
+        }
+
+        // Initialize starting investment value
         const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const values = data.map((item, index) => index === 0 ? initialInvestment : initialInvestment + item.profit_loss);
+        const values = data.map((item, index) => 
+            index === 0 ? initialInvestment : initialInvestment + item.profit_loss
+        );
 
-        const filteredData = filterDataByRange({ labels, values }, range);
+        const barColors = values.map(value => 
+            value < initialInvestment ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'
+        );
 
-        investmentChart.data.labels = filteredData.labels;
-        investmentChart.data.datasets[0].data = filteredData.values;
+        investmentChart.data.labels = labels;
+        investmentChart.data.datasets[0].data = values;
+        investmentChart.data.datasets[0].backgroundColor = barColors;
         investmentChart.update();
 
         // Announce each point on the chart
-        announceInvestmentGrowth(filteredData);
+        announceInvestmentGrowth(labels, values);
         startListeningForNavigation();
     } catch (error) {
         console.error("Error fetching or updating chart data:", error);
     }
 }
 
-function filterDataByRange(data, range) {
-    const { labels, values } = data;
-    const today = new Date();
-    let startIndex;
-
-    switch (range) {
-        case "3M":
-            startIndex = labels.length - 3;
-            break;
-        case "6M":
-            startIndex = labels.length - 6;
-            break;
-        case "YTD":
-            startIndex = labels.findIndex(date => date.startsWith(today.getFullYear()));
-            break;
-        case "2Y":
-            startIndex = labels.length - 24;
-            break;
-        case "ALL":
-        default:
-            return data;
-    }
-    startIndex = Math.max(0, startIndex);
-    return { labels: labels.slice(startIndex), values: values.slice(startIndex) };
-}
-
 const ctx = document.getElementById("investmentChart").getContext("2d");
 const investmentChart = new Chart(ctx, {
-    type: "line",
+    type: "bar",
     data: {
         labels: [],
         datasets: [{
             label: "Investment Growth",
             data: [],
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1
-        }]
+        },
+        {
+            label: "Investment Shrink",
+            data: [],
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "rgba(75, 192, 192, 0.2)",
+            borderWidth: 1
+        }
+    ]
     },
     options: {
         scales: {
@@ -177,24 +170,24 @@ function narrate(message) {
     }
 }
 
-function announceInvestmentGrowth(data) {
+function announceInvestmentGrowth(labels, values) {
     narrate("Welcome to your investments page.");
 
-    if (data.labels && data.labels.length > 0) {
-        data.labels.forEach((label, index) => {
+    if (labels && labels.length > 0) {
+        labels.forEach((label, index) => {
             const day = label.getDate();
             const month = label.toLocaleDateString('en-US', { month: 'long' });
             const year = label.getFullYear();
             const date = `${day} ${month} ${year}`;
 
-            const value = data.values[index];
+            const value = values[index];
             const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);  // Format without decimals if whole number
 
             let message = `On ${date}, your investment was ${valueText} SGD`;
 
             // Announce growth only from the second data point onwards
             if (index > 0) {
-                const previousValue = data.values[index - 1];
+                const previousValue = values[index - 1];
                 const growthAmount = value - previousValue;
                 const growthPercentage = ((growthAmount / previousValue) * 100).toFixed(2);
                 const growthAmountText = growthAmount % 1 === 0 ? growthAmount.toFixed(0) : growthAmount.toFixed(2);
