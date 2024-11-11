@@ -96,7 +96,7 @@ async function fetchAndPlotData(user_id) {
         investmentChart.update();
 
         // Announce each point on the chart
-        announceInvestmentGrowth(values);
+        announceInvestmentGrowth(labels, values);
         startListeningForNavigation();
     } catch (error) {
         console.error("Error fetching or updating chart data:", error);
@@ -170,24 +170,24 @@ function narrate(message) {
     }
 }
 
-function announceInvestmentGrowth(data) {
+function announceInvestmentGrowth(labels, values) {
     narrate("Welcome to your investments page.");
 
-    if (data.labels && data.labels.length > 0) {
-        data.labels.forEach((label, index) => {
+    if (labels && labels.length > 0) {
+        labels.forEach((label, index) => {
             const day = label.getDate();
             const month = label.toLocaleDateString('en-US', { month: 'long' });
             const year = label.getFullYear();
             const date = `${day} ${month} ${year}`;
 
-            const value = data.values[index];
+            const value = values[index];
             const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);  // Format without decimals if whole number
 
             let message = `On ${date}, your investment was ${valueText} SGD`;
 
             // Announce growth only from the second data point onwards
             if (index > 0) {
-                const previousValue = data.values[index - 1];
+                const previousValue = values[index - 1];
                 const growthAmount = value - previousValue;
                 const growthPercentage = ((growthAmount / previousValue) * 100).toFixed(2);
                 const growthAmountText = growthAmount % 1 === 0 ? growthAmount.toFixed(0) : growthAmount.toFixed(2);

@@ -28,7 +28,7 @@
             </div>
     
             <div class="logout">
-                <button onclick="window.location.href='login.html'"> 
+                <button id="logout-btn">
                     注销
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -37,7 +37,7 @@
     </header>
 
     <div class="container">
-        <div class="welcome">欢迎, <span id="user-name"></span></div>
+        <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
         <h2 class="welcome-message">请问您需要什么服务呢?</h2>
         <div class="navbar">
             <a href="../html/accountschi.html">
@@ -57,13 +57,6 @@
 
     <h1>投资随着时间的推移增长</h1>
     <canvas id="investmentChart"></canvas>
-    <div id="range-buttons">
-        <button onclick="fetchAndPlotData('3M')">3个月</button>
-        <button onclick="fetchAndPlotData('6M')">6个月</button>
-        <button onclick="fetchAndPlotData('YTD')">今年</button>
-        <button onclick="fetchAndPlotData('2Y')">两年</button>
-        <button onclick="fetchAndPlotData('ALL')">全部</button>
-    </div>
 
     <div class="content">
         <div class="dropdown">
