@@ -239,6 +239,7 @@ main {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 50px;
     margin-bottom: 70px;
+    position: relative;
 }
 
 .transfer-container h2 {
@@ -363,6 +364,56 @@ select, input[type="text"] {
     font-size: 20px; /* Adjust the size as needed */
 }
 
+#status-checkbox{
+    margin-top: 50px;
+    transform: scale(1.5); /* Adjust the scale factor as needed */
+    margin-right: 8px; /* Optional: add spacing between the checkbox and label */
+}
+
+label {
+    display: flex;
+    align-items: center;
+}
+
+.info-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 4px 10px;
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 400px;
+    background-color: #ffffff;
+    color: #000000;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    top: 50%; /* Center vertically relative to the icon */
+    left: 110%; /* Position to the right of the icon */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid black;
+    font-size: 16px;
+}
+
+.info-icon:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+
 /* Transfer button styling */
 .transfer-btn {
     width: 100%;
@@ -374,11 +425,26 @@ select, input[type="text"] {
     font-size: 1.1rem;
     cursor: pointer;
     text-transform: uppercase;
-    margin-top: 30px;
+    margin-top: 40px;
 }
 
 .transfer-btn:hover {
     background-color: #45a049;
+}
+
+#update-msg {
+    display: none;
+    position: absolute; 
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%); 
+    z-index: 1000; 
+    text-align: center; 
+    background-color: white;
+    border: 2px solid black; 
+    padding: 10px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 /* Language switch button styling */
@@ -398,3 +464,7 @@ select, input[type="text"] {
 .language-btn:hover {
     background-color: #d3d3d3;
 }
+
+
+
+
