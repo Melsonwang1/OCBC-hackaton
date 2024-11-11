@@ -1,13 +1,13 @@
 const Investment = require("../models/investment"); 
 
 
-// Get all investments by Account ID
-const getInvestmentsByAccountId = async (req, res) => {
-    const account_id = parseInt(req.params.account_id);
+// Get all investments by User ID
+const getInvestmentsByUserId = async (req, res) => {
+    const user_id = parseInt(req.params.user_id);
         
     try{
         // Fetch investments for the given account_id
-        const investments = await Investment.getInvestmentsByAccountId(account_id);
+        const investments = await Investment.getInvestmentsByAccountId(user_id);
 
         if (!investments) {
             return res.status(404).send("No investments found for this account.");
@@ -21,11 +21,11 @@ const getInvestmentsByAccountId = async (req, res) => {
     }
 };
 
-const getInvestmentGrowthByAccountId = async (req, res) => {
-    const account_id = parseInt(req.params.account_id);
+const getInvestmentGrowthByUserId = async (req, res) => {
+    const user_id = parseInt(req.params.user_id);
 
     try {
-        const growthData = await Investment.getInvestmentGrowthByAccountId(account_id);
+        const growthData = await Investment.getInvestmentGrowthByAccountId(user_id);
 
         if (!growthData) {
             return res.status(404).send("No investment data found for this account.");
@@ -40,6 +40,6 @@ const getInvestmentGrowthByAccountId = async (req, res) => {
 }
 
 module.exports = {
-    getInvestmentsByAccountId,
-    getInvestmentGrowthByAccountId
+    getInvestmentsByUserId,
+    getInvestmentGrowthByUserId
 };

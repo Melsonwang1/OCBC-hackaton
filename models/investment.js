@@ -2,9 +2,9 @@ const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class Investment {
-    constructor(investment_id, account_id, amount, period_start, period_end, profit_loss) {
+    constructor(investment_id, user_id, amount, period_start, period_end, profit_loss) {
         this.investment_id = investment_id;
-        this.account_id = account_id;
+        this.user_id = user_id;
         this.amount = amount;
         this.period_start = period_start;
         this.period_end = period_end;
@@ -12,20 +12,20 @@ class Investment {
     }
 
     // Get all investments by Account ID
-    static async getInvestmentsByAccountId(account_id) {
+    static async getInvestmentsByAccountId(user_id) {
         let connection;
         try {
             connection = await sql.connect(dbConfig);
-            const sqlQuery = `SELECT * FROM Investment WHERE account_id = @account_id`;
+            const sqlQuery = `SELECT * FROM Investment WHERE user_id = @user_id`;
             const request = connection.request();
-            request.input('account_id', sql.Int, account_id);
+            request.input('user_id', sql.Int, user_id);
 
             const result = await request.query(sqlQuery);
 
             return result.recordset.map(
                 (row) => new Investment(
                     row.investment_id,
-                    row.account_id,
+                    row.user_id,
                     row.amount,
                     row.period_start,
                     row.period_end,
@@ -42,18 +42,18 @@ class Investment {
         }
     }
 
-    static async getInvestmentGrowthByAccountId(account_id) {
+    static async getInvestmentGrowthByAccountId(user_id) {
         let connection;
         try {
             connection = await sql.connect(dbConfig);
             const sqlQuery = `
                 SELECT amount, period_start, period_end, profit_loss
                 FROM Investment
-                WHERE account_id = @account_id
+                WHERE user_id = @user_id
                 ORDER BY period_start ASC;
             `;
             const request = connection.request();
-            request.input('account_id', sql.Int, account_id);
+            request.input('user_id', sql.Int, user_id);
 
             const result = await request.query(sqlQuery);
 

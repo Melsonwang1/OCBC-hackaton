@@ -34,9 +34,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Display the user's name
             document.getElementById("user-name").innerText = user.name.toUpperCase();
 
-            let account_id = user.account_id;
-            console.log(account_id);
-            await fetchAndPlotData(account_id);
+            let user_id = user.user_id;
+            console.log(user_id);
+            await fetchAndPlotData(user_id);
         } catch (error) {
             console.log('Error in getUserData:', error.message);
             // Step 2: Handle invalid or expired token
@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     await getUserData();
 });
 
-async function fetchAndPlotData(account_id) {
+async function fetchAndPlotData(user_id) {
     try {
-        const response = await fetch(`/investments/growth/${account_id}`);
+        const response = await fetch(`/investments/growth/${user_id}`);
         if (!response.ok) throw new Error("Failed to fetch investment growth data");
 
         const data = await response.json();
@@ -86,8 +86,13 @@ async function fetchAndPlotData(account_id) {
             index === 0 ? initialInvestment : initialInvestment + item.profit_loss
         );
 
+        const barColors = values.map(value => 
+            value < initialInvestment ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'
+        );
+
         investmentChart.data.labels = labels;
         investmentChart.data.datasets[0].data = values;
+        investmentChart.data.datasets[0].backgroundColor = barColors;
         investmentChart.update();
 
         // Announce each point on the chart
@@ -106,10 +111,18 @@ const investmentChart = new Chart(ctx, {
         datasets: [{
             label: "Investment Growth",
             data: [],
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1
-        }]
+        },
+        {
+            label: "Investment Shrink",
+            data: [],
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "rgba(75, 192, 192, 0.2)",
+            borderWidth: 1
+        }
+    ]
     },
     options: {
         scales: {
