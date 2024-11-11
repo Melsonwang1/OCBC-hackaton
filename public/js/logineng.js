@@ -73,7 +73,7 @@ if (!SpeechRecognition) {
     let awaitingLoginConfirmation = false; // Tracks login confirmation
 
     // Start with forgot password prompt
-    speakBack("Have you forgotten your password? Say yes or no.");
+    speakBack("Welcome to OCBC Bank. You are currently on the login page. Would you like to login? Say yes or no.");
 
     // Start voice recognition
     startVoiceRecognition();
@@ -92,10 +92,6 @@ if (!SpeechRecognition) {
         processRecognitionResult(event);
     };
 
-    recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        speakBack(`Error: ${event.error}`);
-    };
 
     recognition.onend = () => {
         if (hasMicPermission) {
@@ -112,10 +108,10 @@ if (!SpeechRecognition) {
         // Handle forgot password confirmation
         if (awaitingForgotPassword) {
             if (spokenWord === "yes") {
-                window.location.href = "rememberpassword.html";
-            } else if (spokenWord === "no") {
                 speakBack("You are at the User ID field. Say 'switch to password' to enter password, or 'done' when completed. please say letter by letter.");
                 currentField = 'user-id';
+            } else if (spokenWord === "no") {
+                window.location.href = "startpageeng.html";
             } else {
                 speakBack("Please say yes or no.");
                 return;
@@ -206,7 +202,7 @@ if (!SpeechRecognition) {
             // Numbers with Chinese translations
             "zero": "0", "一": "1", "one": "1", "二": "2", "two": "2", "三": "3", "tree": "3", "three": "3", 
             "四": "4", "for": "4", "four": "4", "五": "5", "five": "5", "六": "6", "six": "6", 
-            "七": "7", "seven": "7", "八": "8", "eight": "8", "九": "9", "nine": "9", 
+            "七": "7", "seven": "7", "八": "8", "eight": "8", "九": "9", "nine": "9", "0": "0","1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9",
         
             // Special characters with Chinese translations
             "dollar": "$", "dollar sign": "$", "美元": "$", "hash": "#", "hashtag": "#", "hash tag": "#", "井号": "#", 
