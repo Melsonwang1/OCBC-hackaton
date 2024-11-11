@@ -163,7 +163,7 @@ function displayAccounts(accounts) {
 
     accounts.forEach(account => {
         const accountCard = document.createElement('a');
-        accountCard.href = `accountsdetails.html?accountId=${account.account_id}`;
+        accountCard.href = `accountdetailschi.html?accountId=${account.account_id}`;
         accountCard.className = 'account-card';
 
         accountCard.innerHTML = 
