@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             user = userData;
             // Display the user's name
             document.getElementById("user-name").innerText = user.name.toUpperCase();
+
+            let account_id = user.account_id;
+            console.log(account_id);
+            await fetchAndPlotData(account_id);
         } catch (error) {
             console.log('Error in getUserData:', error.message);
             // Step 2: Handle invalid or expired token
@@ -58,11 +62,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         history.replaceState(null, null, "logineng.html");
     });
 
-    let account_id = "ALL";
-
-    // Wait for user data to load before fetching bank accounts
     await getUserData();
-    await fetchAndPlotData(account_id);
 });
 
 async function fetchAndPlotData(account_id) {
@@ -73,54 +73,34 @@ async function fetchAndPlotData(account_id) {
         const data = await response.json();
         console.log(data);
 
-        // Adjust the starting value to 100 instead of zero
+        // Check if data array is empty
+        if (data.length === 0) {
+            alert("No investment growth data found for this account.");
+            return; // Exit the function if there's no data
+        }
+
+        // Initialize starting investment value
         const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const values = data.map((item, index) => index === 0 ? initialInvestment : initialInvestment + item.profit_loss);
+        const values = data.map((item, index) => 
+            index === 0 ? initialInvestment : initialInvestment + item.profit_loss
+        );
 
-        const filteredData = filterDataByRange({ labels, values }, range);
-
-        investmentChart.data.labels = filteredData.labels;
-        investmentChart.data.datasets[0].data = filteredData.values;
+        investmentChart.data.labels = labels;
+        investmentChart.data.datasets[0].data = values;
         investmentChart.update();
 
         // Announce each point on the chart
-        announceInvestmentGrowth(filteredData);
+        announceInvestmentGrowth(values);
         startListeningForNavigation();
     } catch (error) {
         console.error("Error fetching or updating chart data:", error);
     }
 }
 
-function filterDataByRange(data, range) {
-    const { labels, values } = data;
-    const today = new Date();
-    let startIndex;
-
-    switch (range) {
-        case "3M":
-            startIndex = labels.length - 3;
-            break;
-        case "6M":
-            startIndex = labels.length - 6;
-            break;
-        case "YTD":
-            startIndex = labels.findIndex(date => date.startsWith(today.getFullYear()));
-            break;
-        case "2Y":
-            startIndex = labels.length - 24;
-            break;
-        case "ALL":
-        default:
-            return data;
-    }
-    startIndex = Math.max(0, startIndex);
-    return { labels: labels.slice(startIndex), values: values.slice(startIndex) };
-}
-
 const ctx = document.getElementById("investmentChart").getContext("2d");
 const investmentChart = new Chart(ctx, {
-    type: "line",
+    type: "bar",
     data: {
         labels: [],
         datasets: [{
