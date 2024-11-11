@@ -1,3 +1,17 @@
+function resetFields() {
+    document.getElementById("user-id").value = "";
+    document.getElementById("pin").value = "";
+    currentField = 'user-id';
+
+    // Reset voice recognition state
+    awaitingForgotPassword = false; 
+    awaitingRememberMeConfirmation = false; 
+    awaitingLoginConfirmation = false;
+
+    speakBack("Login failed. Please enter your User ID again, letter by letter.");
+}
+
+
 document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById("login-button").addEventListener("click", async function(e) {
         e.preventDefault();
@@ -23,35 +37,42 @@ document.addEventListener('DOMContentLoaded', async function() {
                 },
                 body: JSON.stringify({ nric, password, rememberMe }),
             });
-
+    
             if (response.status === 404) {
-                alert("User not found!");
+                resetFields(); // Clears fields and prompts re-entry
                 return;
             }
             if (response.status === 401) {
-                alert("Incorrect password!");
+                
+                resetFields(); // Clears fields and prompts re-entry
                 return;
             }
+            
             if (!response.ok) {
                 throw new Error('Error logging in');
             }
-
+    
             const data = await response.json();
             const token = data.token;
-
+    
             // Store token based on rememberMe preference
             if (rememberMe) {
                 localStorage.setItem("token", token);
             } else {
                 sessionStorage.setItem("token", token);
             }
-
-            alert("Login successful!");
+    
+            
             window.location.href = "accountseng.html";
         } catch (error) {
-            alert("Invalid credentials!");
+            
+            resetFields();
         }
     }
+    
+
+    
+    
 });
 
 
@@ -104,11 +125,11 @@ if (!SpeechRecognition) {
         console.log("Recognized word (raw):", spokenWord);
         spokenWord = spokenWord.replace(/[^\w\s]/gi, '');
         console.log("Cleaned recognized word:", spokenWord);
-
+    
         // Handle forgot password confirmation
         if (awaitingForgotPassword) {
             if (spokenWord === "yes") {
-                speakBack("You are at the User ID field. Say 'switch to password' to enter password, or 'done' when completed. please say letter by letter.");
+                speakBack("You are at the User ID field. Say 'switch to password' to enter password, or 'done' when completed. Please say letter by letter.");
                 currentField = 'user-id';
             } else if (spokenWord === "no") {
                 window.location.href = "startpageeng.html";
@@ -119,6 +140,7 @@ if (!SpeechRecognition) {
             awaitingForgotPassword = false;
             return;
         }
+    
         // Process special characters and letter/numbers
         const specialCharacterMap = {
             "left bracket": "[", "right bracket": "]", "left parenthesis": "(", "right parenthesis": ")",
@@ -128,20 +150,18 @@ if (!SpeechRecognition) {
             processSpokenCharacter(specialCharacterMap[spokenWord], spokenWord);
             return;
         }
-
+    
         // Handle remember me confirmation
         if (awaitingRememberMeConfirmation) {
             if (spokenWord === "yes") {
                 document.getElementById("remember-me").checked = true;
                 speakBack("Remember Me option is now selected. Are you ready to log in? Say yes or no.");
-        
                 awaitingLoginConfirmation = true;
                 awaitingRememberMeConfirmation = false;
                 return;
             } else if (spokenWord === "no") {
                 document.getElementById("remember-me").checked = false;
                 speakBack("Remember Me option is disabled. Are you ready to log in? Say yes or no.");
-        
                 awaitingLoginConfirmation = true;
                 awaitingRememberMeConfirmation = false;
                 return;
@@ -150,7 +170,7 @@ if (!SpeechRecognition) {
                 return;
             }
         }
-        
+    
         // Handle login confirmation
         if (awaitingLoginConfirmation) {
             if (spokenWord === "yes") {
@@ -164,7 +184,7 @@ if (!SpeechRecognition) {
             }
             return;
         }
-        
+    
         // Switch between fields based on spoken words
         if (spokenWord.includes("change to password") || spokenWord.includes("password") || spokenWord.includes("pin")) {
             currentField = 'pin';
@@ -175,19 +195,31 @@ if (!SpeechRecognition) {
             speakBack("Switched to username field.");
             return;
         }
-
+    
         // Handle character deletion
         if (spokenWord.includes("back") || spokenWord.includes("delete") || spokenWord.includes("remove") || spokenWord.includes("erase")) {
             deleteLastCharacter();
             return;
-        } else if (spokenWord === "done") {
+        }
+    
+        // Handle the "done" keyword
+        if (spokenWord === "done") {
             const userId = document.getElementById("user-id").value;
             const password = document.getElementById("pin").value;
+    
+            // Validation check: If fields are empty, reset and prompt again
+            if (!userId || !password) {
+                resetFields();
+                speakBack("Fields are incomplete. Please start again by entering your User ID, letter by letter.");
+                return;
+            }
+    
+            // If both fields are filled, proceed to Remember Me confirmation
             speakBack(`User ID: ${userId}. Password: ${password}. Would you like me to remember you? Say yes or no.`);
             awaitingRememberMeConfirmation = true;
             return;
         }
-
+    
         // Map common letters, numbers, and symbols
         const spokenToCharMap = {
             "hey": "A", "ay": "A", "a": "A", "bee": "B", "b": "B", "be": "B", "see": "C", "sea": "C", "c": "C", 
@@ -198,28 +230,12 @@ if (!SpeechRecognition) {
             "are": "R", "r": "R", "ess": "S", "s": "S", "tee": "T", "tea": "T", "t": "T", 
             "you": "U", "u": "U", "we": "V", "vee": "V", "v": "V", 
             "double you": "W", "w": "W", "ex": "X", "x": "X", "why": "Y", "y": "Y", "zee": "Z", "z": "Z", "the": "Z",
-        
-            // Numbers with Chinese translations
-            "zero": "0", "一": "1", "one": "1", "二": "2", "two": "2", "三": "3", "tree": "3", "three": "3", 
-            "四": "4", "for": "4", "four": "4", "五": "5", "five": "5", "六": "6", "six": "6", 
-            "七": "7", "seven": "7", "八": "8", "eight": "8", "九": "9", "nine": "9", "0": "0","1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9",
-        
-            // Special characters with Chinese translations
-            "dollar": "$", "dollar sign": "$", "美元": "$", "hash": "#", "hashtag": "#", "hash tag": "#", "井号": "#", 
-            "exclamation": "!", "exclamation mark": "!", "感叹号": "!", "at": "@", "艾特": "@", "percent": "%", "per cent": "%", "百分号": "%", 
-            "caret": "^", "carrot": "^", "插入符号": "^", "ampersand": "&", "和号": "&", "plus": "+", "加号": "+", 
-            "equal": "=", "equals": "=", "等号": "=", "left bracket": "[", "right bracket": "]", 
-            "left parenthesis": "(", "right parenthesis": ")", "左括号": "(", "右括号": ")", 
-            "left curly bracket": "{", "right curly bracket": "}", "左大括号": "{", "右大括号": "}", 
-            "colon": ":", "冒号": ":", "semicolon": ";", "分号": ";", 
-            "quote": "\"", "double quote": "\"", "双引号": "\"", "single quote": "'", "单引号": "'", 
-            "comma": ",", "逗号": ",", "period": ".", "句号": ".", 
-            "slash": "/", "斜杠": "/", "backslash": "\\", "反斜杠": "\\", 
-            "pipe": "|", "竖线": "|", "less than": "<", "小于号": "<", 
-            "greater than": ">", "大于号": ">", "question mark": "?", "问号": "?", 
-            "tilde": "~", "波浪号": "~", "grave": "`", "重音符": "`"
+    
+            // Numbers
+            "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5", 
+            "six": "6", "seven": "7", "eight": "8", "nine": "9"
         };
-        
+    
         const character = spokenToCharMap[spokenWord];
         if (character) {
             processSpokenCharacter(character, spokenWord);
@@ -227,6 +243,7 @@ if (!SpeechRecognition) {
             speakBack(`Error: unrecognized input "${spokenWord}"`);
         }
     }
+    
 
     function processSpokenCharacter(character, charName) {
         const inputField = document.getElementById(currentField);
