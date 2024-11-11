@@ -223,6 +223,9 @@ const form = document.querySelector('.transfer-container form');
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    // Hide the Lottie animation at the start of the submission process
+    document.getElementById("update-msg").style.display = "none";
+
     // Get form data
     const transferFrom = parseInt(document.getElementById('transfer-from').value, 10);
     const amount = parseFloat(document.getElementById('amount').value);
@@ -286,7 +289,16 @@ form.addEventListener('submit', async (event) => {
         const result = await response.json();
         
         if (response.ok) {
-            alert("Transaction completed successfully!");
+            //alert("Transaction completed successfully!");
+
+            // Show the Lottie animation
+            document.getElementById("update-msg").style.display = "block";
+
+            // Hide the animation after 3 seconds (adjust the time as needed)
+            setTimeout(function () {
+                document.getElementById("update-msg").style.display = "none";
+            }, 4000); // 3000ms = 3 seconds
+
             // Optional: Clear form fields
             form.reset();
             document.getElementById('balance').style.display = 'none'; // Hide balance after successful transaction

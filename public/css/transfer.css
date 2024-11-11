@@ -239,6 +239,7 @@ main {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 50px;
     margin-bottom: 70px;
+    position: relative;
 }
 
 .transfer-container h2 {
@@ -398,3 +399,20 @@ select, input[type="text"] {
 .language-btn:hover {
     background-color: #d3d3d3;
 }
+
+#update-msg {
+    display: none;
+    position: absolute; /* Absolute positioning relative to .transfer-container */
+    top: 180px; /* Adjust this value to position it just above the transfer button */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Ensure it is centered horizontally */
+    z-index: 1000; /* Ensure it appears above other content */
+    text-align: center; /* Center the content */
+    background-color: white; /* White background */
+    border: 2px solid black; /* Thin black outline around the animation */
+    padding: 10px; /* Add space between the border and the content */
+    border-radius: 8px; /* Optional: Rounded corners for a softer look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for a 3D effect */
+}
+
+
