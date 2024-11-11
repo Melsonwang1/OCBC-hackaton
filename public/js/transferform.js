@@ -1,3 +1,285 @@
+
+window.addEventListener("DOMContentLoaded", () => {
+    const accountSelect = document.getElementById("transfer-from");
+    const mobileRadio = document.querySelector("input[name='transfer-to'][value='mobile']");
+    const nricRadio = document.querySelector("input[name='transfer-to'][value='nric']");
+    const mobileInput = document.getElementById("mobile");
+    const nricInput = document.getElementById("nric");
+    const enterButton = document.getElementById("enterBtn");
+    const amountInput = document.getElementById("amount");
+    const descriptionInput = document.getElementById("description"); // Add a description input element
+
+    let accountOptions = Array.from(accountSelect.options).slice(1);
+    let currentStep = "selectAccount";
+    let currentField = null;
+
+    const accountList = accountOptions.map((option, index) => `Option ${index + 1}: ${option.text}`).join(", ");
+    speakBack(`You are now on the Transfer and Payments page. Please choose an account. ${accountList}. Say the option number you would like to select.`, "en-US");
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    function startRecognitionWithTimer() {
+        recognition.start();
+        setTimeout(() => {
+            recognition.stop();
+        }, 3000);
+    }
+
+    startRecognitionWithTimer();
+
+    recognition.onresult = (event) => {
+        const spokenWord = event.results[0][0].transcript.trim().toLowerCase().replace(/[.,!?]$/g, '');
+        console.log("Recognized:", spokenWord);
+
+        if (currentStep === "selectAccount") {
+            const selectedIndex = parseInt(spokenWord) - 1;
+            if (selectedIndex >= 0 && selectedIndex < accountOptions.length) {
+                selectAccountByOption(selectedIndex);
+                speakBack(`You chose ${accountOptions[selectedIndex].text}. Do you want to transfer by mobile number or NRIC? Please say mobile number or NRIC`, "en-US");
+                currentStep = "selectMethod";
+            } else {
+                speakBack("Unrecognized account choice. Please say the option number you would like to select.", "en-US");
+            }
+        } else if (currentStep === "selectMethod") {
+            if (spokenWord === "mobile" || spokenWord === "mobile number") {
+                toggleInput('mobile');
+                currentField = "mobile";
+                speakBack("You chose mobile number. Please enter the mobile number digit by digit.", "en-US");
+                currentStep = "enterDetails";
+            } else if ( spokenWord=== "nric") {
+                toggleInput('nspokenWordric');
+                currentField = "nric";
+                speakBack("You chose NRIC. Please enter the NRIC starting with a letter, followed by digits, and ending with a letter.", "en-US");
+                currentStep = "enterDetails";
+            } else {
+                speakBack("Unrecognized transfer method. Please say 'mobile' or 'NRIC'.", "en-US");
+            }
+        } else if (currentStep === "enterDetails") {
+            if (spokenWord === "done") {
+                if (currentField === "mobile" && mobileInput.value.length !== 8) {
+                    speakBack("Mobile number must be exactly 8 digits. Please complete the number.", "en-US");
+                } else if (currentField === "nric" && (nricInput.value.length !== 9 || !/^[A-Za-z]\d{7}[A-Za-z]$/.test(nricInput.value))) {
+                    speakBack("NRIC must start with a letter, contain seven digits in between, and end with a letter. Please complete the NRIC.", "en-US");
+                } else {
+                    enterButton.click();
+                    speakBack("Please say the amount you want to transfer.", "en-US");
+                    currentStep = "enterAmount";
+                }
+            } else {
+                processUserInput(spokenWord);
+            }
+        }
+        
+         else if (currentStep === "enterAmount") {
+            const amount = parseFloat(spokenWord.replace(/[^\d.]/g, ''));
+            if (!isNaN(amount) && amount >= 0) {
+                amountInput.value = amount.toFixed(2);
+                speakBack(`You entered ${amount.toFixed(2)} dollars.`, "en-US");
+                currentStep = "addDescription";
+                speakBack("Would you like to add anything to the description?", "en-US");
+            } else {
+                speakBack("Please enter a valid amount in dollars and cents.", "en-US");
+            }
+
+        } else if (currentStep === "addDescription") {
+            if (spokenWord === "no") {
+                descriptionInput.value = ""; // Leave description blank
+                speakBack("Description left blank. Your transfer is ready.", "en-US");
+                // Move to next step or confirmation here if needed
+            } else if (spokenWord === "yes") {
+                speakBack("Please dictate your description and say 'done' when finished.", "en-US");
+                currentStep = "recordDescription";
+            } else if (currentStep === "recordDescription" && spokenWord === "done") {
+                speakBack(`Description recorded: ${descriptionInput.value}. Is this correct? Say yes or no.`, "en-US");
+                currentStep = "confirmDescription";
+            } else if (currentStep === "confirmDescription") {
+                if (spokenWord === "yes") {
+                    speakBack("Description confirmed. Your transfer is ready.", "en-US");
+                    // Move to the final step here
+                } else if (spokenWord === "no") {
+                    descriptionInput.value = ""; // Clear previous input
+                    speakBack("Please dictate your description again and say 'done' when finished.", "en-US");
+                    currentStep = "recordDescription";
+                }
+            } else {
+                descriptionInput.value += " " + spokenWord; // Append spoken words to description
+            }
+        }
+        
+    };
+
+    recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        speakBack(`Error: ${event.error}`, "en-US");
+    };
+
+    recognition.onend = () => {
+        startRecognitionWithTimer();
+    };
+
+    function toggleInput(selected) {
+        const transferInputGroup = document.querySelector('.transfer-input-group');
+        transferInputGroup.style.display = 'flex';
+        if (selected === 'mobile') {
+            mobileInput.style.display = 'block';
+            nricInput.style.display = 'none';
+            enterButton.style.display = 'block';
+        } else if (selected === 'nric') {
+            nricInput.style.display = 'block';
+            mobileInput.style.display = 'none';
+            enterButton.style.display = 'block';
+        } else {
+            mobileInput.style.display = 'none';
+            nricInput.style.display = 'none';
+            enterButton.style.display = 'none';
+        }
+    }
+
+    function speakBack(message, lang = "en-US") {
+        const speech = new SpeechSynthesisUtterance(message);
+        speech.lang = lang;
+        window.speechSynthesis.speak(speech);
+    }
+
+    function selectAccountByOption(index) {
+        accountSelect.selectedIndex = index + 1;
+    }
+
+    function processUserInput(spokenWord) {
+        const inputField = document.getElementById(currentField);
+        let currentValue = inputField.value;
+
+        const spokenToCharMap = {
+            "a": "A", "hey": "A", "ay": "A",
+            "b": "B", "bee": "B", "be": "B",
+            "c": "C", "see": "C", "sea": "C",
+            "d": "D", "dee": "D",
+            "e": "E", "ee": "E",
+            "f": "F", "eff": "F",
+            "g": "G", "gee": "G",
+            "h": "H", "aitch": "H",
+            "i": "I", "eye": "I",
+            "j": "J", "jay": "J",
+            "k": "K", "kay": "K",
+            "l": "L", "ell": "L",
+            "m": "M", "em": "M", "im": "M",
+            "n": "N", "en": "N", "anne": "N", "an": "N",
+            "o": "O", "oh": "O",
+            "p": "P", "pee": "P",
+            "q": "Q", "queue": "Q",
+            "r": "R", "are": "R",
+            "s": "S", "ess": "S",
+            "t": "T", "tee": "T",
+            "u": "U", "you": "U",
+            "v": "V", "vee": "V",
+            "w": "W", "double you": "W",
+            "x": "X", "ex": "X",
+            "y": "Y", "why": "Y",
+            "z": "Z", "zee": "Z",
+
+            // Numbers
+            "zero": "0", "0": "0",
+            "one": "1", "1": "1",
+            "two": "2", "2": "2","true": "2",
+            "three": "3", "3": "3",
+            "four": "4", "for": "4", "4": "4",
+            "five": "5", "5": "5",
+            "six": "6", "6": "6",
+            "seven": "7", "7": "7",
+            "eight": "8", "8": "8",
+            "nine": "9", "9": "9"
+        };
+
+        const character = spokenToCharMap[spokenWord];
+        console.log("Mapped character:", character);
+
+        if (!character) {
+            speakBack("Unrecognized input. Please try again.");
+            return;
+        }
+
+        if (currentField === "nric") {
+            if (currentValue.length === 0) {
+                if (/[A-Za-z]/.test(character)) {
+                    inputField.value += character;
+                    speakBack(`Added ${character}`);
+                } else {
+                    speakBack("NRIC must start with a letter.");
+                }
+            }
+            else if (currentValue.length > 0 && currentValue.length < 8) {
+                if (/\d/.test(character)) {
+                    inputField.value += character;
+                    speakBack(`Added ${character}`);
+                } else {
+                    speakBack("Please enter a digit for NRIC.");
+                }
+            }
+            else if (currentValue.length === 8) {
+                if (/[A-Za-z]/.test(character)) {
+                    inputField.value += character;
+                    speakBack(`Added ${character}`);
+                } else {
+                    speakBack("NRIC must end with a letter.");
+                }
+            }
+            else {
+                speakBack("NRIC must be exactly 9 characters long, starting and ending with letters and containing seven digits in between.");
+            }
+            
+            
+        } else if (currentField === "mobile") {
+            if (currentField === "mobile") {
+                // Ensure only digits are added to the mobile field, starts with 8 or 9, and limited to 8 digits
+                if (currentValue.length === 0) {
+                    // Check if the first character is 8 or 9
+                    if (/[89]/.test(character)) {
+                        inputField.value += character;
+                        speakBack(`Added ${character}`);
+                    } else {
+                        speakBack("Mobile number must start with 8 or 9.");
+                    }
+                } else if (currentValue.length < 8) {
+                    // Check if the next characters are digits
+                    if (/\d/.test(character)) {
+                        inputField.value += character;
+                        speakBack(`Added ${character}`);
+                    } else {
+                        speakBack("Mobile numbers can only contain digits.");
+                    }
+                } else {
+                    speakBack("Mobile number must be 8 digits long.");
+                }
+            }
+            else if (currentField === "nric") {
+                // Existing NRIC handling logic remains the same
+                if (currentValue.length === 0 || currentValue.length === 8) {
+                    if (/[A-Za-z]/.test(character)) {
+                        inputField.value += character;
+                        speakBack(`Added ${character}`);
+                    } else {
+                        speakBack("NRIC must start and end with a letter.");
+                    }
+                } else if (currentValue.length > 0 && currentValue.length < 8) {
+                    if (/\d/.test(character)) {
+                        inputField.value += character;
+                        speakBack(`Added ${character}`);
+                    } else {
+                        speakBack("Please enter a number for NRIC.");
+                    }
+                } else {
+                    speakBack("NRIC must be 9 characters long.");
+                }
+            }
+            
+        }
+    }
+});
+
+
 // Function to check if the user is currently focused on an input or textarea
 function isTyping() {
     const activeElement = document.activeElement;
@@ -397,259 +679,4 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
 
 
 
-async function narrate(message) {
-    if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
-        utterance.rate = 1;
-        window.speechSynthesis.speak(utterance);
-    } else {
-        console.error("Speech Synthesis is not supported in this browser.");
-    }
-}
 
-async function announceAccountsAndListen(userId) {
-    const accountsData = await fetchAccounts(userId);
-
-    if (accountsData && accountsData.account && accountsData.account.length > 0) {
-        narrate(`Welcome to your accounts page. You have the following accounts:`);
-
-        accountsData.account.forEach((account, index) => {
-            const accountEnding = account.account_number.slice(-3);
-            narrate(`Account ${index + 1}: ${account.account_name} ending in ${accountEnding}.`);
-        });
-
-        narrate("Please say the number of the account you'd like to check the balance for.");
-        startListeningForAccountSelection(accountsData.account);
-    } else {
-        narrate("No accounts found.");
-    }
-}
-
-async function fetchAccounts(userId) {
-    try {
-        const response = await fetch(`/accounts/accountnameandnumber/${userId}`);
-        if (!response.ok) throw new Error(`Error status: ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching accounts data:', error);
-        return null;
-    }
-}
-
-function startListeningForAccountSelection(accounts) {
-    if (!('webkitSpeechRecognition' in window)) {
-        console.error("Speech Recognition is not supported in this browser.");
-        return;
-    }
-
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-        const numberMatch = transcript.match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\b/);
-
-        if (numberMatch) {
-            let accountIndex;
-            const numberWord = numberMatch[1];
-            switch (numberWord) {
-                case "one": accountIndex = 0; break;
-                case "two": accountIndex = 1; break;
-                case "three": accountIndex = 2; break;
-                case "four": accountIndex = 3; break;
-                case "five": accountIndex = 4; break;
-                case "six": accountIndex = 5; break;
-                case "seven": accountIndex = 6; break;
-                case "eight": accountIndex = 7; break;
-                case "nine": accountIndex = 8; break;
-                case "ten": accountIndex = 9; break;
-                default: accountIndex = parseInt(numberWord) - 1;
-            }
-
-            if (accountIndex >= 0 && accountIndex < accounts.length) {
-                const selectedAccount = accounts[accountIndex];
-                narrate(`Fetching balance for ${selectedAccount.account_name} ending in ${selectedAccount.account_number.slice(-3)}.`);
-
-                const transferFromDropdown = document.getElementById("transfer-from");
-                transferFromDropdown.value = selectedAccount.account_id;
-
-                fetchAndAnnounceBalance(selectedAccount.account_id).then(() => {
-                    startListeningForTransferMethod();
-                });
-            } else {
-                narrate("Invalid selection. Please say a number corresponding to the account you want.");
-            }
-        } else {
-            narrate("Sorry, I didn't understand that. Please say the number of the account you want to check.");
-        }
-    };
-
-    recognition.start();
-}
-
-async function fetchAndAnnounceBalance(accountId) {
-    try {
-        const response = await fetch(`/accounts/account/${accountId}`);
-        if (!response.ok) throw new Error(`Error status: ${response.status}`);
-        
-        const accountData = await response.json();
-        const balanceHave = accountData.account.balance_have.toFixed(2);
-
-        narrate(`The balance for this account is ${balanceHave} SGD.`);
-        document.getElementById('balance-amount').innerText = balanceHave;
-    } catch (error) {
-        console.error('Error fetching account balance:', error);
-        narrate("There was an error fetching the balance for this account.");
-    }
-}
-
-function startListeningForTransferMethod() {
-    if (!('webkitSpeechRecognition' in window)) {
-        console.error("Speech Recognition is not supported in this browser.");
-        return;
-    }
-
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-
-        if (transcript.includes("mobile")) {
-            document.querySelector("input[value='mobile']").checked = true;
-            toggleInput("mobile");
-            narrate("Please enter the mobile number character by character.");
-            startListeningForCharacterEntry();
-        } else if (transcript.includes("nric")) {
-            document.querySelector("input[value='nric']").checked = true;
-            toggleInput("nric");
-            narrate("Please enter the NRIC character by character.");
-            startListeningForCharacterEntry();
-        } else {
-            narrate("Sorry, I didn't understand. Please say mobile number or NRIC.");
-        }
-    };
-
-    recognition.start();
-}
-
-function startListeningForAccountSelection(accounts) {
-    if (!('webkitSpeechRecognition' in window)) {
-        console.error("Speech Recognition is not supported in this browser.");
-        return;
-    }
-
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-        // Improved pattern to catch words and digits from one to ten
-        const numberMatch = transcript.match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\b/);
-
-        if (numberMatch) {
-            let accountIndex;
-            const numberWord = numberMatch[1];
-            switch (numberWord) {
-                case "one": accountIndex = 0; break;
-                case "two": accountIndex = 1; break;
-                case "three": accountIndex = 2; break;
-                case "four": accountIndex = 3; break;
-                case "five": accountIndex = 4; break;
-                case "six": accountIndex = 5; break;
-                case "seven": accountIndex = 6; break;
-                case "eight": accountIndex = 7; break;
-                case "nine": accountIndex = 8; break;
-                case "ten": accountIndex = 9; break;
-                default: accountIndex = parseInt(numberWord) - 1;
-            }
-
-            if (accountIndex >= 0 && accountIndex < accounts.length) {
-                const selectedAccount = accounts[accountIndex];
-                narrate(`Fetching balance for ${selectedAccount.account_name} ending in ${selectedAccount.account_number.slice(-3)}.`);
-
-                // Set the selected account in the transfer form dropdown
-                const transferFromDropdown = document.getElementById("transfer-from");
-                transferFromDropdown.value = selectedAccount.account_id;
-
-                // Announce the balance for the selected account
-                fetchAndAnnounceBalance(selectedAccount.account_id).then(() => {
-                    // Start listening for transfer method after announcing balance
-                    startListeningForTransferMethod();
-                });
-            } else {
-                narrate("Invalid selection. Please say a number corresponding to the account you want.");
-            }
-        } else {
-            narrate("Sorry, I didn't understand that. Please say the number of the account you want to check.");
-        }
-    };
-
-    recognition.start();
-}
-
-function toggleInput(type) {
-    const mobileInput = document.getElementById('mobile');
-    const nricInput = document.getElementById('nric');
-    const transferInputGroup = document.querySelector('.transfer-input-group');
-
-    transferInputGroup.style.display = 'block';
-
-    if (type === 'mobile') {
-        mobileInput.style.display = 'block';
-        nricInput.style.display = 'none';
-        mobileInput.value = '';
-        mobileInput.addEventListener('input', validateMobileNumber);
-        nricInput.removeEventListener('input', validateNRIC);
-    } else if (type === 'nric') {
-        mobileInput.style.display = 'none';
-        nricInput.style.display = 'block';
-        nricInput.value = '';
-        nricInput.addEventListener('input', validateNRIC);
-        mobileInput.removeEventListener('input', validateMobileNumber);
-    }
-}
-
-function validateMobileNumber(event) {
-    const input = event.target;
-    const value = input.value;
-
-    // Check that the first character is 8 or 9
-    if (value.length === 1 && !/[89]/.test(value[0])) {
-        input.value = ''; // Clear input if first character is not 8 or 9
-        narrate("Mobile number must start with 8 or 9.");
-        return;
-    }
-
-    // Ensure input is a digit and length doesn't exceed 8
-    if (!/^\d+$/.test(value) || value.length > 8) {
-        input.value = value.slice(0, -1); // Remove invalid character
-        narrate("Mobile number can only be 8 digits.");
-    }
-}
-
-function validateNRIC(event) {
-    const input = event.target;
-    const value = input.value.toUpperCase(); // Convert to uppercase for consistency
-    input.value = value; // Update the input to reflect uppercase letters
-
-    // Validate the NRIC format: start with a letter, middle characters are digits, last character is a letter
-    if (value.length === 1 && !/[A-Z]/.test(value[0])) {
-        input.value = ''; // Clear input if first character is not a letter
-        narrate("NRIC must start with an alphabet.");
-        return;
-    }
-    if (value.length > 1 && value.length < 9 && !/\d/.test(value[value.length - 1])) {
-        input.value = value.slice(0, -1); // Clear input if middle characters are not digits
-        narrate("NRIC middle characters must be digits.");
-        return;
-    }
-    if (value.length === 9 && !/[A-Z]/.test(value[8])) {
-        input.value = value.slice(0, -1); // Clear input if last character is not a letter
-        narrate("NRIC must end with an alphabet.");
-    }
-}
