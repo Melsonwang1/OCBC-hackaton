@@ -21,7 +21,22 @@
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
 
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">Hover to listen: <b>OFF</b></span>
+        </div>
+
         <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
+            </div>
+            
             <div class="language-switch">
                 <a href="transferchi.html" class="language-btn">中文</a>
             </div>
