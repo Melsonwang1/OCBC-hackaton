@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Check if token is null before proceeding
     if (!token) {
-        alert("Your session has expired or you are not logged in. Please log in again.");
-        window.location.href = "logineng.html"; // Redirect to login page
+        alert("请您重新登录以继续");
+        window.location.href = "loginchi.html"; // Redirect to login page
         return; // Stop execution
     }
 
@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log('Error in getUserData:', error.message);
             // Step 2: Handle invalid or expired token
             if (error.message === 'Forbidden: Invalid or expired token') {
-                alert("Times out. Please login again!");
+                alert("请您重新登录以继续!");
                 localStorage.setItem("token", null); // Properly remove token from local storage
                 sessionStorage.removeItem("token"); // Remove token from session storage
-                window.location.href = "logineng.html"; // Redirect to login
+                window.location.href = "loginchi.html"; // Redirect to login
             } else if (error.message === 'Unauthorized') {
-                alert("Please login first!");
-                window.location.href = "logineng.html"; // Redirect to login
+                alert("请先登录!");
+                window.location.href = "loginchi.html"; // Redirect to login
             } else {
-                console.error('Unexpected error:', error);
+                console.error('出现错误:', error);
             }
         }
     }
@@ -68,14 +68,14 @@ document.addEventListener('DOMContentLoaded', async function() {
 async function fetchAndPlotData(user_id) {
     try {
         const response = await fetch(`/investments/growth/${user_id}`);
-        if (!response.ok) throw new Error("Failed to fetch investment growth data");
+        if (!response.ok) throw new Error("无法取得投资图表");
 
         const data = await response.json();
         console.log(data);
 
         // Check if data array is empty
         if (data.length === 0) {
-            alert("No investment growth data found for this account.");
+            alert("此账户无任何投资资料.");
             return; // Exit the function if there's no data
         }
 
@@ -95,11 +95,14 @@ async function fetchAndPlotData(user_id) {
         investmentChart.data.datasets[0].backgroundColor = barColors;
         investmentChart.update();
 
-        // Announce each point on the chart
-        announceInvestmentGrowth(labels, values);
-        startListeningForNavigation();
+        if (!ttsEnabled) {
+            // Announce each point on the chart
+            announceInvestmentGrowth(labels, values);
+            startListeningForNavigation();
+        }
+        
     } catch (error) {
-        console.error("Error fetching or updating chart data:", error);
+        console.error("出现错误:", error);
     }
 }
 
@@ -126,16 +129,11 @@ const investmentChart = new Chart(ctx, {
     },
     options: {
         scales: {
-            x: { type: "time",
-                 time: { 
-                    unit: "month" },
-                },
-                locale: 'zh-CN'
-            },
+            x: { type: "time", time: { unit: "month" } },
             y: { beginAtZero: true }
         }
     }
-);
+});
 
 function toggleDropdown(id) {
     const content = document.getElementById(id);
@@ -155,8 +153,8 @@ document.addEventListener("keydown", (event) => {
         case "3":
             window.location.href = "../html/investmentchi.html";
             break;
-        case "e":
-            window.location.href = "../html/accountseng.html";
+        case "c":
+            window.location.href = "../html/accountschi.html";
             break;
         case "l":
             window.location.href = "loginchi.html";
@@ -199,7 +197,7 @@ function narrate(message) {
         utterance.rate = 1;
         window.speechSynthesis.speak(utterance);
     } else {
-        console.error("该浏览器不支持语音合成。");
+        console.error("该浏览器不支持语音合成");
     }
 }
 
@@ -216,7 +214,7 @@ function announceInvestmentGrowth(labels, values) {
             const value = values[index];
             const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);
 
-            let message = `在${date}，您的投资为${valueText}新加坡元`;
+            let message = `在${date}，您的投资为${valueText}新币`;
 
             if (index > 0) {
                 const previousValue = values[index - 1];
@@ -224,7 +222,7 @@ function announceInvestmentGrowth(labels, values) {
                 const growthPercentage = ((growthAmount / previousValue) * 100).toFixed(2);
                 const growthAmountText = growthAmount % 1 === 0 ? growthAmount.toFixed(0) : growthAmount.toFixed(2);
 
-                message += `，较前一个数据点变化为${growthAmountText}新加坡元，增长率为${growthPercentage}%。`;
+                message += `, 比较前一个数据点变化为${growthAmountText}新币, 增长率为${growthPercentage}%。`;
             }
 
             narrate(message);
@@ -236,7 +234,10 @@ function announceInvestmentGrowth(labels, values) {
     narrate("您想转账、查看账户，还是查看交易记录？");
 }
 
+// Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     if (!('webkitSpeechRecognition' in window)) {
         console.error("该浏览器不支持语音识别。");
         return;
@@ -252,7 +253,7 @@ function startListeningForNavigation() {
     };
 
     recognition.onerror = function(event) {
-        if (event.error !== 'no-speech') {
+        if (!ttsEnabled && event.error !== 'no-speech') {
             narrate("抱歉，我没听清楚。请说转账、查看账户，或查看交易记录。");
         }
     };
@@ -264,14 +265,141 @@ function startListeningForNavigation() {
     recognition.start();
 }
 
+// Handle the user's response to navigation prompt
 function handleUserResponse(response) {
-    if (response.includes("转账") || response.includes("发送") || response.includes("发") || response.includes("转账") || response.includes("转移")) {
-        window.location.href = "transferchi.html";
-    } else if (response.includes("交易") || response.includes("交易记录") || response.includes("进行交易")) {
-        window.location.href = "accountsdetailschi.html";
-    } else if (response.includes("账户") || response.includes("查看账户")) {
-        window.location.href = "accountsengchi.html";
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
+    if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transferring")) {
+        window.location.href = "transfer.html";
+    } else if (response.includes("transaction") || response.includes("transactions") || response.includes("transacting")) {
+        window.location.href = "accountsdetails.html";
+    } else if (response.includes("account") || response.includes("accounts")) {
+        window.location.href = "accountseng.html";
     } else {
         narrate("抱歉，我没听清楚。请说转账、查看账户，或查看交易记录。");
     }
 }
+
+// State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
+let ttsEnabled = false;
+
+// Function to trigger speech
+function speakText(text) {
+    if (ttsEnabled) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        // Create a new utterance and speak the text
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.7; // Speed of speech (1 is normal speed)
+        utterance.pitch = 0.7; // Pitch of speech (1 is normal pitch)
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// Toggle the TTS state (on/off)
+function toggleTTS() {
+    ttsEnabled = !ttsEnabled;
+    const statusText = document.getElementById('tts-status');
+    const toggleButton = document.getElementById('toggle-tts');
+    if (ttsEnabled) {
+        statusText.innerHTML = '语音助读: <strong>开启</strong>';
+    } else {
+        statusText.innerHTML = '语音助读: <strong>关闭</strong>';
+    }
+}
+
+// You can also trigger speech for dynamic content
+window.onload = function () {
+    // Welcome message will be spoken when the page loads if TTS is enabled
+    if (ttsEnabled) {
+        const welcomeMessage = document.getElementById('welcome-message');
+        speakText(welcomeMessage.innerText); // Speak "Welcome, user" message
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Find the account list and account cards
+    const accountsList = document.getElementById('accounts-list');
+    // Sample accounts (You can replace this with dynamically loaded data)
+    const accounts = [];
+    // Function to create account card elements
+    function createAccountCards() {
+        accounts.forEach(account => {
+            const accountCard = document.createElement('button');
+            accountCard.classList.add('account-card');
+            accountCard.setAttribute('aria-label', account.name);
+            accountCard.setAttribute('tabindex', '0'); // Makes it focusable with Tab
+            accountCard.innerText = account.name;
+            accountCard.addEventListener('click', () => {
+                alert(`您正在查看: ${account.name}`);
+                // You can add logic to open the account details page here.
+            });
+            accountsList.appendChild(accountCard);
+        });
+    }
+    // Call function to create account cards
+    createAccountCards();
+    // Handle Tab navigation only within account selection
+    document.addEventListener('keydown', function(event) {
+        // Only process Tab key (Forward or Shift + Tab for backward)
+        if (event.key === 'Tab') {
+            const focusableElements = Array.from(accountsList.querySelectorAll('.account-card'));
+            const currentIndex = focusableElements.findIndex(el => el === document.activeElement);
+            if (event.shiftKey) { 
+                // If Shift + Tab, go backward
+                const prevIndex = currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
+                focusableElements[prevIndex].focus();
+                event.preventDefault(); // Prevent default tabbing behavior
+            } else {
+                // If Tab (forward), go forward
+                const nextIndex = currentIndex < focusableElements.length - 1 ? currentIndex + 1 : 0;
+                focusableElements[nextIndex].focus();
+                event.preventDefault(); // Prevent default tabbing behavior
+            }
+        }
+    });
+});
+
+// Event listener for keydown event
+document.addEventListener('keydown', function(event) {
+    // Check if the left or right arrow key is pressed
+    if (event.key === 'ArrowLeft') {
+        // Go to the previous page (like undo)
+        window.history.back();
+    } else if (event.key === 'ArrowRight') {
+        // Go to the next page (like redo)
+        window.history.forward();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Show the list by default on page load
+    shortcutList.style.display = "block";
+    icon.classList.add("up");  // Initially show the downward arrow
+    keyboardNote.style.maxHeight = "500px"; // Adjust to accommodate the expanded list
+});
+
+document.getElementById("keyboard-shortcut-header").addEventListener("click", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Toggle the visibility of the shortcut list with animation
+    if (shortcutList.classList.contains("collapsed")) {
+        shortcutList.classList.remove("collapsed");
+        icon.classList.add("up");
+        keyboardNote.style.maxHeight = "500px"; // Adjust based on content
+    } else {
+        shortcutList.classList.add("collapsed");
+        icon.classList.remove("up");
+        keyboardNote.style.maxHeight = "50px"; // Collapse back
+    }
+});
+

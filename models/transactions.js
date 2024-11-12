@@ -52,7 +52,7 @@ class Transaction {
 
     
 
-    static async createTransaction(user_id, amount, description, status, phoneNumber = null, nric = null) {
+    static async createTransaction(account_id, amount, description, status, phoneNumber = null, nric = null) {
         if (phoneNumber === null && nric === null) {
             throw new Error("Either phone number or NRIC must be provided.");
         }
@@ -67,16 +67,10 @@ class Transaction {
             const connection = await sql.connect(dbConfig);
     
             const sqlQuery = `
-                DECLARE @source_account_id INT;
                 DECLARE @destination_account_id INT;
                 DECLARE @source_balance_have DECIMAL(10, 2);
                 DECLARE @input_amount DECIMAL(10, 2) = @input_amount_param;
                 DECLARE @input_status NVARCHAR(50) = @input_status_param;
-    
-                -- Get the source account ID for the provided user_id
-                SELECT @source_account_id = account_id
-                FROM Account
-                WHERE user_id = @user_id;
     
                 -- Identify destination account based on phoneNumber or NRIC
                 SELECT @destination_account_id = a.account_id
@@ -84,11 +78,6 @@ class Transaction {
                 JOIN Account a ON u.user_id = a.user_id
                 WHERE (@phoneNumber IS NOT NULL AND u.phoneNumber = @phoneNumber)
                    OR (@nric IS NOT NULL AND u.nric = @nric);
-    
-                IF @source_account_id IS NULL
-                BEGIN
-                    THROW 50000, 'Source account not found for the provided user_id.', 1;
-                END
     
                 IF @destination_account_id IS NULL
                 BEGIN
@@ -98,7 +87,7 @@ class Transaction {
                 IF @input_status = 'completed'
                 BEGIN
                     -- Check balance and perform deduction for completed status
-                    SELECT @source_balance_have = balance_have FROM Account WHERE account_id = @source_account_id;
+                    SELECT @source_balance_have = balance_have FROM Account WHERE account_id = @account_id;
                     IF @source_balance_have < @input_amount
                     BEGIN
                         THROW 50000, 'Insufficient balance in the source account.', 1;
@@ -106,7 +95,7 @@ class Transaction {
                     -- Deduct from source account
                     UPDATE Account
                     SET balance_have = balance_have - @input_amount
-                    WHERE account_id = @source_account_id;
+                    WHERE account_id = @account_id;
     
                     -- Add to destination account
                     UPDATE Account
@@ -117,7 +106,7 @@ class Transaction {
                 -- Insert transaction records with proper sign for 'pending' status
                 INSERT INTO Transactions (account_id, amount, status, description, date_of_transaction, created_at, updated_at)
                 VALUES (
-                    @source_account_id,
+                    @account_id,
                     CASE WHEN @input_status = 'completed' THEN -@input_amount ELSE -@input_amount END, 
                     @input_status, 
                     @description, 
@@ -139,7 +128,7 @@ class Transaction {
             `;
     
             const request = connection.request();
-            request.input('user_id', sql.Int, user_id);
+            request.input('account_id', sql.Int, account_id);
             request.input('phoneNumber', sql.VarChar, phoneNumber);
             request.input('nric', sql.VarChar, nric);
             request.input('input_amount_param', sql.Decimal(10, 2), amount);
@@ -153,6 +142,7 @@ class Transaction {
             throw error;
         }
     }
+    
     
     
     

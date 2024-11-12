@@ -149,6 +149,9 @@ function displayTransactions(transactions) {
     const container = document.getElementById('transaction-list');
     if (container) {
         container.innerHTML = '';
+        // Sort transactions by date in descending order
+        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
         transactions.forEach(transaction => {
             const amountClass = transaction.transactionAmount >= 0 ? 'value-positive' : 'value-negative';
             const amountSign = transaction.transactionAmount >= 0 ? '+' : '-';
