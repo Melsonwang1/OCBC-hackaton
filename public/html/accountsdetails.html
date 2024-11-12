@@ -19,6 +19,15 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
+
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">Hover to listen: <b>OFF</b></span>
+        </div>
     
         <div class="header-right">
             <div class="language-switch">
@@ -26,7 +35,7 @@
             </div>
     
             <div class="logout">
-                <button id="logout-btn"> 
+                <button id="logout-btn" onmouseover="speakText('Click here to Logout')"> 
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -36,7 +45,7 @@
 
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome">Welcome, <span id="user-name"></span></div>
+        <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
 
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -44,51 +53,51 @@
                 <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
             </p>
             <ul id="shortcut-list">
-                <li><span class="shortcut-key">1</span> → View Accounts</li>
-                <li><span class="shortcut-key">2</span> → Transfer Money</li>
-                <li><span class="shortcut-key">3</span> → Investments</li>
-                <li><span class="shortcut-key">c</span> → Chinese Translation</li>
-                <li><span class="shortcut-key">l</span> → Log Out</li>
-                <li><span class="shortcut-key">←</span> → Previous Page</li>
-                <li><span class="shortcut-key">→</span> → Next Page</li>
-                <li><span class="shortcut-key">↑</span> → Scroll Up</li>
-                <li><span class="shortcut-key">↓</span> → Scroll Down</li>
+                <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
+                <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
+                <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
+                <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">c</span> → Chinese Translation</li>
+                <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">l</span> → Log Out</li>
+                <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
+                <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
+                <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
+                <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
             </ul>
         </div>
 
 
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message">What would you like to do today?</h2>
+        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountseng.html" class="active">
+            <a href="../html/accountseng.html" class="active" onmouseover="speakText('Click here to View Accounts')">
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts</a>
-            <a href="../html/transfer.html">
+            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 Transfer Money</a>
-            <a href="../html/investmenteng.html">
+            <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view Investments')">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments</a> 
         </div>
 
         <!-- Account Details Section -->
         <div class="account-details">
-            <h2></h2>
-            <p>Account Number: <span class="account-number"></span></p>
+            <h2 onmouseover="speakText('This is' + document.querySelector('.account-details h2').textContent)"></h2>
+            <p onmouseover="speakText('Your Account Number is' + document.querySelector('.account-number').textContent)">Account Number: <span class="account-number"></span></p>
 
             <div class="balance-summary">
-                <div class="balance-item positive"> 
+                <div class="balance-item positive" onmouseover="speakText('Currently, you have SGD ' + document.querySelector('.balance-item.positive .value').textContent)"> 
                     <div class="balance-icon positive">
                         <img src="../pics/what_you_have.png" alt="What You Have Icon" class="what-you-have-icon">
                     </div>
-                    <p>What you have:</p>
+                    <p >What you have:</p>
                     <p class="amount positive">
                         <span class="currency">SGD</span> 
                         <span class="value">0.00</span> 
                     </p>
                 </div>
-                <div class="balance-item negative"> 
+                <div class="balance-item negative" onmouseover="speakText('Currently, you owe SGD ' + document.querySelector('.balance-item.negative .value').textContent)"> 
                     <div class="balance-icon negative">
                         <img src="../pics/what_you_owe.png" alt="What You Owe Icon" class="what-you-owe-icon">
                     </div>

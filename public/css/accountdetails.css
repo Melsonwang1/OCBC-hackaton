@@ -154,18 +154,18 @@ header .logout button .login-icon {
 
 /* Welcome message styling */
 .welcome {
-    font-size: 32px;
-    margin-bottom: 60px;
+    font-size: 27px;
+    margin-bottom: 50px;
     margin-top: 40px;
     font-weight: bold;
     text-align: left;
     margin-left: 90px;
-    
 }
+
 
 .welcome-message {
     text-align: center; 
-    font-size: 24px; 
+    font-size: 30px; 
     margin-bottom: 20px; 
     font-weight: bold; 
 }
@@ -486,4 +486,68 @@ section {
 
 .language-btn:hover {
     background-color: #d3d3d3;
+}
+
+/* Positioning the TTS toggle and status */
+.tts-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between slider and status text */
+    margin-left: 700px;
+}
+
+/* Slider container */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide the default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Slider background */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+/* The circle inside the slider */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    border-radius: 50%;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+}
+
+/* When the checkbox is checked, move the circle to the right */
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Status text style */
+#tts-status {
+    font-size: 18px;
+    color: #333;
 }
