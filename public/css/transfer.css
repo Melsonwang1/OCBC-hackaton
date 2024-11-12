@@ -448,6 +448,16 @@ label {
 }
 
 /* Language switch button styling */
+.header-right {
+    display: flex;
+    align-items: center; /* Aligns language switch and logout button vertically */
+}
+
+/* Language switch button styling */
+.language-switch {
+    margin-right: 20px; /* Space between language switch and logout button */
+}
+
 .language-btn {
     font-family: 'Poppins', sans-serif;
     font-size: 22px; /* Increased font size */
@@ -464,7 +474,5 @@ label {
 .language-btn:hover {
     background-color: #d3d3d3;
 }
-
-
 
 

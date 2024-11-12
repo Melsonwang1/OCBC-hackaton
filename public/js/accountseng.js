@@ -100,6 +100,8 @@ function narrate(message) {
 
 // Announce the account details dynamically
 function announceAccountDetails(accounts) {
+    if (ttsEnabled) return;  // If TTS is enabled, don't announce account details (zb)
+
     narrate("Welcome to your accounts page. Here are your account details:");
 
     accounts.forEach((account, index) => {
@@ -116,6 +118,8 @@ function announceAccountDetails(accounts) {
 
 // Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
+    if (ttsEnabled) return;  // If TTS is enabled, don't start navigation listenin (zb)
+
     if (!('webkitSpeechRecognition' in window)) {
         console.error("Speech Recognition is not supported in this browser.");
         return;
@@ -131,7 +135,7 @@ function startListeningForNavigation() {
     };
 
     recognition.onerror = function(event) {
-        if (event.error !== 'no-speech') {
+        if (!ttsEnabled && event.error !== 'no-speech') {
             narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
         }
     };
@@ -146,6 +150,8 @@ function startListeningForNavigation() {
 
 // Handle the user's response to navigation prompt
 function handleUserResponse(response) {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     if (response.includes("transfer")||response.includes("sending")|| response.includes("send")|| response.includes("transfers")|| response.includes("transfering")) {
         window.location.href = "transfer.html";
     } else if (response.includes("investments")||response.includes("investment")||response.includes("investing")||response.includes("invest")) {
@@ -156,6 +162,46 @@ function handleUserResponse(response) {
         narrate("Sorry, I didn't understand that. Please say Transfer Money, Check Investments, or View Transactions.");
     }
 }
+
+// State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
+let ttsEnabled = false;
+
+// Function to trigger speech
+function speakText(text) {
+    if (ttsEnabled) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        // Create a new utterance and speak the text
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.7; // Speed of speech (1 is normal speed)
+        utterance.pitch = 0.7; // Pitch of speech (1 is normal pitch)
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// Toggle the TTS state (on/off)
+function toggleTTS() {
+    ttsEnabled = !ttsEnabled;
+    const statusText = document.getElementById('tts-status');
+    const toggleButton = document.getElementById('toggle-tts');
+    if (ttsEnabled) {
+        statusText.innerHTML = 'Hover to listen: <strong>ON</strong>';
+    } else {
+        statusText.innerHTML = 'Hover to listen: <strong>OFF</strong>';
+    }
+}
+
+// You can also trigger speech for dynamic content
+window.onload = function () {
+    // Welcome message will be spoken when the page loads if TTS is enabled
+    if (ttsEnabled) {
+        const welcomeMessage = document.getElementById('welcome-message');
+        speakText(welcomeMessage.innerText); // Speak "Welcome, user" message
+    }
+};
 
 // Display account cards and set up narration and listening
 function displayAccounts(accounts) {
@@ -175,16 +221,23 @@ function displayAccounts(accounts) {
             <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>`;
         
         accountsList.appendChild(accountCard);
+
+        
+        // Add text-to-speech functionality on mouse hover only if TTS is enabled
+        accountCard.onmouseover = function() {
+            if (ttsEnabled) {
+                const accountDetails = `Click this to view ${account.account_name}, with the account number ${account.account_number}. Your current balance is SGD ${account.balance_have.toFixed(2)}.`;
+                speakText(accountDetails); // Use speakText function to narrate account details
+            }
+        };
     });
 
-    // Announce account details
-    announceAccountDetails(accounts);
-
-    // Start listening for navigation commands after announcement
-    startListeningForNavigation();
+    // Only announce account details and start navigation listening if TTS is NOT enabled
+    if (!ttsEnabled) {
+        announceAccountDetails(accounts); 
+        startListeningForNavigation();
+    }
 }
-
-
 
 // Keyboard Shortcuts
 document.addEventListener('keydown', function (event) {

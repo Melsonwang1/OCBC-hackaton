@@ -25,9 +25,8 @@
             <div class="language-switch">
                 <a href="transfer.html" class="language-btn">English</a>
             </div>
-
             <div class="logout">
-                <button id="logout-btn">
+                <button id="logout-btn"> 
                     登出
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -48,7 +47,7 @@
                 <a href="../html/accountschi.html">
                     <img src="../pics/view-account.png" alt="View Icon">
                     查看账户</a>
-                <a href="../html/transfer.html" class="active">
+                <a href="../html/transferchi.html" class="active">
                     <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                     转账与支付</a>
                 <a href="../html/investmentchi.html">
@@ -108,13 +107,16 @@
 
                 <div class="form-group">
                     <label for="description">4. 转账用途:</label>
-                    <p style="padding-bottom:5px;">请写下转账的目的以及名子
+                    <p style="padding-bottom:5px;">请写下您的名字以及转账的目的
                         <br>例如: 用于支付学费, 付款人: JANE SMITH</p>
                     <!-- Description input field to be filled with dynamic value -->
                     <input type="text" id="description" placeholder="Description">
                     <!-- Checkbox for saving as a favorite transaction -->
                     <label>
-                        <br><input type="checkbox" id="status-checkbox"> 设为待完成
+                        <input type="checkbox" id="status-checkbox"> 启用24小时延迟转账 (可选)
+                        <span class="info-icon">这是什么?
+                            <span class="tooltip-text">该选项会将转账延迟24小时。在此期间, 您可以随时取消交易。24小时后, 资金将自动从您的账户扣除并完成转账。</span>
+                        </span>
                     </label> 
                 </div>
 
@@ -123,9 +125,17 @@
                     <button type="submit" class="transfer-btn">转账</button>
                 </div>
             </form>
+            <div id="update-msg" style="display: none;">
+                <div class="alert alert-success" role="alert">
+                    <dotlottie-player src="https://lottie.host/3a0e448a-e059-491a-ba78-53734f104751/5XWEjdqtkJ.json" background="transparent" speed="0.7" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+                </div>
+            </div>
+            
         </div>
     </main>
 
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
+    <script src="../js/transfer.js"></script>
 </body>
 </html>
