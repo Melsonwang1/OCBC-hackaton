@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     var user = {}; // The current user
     let token = localStorage.getItem("token") || sessionStorage.getItem("token"); // Get token from local storage
 
@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 alert("请您重新登录以继续!");
                 localStorage.setItem("token", null); // Properly remove token from local storage
                 sessionStorage.removeItem("token"); // Remove token from session storage
-                window.location.href = "loginchi.html"; // Redirect to login
+                window.location.href = "logineng.html"; // Redirect to login
             } else if (error.message === 'Unauthorized') {
                 alert("请先登录!");
-                window.location.href = "loginchi.html"; // Redirect to login
+                window.location.href = "logineng.html"; // Redirect to login
             } else {
                 console.error('出现错误:', error);
             }
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Log Out Button functionality
-    document.getElementById("logout-btn").addEventListener("click", function() {
+    document.getElementById("logout-btn").addEventListener("click", function () {
         // Step 3: Clear token on logout
         localStorage.removeItem("token");
         window.location.href = "loginchi.html";
@@ -82,11 +82,11 @@ async function fetchAndPlotData(user_id) {
         // Initialize starting investment value
         const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const values = data.map((item, index) => 
+        const values = data.map((item, index) =>
             index === 0 ? initialInvestment : initialInvestment + item.profit_loss
         );
 
-        const barColors = values.map(value => 
+        const barColors = values.map(value =>
             value < initialInvestment ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'
         );
 
@@ -100,7 +100,7 @@ async function fetchAndPlotData(user_id) {
             announceInvestmentGrowth(labels, values);
             startListeningForNavigation();
         }
-        
+
     } catch (error) {
         console.error("出现错误:", error);
     }
@@ -125,7 +125,7 @@ const investmentChart = new Chart(ctx, {
             borderColor: "rgba(75, 192, 192, 0.2)",
             borderWidth: 1
         }
-    ]
+        ]
     },
     options: {
         scales: {
@@ -202,6 +202,8 @@ function narrate(message) {
 }
 
 function announceInvestmentGrowth(labels, values) {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     narrate("欢迎来到您的投资页面。");
 
     if (labels && labels.length > 0) {
@@ -212,10 +214,11 @@ function announceInvestmentGrowth(labels, values) {
             const date = `${year}年${month}${day}日`;
 
             const value = values[index];
-            const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);
+            const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);  // Format without decimals if whole number
 
             let message = `在${date}，您的投资为${valueText}新币`;
 
+            // Announce growth only from the second data point onwards
             if (index > 0) {
                 const previousValue = values[index - 1];
                 const growthAmount = value - previousValue;
@@ -247,7 +250,7 @@ function startListeningForNavigation() {
     recognition.continuous = true;
     recognition.lang = 'zh-CN';
 
-    recognition.onresult = function(event) {
+    recognition.onresult = function (event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, "");
         handleUserResponse(transcript.toLowerCase());
     };
@@ -343,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Call function to create account cards
     createAccountCards();
     // Handle Tab navigation only within account selection
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         // Only process Tab key (Forward or Shift + Tab for backward)
         if (event.key === 'Tab') {
             const focusableElements = Array.from(accountsList.querySelectorAll('.account-card'));
@@ -364,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Event listener for keydown event
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     // Check if the left or right arrow key is pressed
     if (event.key === 'ArrowLeft') {
         // Go to the previous page (like undo)
@@ -375,7 +378,7 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     var shortcutList = document.getElementById("shortcut-list");
     var icon = document.getElementById("dropdown-icon");
     var keyboardNote = document.querySelector(".keyboard-note");
@@ -386,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardNote.style.maxHeight = "500px"; // Adjust to accommodate the expanded list
 });
 
-document.getElementById("keyboard-shortcut-header").addEventListener("click", function() {
+document.getElementById("keyboard-shortcut-header").addEventListener("click", function () {
     var shortcutList = document.getElementById("shortcut-list");
     var icon = document.getElementById("dropdown-icon");
     var keyboardNote = document.querySelector(".keyboard-note");
@@ -402,4 +405,3 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
         keyboardNote.style.maxHeight = "50px"; // Collapse back
     }
 });
-
