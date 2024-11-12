@@ -222,6 +222,7 @@ header .logout button .login-icon {
 .navbar {
     display: inline-flex;
     background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 20px;
@@ -310,6 +311,7 @@ h1 {
     cursor: pointer;
     border: none;
     background-color: #757575;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     color: #fff;
     border-radius: 5px;
     text-align: left;
