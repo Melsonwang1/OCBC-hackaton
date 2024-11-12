@@ -154,14 +154,14 @@ header .logout button .login-icon {
 
 /* Welcome message styling */
 .welcome {
-    font-size: 32px;
-    margin-bottom: 60px;
+    font-size: 27px;
+    margin-bottom: 50px;
     margin-top: 40px;
     font-weight: bold;
     text-align: left;
     margin-left: 90px;
-    
 }
+
 
 .welcome-message {
     text-align: center; 
