@@ -282,7 +282,7 @@ form.addEventListener('submit', async (event) => {
     }
 
     console.log("Transaction data being sent:", {
-        user_id: transferFrom,
+        account_id: transferFrom,
         amount,
         description,
         phoneNumber,
@@ -292,7 +292,7 @@ form.addEventListener('submit', async (event) => {
 
     try {
         const requestData = {
-            user_id: transferFrom,
+            account_id: transferFrom,
             amount: parseFloat(amount),
             description,
             phoneNumber,
