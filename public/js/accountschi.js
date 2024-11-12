@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (user && user.user_id) {
         await fetchBankAccounts(user.user_id);
     } else {
-        console.log('User ID is not available.');
+        console.log('错误账号');
     }
 });
 
@@ -105,8 +105,8 @@ async function fetchBankAccounts(userId) {
         const accounts = await response.json();
         displayAccounts(accounts); // Display the bank records
     } catch (error) {
-        console.error('Error fetching bank accounts:', error);
-        alert('No bank account records data found'); // Alert the user if no bank accounts are found
+        console.error('无法获取银行账户:', error);
+        alert('没有银行账户资料'); // Alert the user if no bank accounts are found
     }
 }
 
@@ -119,7 +119,7 @@ function narrate(message) {
         utterance.rate = 1;
         window.speechSynthesis.speak(utterance);
     } else {
-        console.error("Speech Synthesis is not supported in this browser.");
+        console.error("该浏览器不支持语音识别。");
     }
 }
 
@@ -145,7 +145,7 @@ function startListeningForNavigation() {
     if (ttsEnabled) return;  // If TTS is enabled, don't start navigation listenin (zb)
 
     if (!('webkitSpeechRecognition' in window)) {
-        console.error("Speech Recognition is not supported in this browser.");
+        console.error("该浏览器不支持语音识别。");
         return;
     }
 
