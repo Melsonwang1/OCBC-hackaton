@@ -95,9 +95,12 @@ async function fetchAndPlotData(user_id) {
         investmentChart.data.datasets[0].backgroundColor = barColors;
         investmentChart.update();
 
-        // Announce each point on the chart
-        announceInvestmentGrowth(labels, values);
-        startListeningForNavigation();
+        if (!ttsEnabled) {
+            // Announce each point on the chart
+            announceInvestmentGrowth(labels, values);
+            startListeningForNavigation();
+        }
+        
     } catch (error) {
         console.error("Error fetching or updating chart data:", error);
     }
@@ -199,6 +202,8 @@ function narrate(message) {
 }
 
 function announceInvestmentGrowth(labels, values) {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     narrate("Welcome to your investments page.");
 
     if (labels && labels.length > 0) {
@@ -234,6 +239,8 @@ function announceInvestmentGrowth(labels, values) {
 
 // Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     if (!('webkitSpeechRecognition' in window)) {
         console.error("Speech Recognition is not supported in this browser.");
         return;
@@ -249,7 +256,7 @@ function startListeningForNavigation() {
     };
 
     recognition.onerror = function(event) {
-        if (event.error !== 'no-speech') {
+        if (!ttsEnabled && event.error !== 'no-speech') {
             narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions.");
         }
     };
@@ -263,6 +270,8 @@ function startListeningForNavigation() {
 
 // Handle the user's response to navigation prompt
 function handleUserResponse(response) {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transferring")) {
         window.location.href = "transfer.html";
     } else if (response.includes("transaction") || response.includes("transactions") || response.includes("transacting")) {
@@ -273,6 +282,46 @@ function handleUserResponse(response) {
         narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions");
     }
 }
+
+// State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
+let ttsEnabled = false;
+
+// Function to trigger speech
+function speakText(text) {
+    if (ttsEnabled) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        // Create a new utterance and speak the text
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.7; // Speed of speech (1 is normal speed)
+        utterance.pitch = 0.7; // Pitch of speech (1 is normal pitch)
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// Toggle the TTS state (on/off)
+function toggleTTS() {
+    ttsEnabled = !ttsEnabled;
+    const statusText = document.getElementById('tts-status');
+    const toggleButton = document.getElementById('toggle-tts');
+    if (ttsEnabled) {
+        statusText.innerHTML = 'Hover to listen: <strong>ON</strong>';
+    } else {
+        statusText.innerHTML = 'Hover to listen: <strong>OFF</strong>';
+    }
+}
+
+// You can also trigger speech for dynamic content
+window.onload = function () {
+    // Welcome message will be spoken when the page loads if TTS is enabled
+    if (ttsEnabled) {
+        const welcomeMessage = document.getElementById('welcome-message');
+        speakText(welcomeMessage.innerText); // Speak "Welcome, user" message
+    }
+};
 
 document.addEventListener('DOMContentLoaded', function () {
     // Find the account list and account cards
