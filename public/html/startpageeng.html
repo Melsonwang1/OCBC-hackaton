@@ -14,26 +14,36 @@
 
 </head>
 <body>
-    <div class="page-container">
-        <!-- Header Section -->
-        <header>
-            <div class="logo">
-                <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo">
+            <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+        </div>
+
+        <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
             </div>
+                
+            <div class="language-switch">
+                <a href="startpagechi.html" class="language-btn">中文</a>
+            </div>
+        
             <div class="login">
                 <button onclick="window.location.href='logineng.html'">
                     Login
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Content Section -->
-        <main>
-            <section class="welcome-message">
-                <h1>Welcome to the OCBC Bank</h1>
-            </section>
-        </main>
-
-    </div>
+    <!-- Main Content Section -->
+    <main>
+        <section class="welcome-message">
+            <h1>Welcome to the OCBC Bank</h1>
+        </section>
+    </main>
 
     <!-- Footer Section --> 
     <footer class="footer">
