@@ -329,3 +329,31 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Show the list by default on page load
+    shortcutList.style.display = "block";
+    icon.classList.add("up");  // Initially show the downward arrow
+    keyboardNote.style.maxHeight = "500px"; // Adjust to accommodate the expanded list
+});
+
+document.getElementById("keyboard-shortcut-header").addEventListener("click", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Toggle the visibility of the shortcut list with animation
+    if (shortcutList.classList.contains("collapsed")) {
+        shortcutList.classList.remove("collapsed");
+        icon.classList.add("up");
+        keyboardNote.style.maxHeight = "500px"; // Adjust based on content
+    } else {
+        shortcutList.classList.add("collapsed");
+        icon.classList.remove("up");
+        keyboardNote.style.maxHeight = "50px"; // Collapse back
+    }
+});
+
