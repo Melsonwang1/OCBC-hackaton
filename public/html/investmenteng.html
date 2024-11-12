@@ -21,6 +21,15 @@
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>    
 
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">Hover to listen: <b>OFF</b></span>
+        </div>
+
         <div class="header-right">
             <div class="font-size-controls">
                 <button onclick="changeFontSize(-2)">A-</button>
