@@ -90,10 +90,10 @@ main {
 
 .login-container {
     background-color: #e0e0e0;
-    padding: 60px;
+    padding: 70px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 450px; /* Increase the width of the form */
+    width: 425px; /* Increase the width of the form */
     text-align: center;
     margin-left: 80px;
 }
