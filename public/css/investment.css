@@ -38,6 +38,27 @@ header .logo img {
     margin-right: 20px; /* Space between language switch and logout button */
 }
 
+.font-size-controls {
+    margin-right: 20px;
+}
+
+.font-size-controls button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; /* Increased font size */
+    padding: 8px 15px; /* Adjusted padding */
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px; /* Slightly larger border radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.font-size-controls button:hover {
+    background-color: #d3d3d3;
+}
+
 .language-btn {
     font-family: 'Poppins', sans-serif;
     font-size: 22px; /* Increased font size */
@@ -118,6 +139,7 @@ header .logout button .login-icon {
 .container {
     text-align: center;
     font-family: Arial, sans-serif;
+    font-size: 16px;
 }
 
 /* Welcome message styling */
@@ -218,6 +240,7 @@ h1 {
 
 .content {
     padding: 20px;
+    font-size: 14px;
 }
 
 .dropdown-btn {
@@ -274,4 +297,17 @@ h1 {
     text-align: center;
     padding: 20px;
     background-color: #f4f4f4;
+}
+
+/* Style for font size control buttons */
+.font-size-controls {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+.font-size-controls button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
 }
