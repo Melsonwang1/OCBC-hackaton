@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 alert("请先登录!");
                 window.location.href = "loginchi.html"; // Redirect to login
             } else {
-                console.error('错误:', error);
+                console.error('出现错误:', error);
             }
         }
     }
