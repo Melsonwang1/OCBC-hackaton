@@ -22,6 +22,15 @@
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
 
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">语音助读: <b>关闭</b></span>
+        </div>
+
         <div class="header-right">
             <div class="font-size-controls">
                 <button onclick="changeFontSize(-2)">A-</button>
@@ -44,6 +53,25 @@
 
     <div class="container">
         <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
+
+        <!-- Keyboard Shortcuts Note -->
+        <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+            <p id="keyboard-shortcut-header">
+                <strong>键盘快捷键:</strong> <span id="dropdown-icon"></span>
+            </p>
+            <ul id="shortcut-list">
+                <li onmouseover="speakText('查看账户请选择 1')"><span class="shortcut-key">1</span> → 查看账户</li>
+                <li onmouseover="speakText('转账与支付请选择 2')"><span class="shortcut-key">2</span> → 转账与支付</li>
+                <li onmouseover="speakText('投资页面请选择 3')"><span class="shortcut-key">3</span> → 投资</li>
+                <li onmouseover="speakText('翻译成华文请点击 C')"><span class="shortcut-key">C</span> → 翻译成华文</li>
+                <li onmouseover="speakText('登出请点击 L')"><span class="shortcut-key">L</span> → 登出</li>
+                <li onmouseover="speakText('返回上一页面请点击左箭头')"><span class="shortcut-key">←</span> → 上一页</li>
+                <li onmouseover="speakText('跳到下一页面请点击右箭头')"><span class="shortcut-key">→</span> → 下一页</li>
+                <li onmouseover="speakText('向上滑动请点击上箭头')"><span class="shortcut-key">↑</span> → 向上滑动</li>
+                <li onmouseover="speakText('向下滑动请点击下箭头')"><span class="shortcut-key">↓</span> → 向下滑动</li>
+            </ul>
+        </div>
+        
         <h2 class="welcome-message">请问您需要什么服务呢?</h2>
         <div class="navbar">
             <a href="../html/accountschi.html">
