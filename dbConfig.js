@@ -1,5 +1,5 @@
 module.exports = {
-    user: "testing1234", // Replace with your SQL Server login username (testing1234)
+    user: "test123", // Replace with your SQL Server login username (testing1234)
     password: "testingtesting1234", // Replace with your SQL Server login password (testingtesting1234)
     server: "localhost",
     database: "fsdpSQL",
