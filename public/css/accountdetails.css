@@ -29,6 +29,27 @@ header .logo img {
     margin-top: 15px;
 }
 
+.font-size-controls {
+    margin-right: 20px;
+}
+
+.font-size-controls button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; /* Increased font size */
+    padding: 8px 15px; /* Adjusted padding */
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px; /* Slightly larger border radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.font-size-controls button:hover {
+    background-color: #d3d3d3;
+}
+
 header .logout button {
     display: flex;
     align-items: center; /* Aligns text and icon vertically */
@@ -493,7 +514,7 @@ section {
     display: flex;
     align-items: center;
     gap: 10px; /* Space between slider and status text */
-    margin-left: 700px;
+    margin-left: 500px;
 }
 
 /* Slider container */
