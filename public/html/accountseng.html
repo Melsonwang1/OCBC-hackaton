@@ -18,6 +18,15 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
+        
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">Hover to listen: <b>OFF</b></span>
+        </div>
     
         <div class="header-right">
             <div class="language-switch">
@@ -25,17 +34,19 @@
             </div>
     
             <div class="logout">
-                <button id="logout-btn"> 
+                <button id="logout-btn" onmouseover="speakText('Click here to Logout')"> 
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
             </div>
         </div>
     </header>
+    
 
     <div class="container">
+
         <!-- Welcome message -->
-        <div class="welcome">Welcome, <span id="user-name"></span></div>
+        <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
 
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -43,30 +54,30 @@
                 <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
             </p>
             <ul id="shortcut-list">
-                <li><span class="shortcut-key">1</span> → View Accounts</li>
-                <li><span class="shortcut-key">2</span> → Transfer Money</li>
-                <li><span class="shortcut-key">3</span> → Investments</li>
-                <li><span class="shortcut-key">c</span> → Chinese Translation</li>
-                <li><span class="shortcut-key">l</span> → Log Out</li>
-                <li><span class="shortcut-key">←</span> → Previous Page</li>
-                <li><span class="shortcut-key">→</span> → Next Page</li>
-                <li><span class="shortcut-key">↑</span> → Scroll Up</li>
-                <li><span class="shortcut-key">↓</span> → Scroll Down</li>
+                <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
+                <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
+                <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
+                <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">c</span> → Chinese Translation</li>
+                <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">l</span> → Log Out</li>
+                <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
+                <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
+                <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
+                <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
             </ul>
         </div>
         
 
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message">What would you like to do today?</h2>
+        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountseng.html" class="active">
+            <a href="../html/accountseng.html" class="active" onmouseover="speakText('Click here to View Accounts')">
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts</a>
-            <a href="../html/transfer.html">
+            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 Transfer Money</a>
-            <a href="../html/investmenteng.html">
+            <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view Investments')">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments</a> 
         </div>
@@ -76,10 +87,10 @@
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <div class="account-selection-note">
-            <p><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
+            <p onmouseover="speakText('Use the Tab key to navigate and press Enter to view')"><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
         </div>      
-        <h2>Your Bank Accounts:</h2>
-        <p>Select an account below to view detailed information.</p>
+        <h2 onmouseover="speakText('These are your Bank Accounts')">Your Bank Accounts:</h2>
+        <p onmouseover="speakText('Select an account below to view detailed information.')">Select an account below to view detailed information.</p>
         <div id="accounts-list">
             <!-- Account cards will be inserted here by JavaScript -->
         </div>
