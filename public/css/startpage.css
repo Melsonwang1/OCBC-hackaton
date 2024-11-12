@@ -100,26 +100,54 @@ header .login button .login-icon {
 }
 
 /* Main Styles */
-main {
-    flex: 1; 
+/* Main promo section styling */
+.pic-section {
+    display: flex;
+    align-items: center;
     padding: 20px;
+    background-color: #e7e7e7;
+}
+
+/* Left promo banner and character images */
+.pic-left {
+    flex: 1;
     text-align: center;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-right: 20px;
 }
 
-.welcome-message, .highlights {
-    background-color: #e0e0e0;
+.pic-banner h2 {
+    font-size: 32px;
+    font-weight: bold;
     margin: 20px 0;
-    padding: 40px;
-    border-radius: 8px;
+    line-height: 1.2;
 }
 
-.welcome-message {
-    height: 300px;
-    font-size: 26px;
+.highlight {
+    color: #ffeb3b;
 }
 
-.highlights {
-    height: 200px;
+/* Right section with event details */
+.pic-right {
+    flex: 1;
+    color: #333;
+}
+
+.promo-right h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.promo-right ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.promo-right ul li {
+    margin-bottom: 10px;
+    line-height: 1.5;
 }
 
 /* Footer Styles */
