@@ -117,13 +117,6 @@ const investmentChart = new Chart(ctx, {
             backgroundColor: "rgba(255, 99, 132, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1
-        },
-        {
-            label: "Investment Shrink",
-            data: [],
-            backgroundColor: "rgba(255, 99, 132, 0.2)",
-            borderColor: "rgba(75, 192, 192, 0.2)",
-            borderWidth: 1
         }
     ]
     },
@@ -139,6 +132,27 @@ function toggleDropdown(id) {
     const content = document.getElementById(id);
     content.style.display = content.style.display === "block" ? "none" : "block";
 }
+
+// Function to handle navigation to account details
+function navigateToAccountDetails(accountId) {
+    window.location.href = `accountsdetails.html?accountId=${accountId + 2}`;
+}
+
+// Function to make dropdown items clickable
+function enableDropdownNavigation() {
+    // Get all dropdown items
+    const dropdownItems = document.querySelectorAll("#fixedDeposit .card");
+
+    dropdownItems.forEach((item, index) => {
+        // Assuming each card corresponds to a specific account ID
+        const accountId = index + 1; // Update this based on actual account IDs
+        item.onclick = () => navigateToAccountDetails(accountId);
+    });
+}
+
+// Call the function after the dropdown content is loaded
+enableDropdownNavigation();
+
 
 document.addEventListener("keydown", (event) => {
     if (event.altKey || event.ctrlKey || event.metaKey) return;

@@ -276,28 +276,6 @@ h1 {
     margin-left: 220px;
 }
 
-#range-buttons {
-    display: block;
-    margin: auto;
-}
-
-#range-buttons button {
-    font-family: 'Poppins', sans-serif;
-    font-size: 15px; /* Increased font size */
-    padding: 8px 15px; /* Adjusted padding */
-    background-color: #f0f0f0;
-    color: #333;
-    text-decoration: none;
-    border: none;
-    border-radius: 6px; /* Slightly larger border radius */
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#range-buttons button:hover {
-    background-color: #d3d3d3;
-}
-
 .content {
     padding: 20px;
     font-size: 14px;
@@ -333,6 +311,11 @@ h1 {
     margin-bottom: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.card:hover {
+    background-color: #ccc;
 }
 
 .card h2 {
@@ -358,19 +341,6 @@ h1 {
     text-align: center;
     padding: 20px;
     background-color: #f4f4f4;
-}
-
-/* Style for font size control buttons */
-.font-size-controls {
-    display: flex;
-    align-items: center;
-    margin-left: 20px;
-}
-.font-size-controls button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    font-size: 16px;
-    cursor: pointer;
 }
 
 /* Positioning the TTS toggle and status */
