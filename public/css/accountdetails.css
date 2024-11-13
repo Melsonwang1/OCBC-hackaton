@@ -352,8 +352,8 @@ section {
 /* Recent Transactions Styling */
 .transaction-records h3 {
     text-align: left;
-    font-size: 28px;
-    margin-bottom: 50px;
+    font-size: 32px;
+    margin-bottom: 40px;
 }
 
 /* Transaction records table styles */
