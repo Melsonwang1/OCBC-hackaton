@@ -642,16 +642,16 @@ async function announceAccountsAndListen(userId) {
             }
         };
 
-        document.getElementById("enterBtn").onclick = async function() {
+        document.getElementById("enterBtn").onclick = async function () {
             const mobileInput = document.getElementById('mobile');
             const nricInput = document.getElementById('nric');
             const errorElement = document.getElementById('error');
             const mobileRadio = document.querySelector('input[name="transfer-to"][value="mobile"]');
-
+        
             let input, url;
             if (mobileRadio.checked && /^[89]\d{7}$/.test(mobileInput.value)) {
                 input = mobileInput.value;
-                url = `/user?phoneNumber=${encodeURIComponent(input)}`; 
+                url = `/user?phoneNumber=${encodeURIComponent(input)}`;
             } else if (/^[A-Z]\d{7}[A-Z]$/.test(nricInput.value)) {
                 input = nricInput.value;
                 url = `/user/${input}`;
@@ -662,24 +662,79 @@ async function announceAccountsAndListen(userId) {
                 else nricInput.value = '';
                 return;
             }
-
+        
             try {
                 const verifyResponse = await fetch(url);
                 if (!verifyResponse.ok) throw new Error();
-
+        
                 const data = await verifyResponse.json();
                 if (data.name) {
                     synth.speak(new SpeechSynthesisUtterance(`Verified. The name is ${data.name}.`));
                     errorElement.textContent = `Verified. The name is ${data.name}.`;
-                    await fetchAndDisplayBalance(selectedAccount.account_id); // Announce balance here
+        
+                    // Ask the user to enter the dollar amount, digit by digit
+                    synth.speak(new SpeechSynthesisUtterance('Please say the amount you want to transfer in dollars, digit by digit. Say "finish" when you are done.'));
+        
+                    let transferAmount = { dollars: '', cents: '' };
+                    let isDollarInputComplete = false;
+                    
+                    recognition.onresult = (event) => {
+                        const spokenInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                        console.log(`Heard: ${spokenInput}`);
+                    
+                        if (spokenInput.includes("finish")) {
+                            if (!isDollarInputComplete) {
+                                // Move to cents input after dollars are complete
+                                isDollarInputComplete = true;
+                                console.log(`Dollars entered: ${transferAmount.dollars}`);
+                                synth.speak(new SpeechSynthesisUtterance(`You entered ${transferAmount.dollars} dollars. Now, please say the amount in cents, digit by digit. Say "finish" when you are done.`));
+                                transferAmount.cents = ''; // Reset cents input
+                            } else {
+                                // Complete the amount entry
+                                recognition.stop();
+                                const totalAmount = `${transferAmount.dollars}.${transferAmount.cents.padStart(2, '0')}`;
+                                document.getElementById('amount').value = totalAmount;
+                                console.log(`Final Transfer Amount: $${totalAmount}`);
+                                synth.speak(new SpeechSynthesisUtterance(`Your transfer of ${totalAmount} SGD has been populated in the amount field.`));
+                                return;
+                            }
+                        } else {
+                            const digit = parseInt(spokenInput, 10);
+                    
+                            if (!isNaN(digit) && digit >= 0 && digit <= 9) {
+                                if (!isDollarInputComplete) {
+                                    transferAmount.dollars += digit;
+                                    console.log(`Current dollar amount: ${transferAmount.dollars}`);
+                                    synth.speak(new SpeechSynthesisUtterance(`Current dollar amount is ${transferAmount.dollars}.`));
+                                } else {
+                                    transferAmount.cents += digit;
+                                    console.log(`Current cents amount: ${transferAmount.cents}`);
+                                    synth.speak(new SpeechSynthesisUtterance(`Current cents amount is ${transferAmount.cents}.`));
+                                }
+                            } else {
+                                console.log('Invalid input, please say a valid single digit.');
+                                synth.speak(new SpeechSynthesisUtterance('Please say a valid single digit.'));
+                            }
+                        }
+                    };
+                    
+        
+                    recognition.onend = () => {
+                        // Only restart recognition if we're still collecting input
+                        if (!isDollarInputComplete || transferAmount.cents === '') recognition.start();
+                    };
                 } else {
                     synth.speak(new SpeechSynthesisUtterance('Invalid input. Please try again.'));
                 }
             } catch (error) {
-                
                 errorElement.style.display = 'block';
             }
         };
+        
+        
+        
+        
+        
 
     } catch (error) {
         console.error('Error fetching accounts:', error);
