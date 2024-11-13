@@ -345,94 +345,69 @@ section {
     color: red;
 }
 
-/* Recent Transactions Styling */
-.recent-transactions {
-    background-color: #d3d3d3;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border: 1px solid black;
+.transaction-records{
+    margin-top: 30px;
 }
 
-.recent-transactions h3 {
+/* Recent Transactions Styling */
+.transaction-records h3 {
     text-align: left;
     font-size: 28px;
     margin-bottom: 50px;
 }
 
-/* Legend Styling */
-.transaction-legend {
-    display: flex;
-    justify-content: space-between;
+/* Transaction records table styles */
+#transaction-records-table {
+    width: 90%; /* Make the table wider */
+    margin: 0 auto;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    font-size: 20px; /* Increase the overall font size */
+}
+
+#transaction-records-table th, #transaction-records-table td {
+    border: 1px solid #ddd;
+    padding: 20px; /* Increase padding for better spacing */
+    text-align: center;
+}
+
+#transaction-records-table th {
+    background-color: #8AB4F8;
     font-weight: bold;
-    font-size: 19px;
-    margin-bottom: 10px;
+    font-size: 22px; /* Larger font size for headers */
 }
 
-/* Define widths for each legend item */
-.legend-item {
-    text-align: center;
+#transaction-records-table tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.legend-item.date {
-    width: 15%;
+#transaction-records-table tr:hover {
+    background-color: #d8d8d8;
 }
 
-.legend-item.description {
-    width: 25%; 
-    margin-left: -10px; /* Move description legend left */
+#transaction-records-table tr.selected {
+    background-color: #b3b3b3; /* Highlighted color */
 }
 
-.legend-item.amount {
-    width: 20%; 
-    margin-left: -40px; /* Move amount legend left */
+/* Styling for transaction amount values */
+.value-positive {
+    color: green;
+    font-size: 22px; /* Larger font size for amount values */
+    font-weight: bold;
 }
 
-.legend-item.status {
-    width: 15%; 
-    margin-left: -10px; /* Move status legend left */
+.value-negative {
+    color: red;
+    font-size: 22px; /* Larger font size for amount values */
+    font-weight: bold;
 }
 
-.transaction {
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid #999;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    margin-top: 10px;
-}
-
-.transaction-date {
-    font-weight: bold; 
-    color: #555; 
-    width: 20%; 
-}
-
-.transaction-description {
-    white-space: normal; 
-    overflow-wrap: break-word; 
-    flex-grow: 1; 
-    min-width: 0; 
-    max-width: 400px; 
-    margin-left: 20px;
-}
-
-.transaction-amount {
-    font-size: 18px; 
-    font-weight: bold; 
-    width: 20%; 
-    text-align: center;
-    margin-left: 20px;
-}
-
+/* Status-specific styling with colored boxes */
 .transaction-status {
+    display: inline-block;
+    padding: 8px 15px; /* Larger padding for more prominent status boxes */
+    font-size: 20px; /* Bigger font size for status */
     font-weight: bold;
-    width: 12%;
-    text-align: center;
-    padding-left: 2px; 
-    padding-right: 2px; 
-    padding-top: 7px;  
-    padding-bottom: 7px; 
     border-radius: 5px;
     color: white;
 }
@@ -450,22 +425,38 @@ section {
     background-color: red;
 }
 
-
 .currency {
-    color: black; 
-    font-size: 18px; 
+    color: black;
+    font-size: 18px;
 }
 
-.value-positive {
-    color: green; 
-    font-size: 24px; 
-    margin-left: 5px; 
+/* Style for the delete button container */
+.button-container {
+    text-align: center;
+    margin-top: 20px; /* Space from the table above */
 }
 
-.value-negative {
-    color: red; 
-    font-size: 24px; 
-    margin-left: 5px; 
+/* Delete button styling */
+#delete-transaction-btn {
+    background-color: red;
+    color: white;
+    font-size: 21px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-top: 30px;
+}
+
+#delete-transaction-btn:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+}
+
+#delete-transaction-btn:hover:enabled {
+    background-color: darkred;
 }
 
 /* Back Button Styling */

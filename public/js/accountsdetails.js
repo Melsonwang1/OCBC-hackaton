@@ -145,13 +145,17 @@ function handleAuthError(error) {
     }
 }
 
+const container = document.getElementById('transaction-list');
+const deleteBtn = document.getElementById('delete-transaction-btn');
+let selectedTransactionId = null;
+
 function displayTransactions(transactions) {
-    const container = document.getElementById('transaction-list');
     if (container) {
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear existing rows
+
         // Sort transactions by date in descending order
         transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
+
         transactions.forEach(transaction => {
             const amountClass = transaction.transactionAmount >= 0 ? 'value-positive' : 'value-negative';
             const amountSign = transaction.transactionAmount >= 0 ? '+' : '-';
@@ -171,24 +175,91 @@ function displayTransactions(transactions) {
                     statusClass = '';
             }
 
-            container.innerHTML += `
-                <div class="transaction">
-                    <p class="transaction-date">${new Date(transaction.date).toLocaleDateString('en-GB', {
-                        day: '2-digit', month: 'long', year: 'numeric'
-                    })}</p>
-                    <p class="transaction-description">${transaction.description}</p>
-                    <p class="transaction-amount ${amountClass}">
-                        <span class="currency">SGD</span> 
-                        <span class="${amountClass}">${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}</span>
-                    </p>
-                    <p class="transaction-status ${statusClass}">${transaction.status}</p>
-                </div>
+            // Add a new row for each transaction
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', transaction.id);
+            row.onclick = function(event) {
+                selectTransactionRow(event, transaction); // Pass the whole transaction object
+            };
+
+            row.innerHTML = `
+                <td>${transaction.id}</td>
+                <td>${new Date(transaction.date).toLocaleDateString('en-GB', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                })}</td>
+                <td>${transaction.description}</td>
+                <td class="${amountClass}">
+                    <span class="currency">SGD</span> ${amountSign}${Math.abs(transaction.transactionAmount).toFixed(2)}
+                </td>
+                <td><span class="transaction-status ${statusClass}">${transaction.status}</span></td>
             `;
+
+            container.appendChild(row);
         });
     } else {
         console.warn('Transaction list container not found');
     }
 }
+
+// Function to select the row
+function selectTransactionRow(event, transaction) {
+    const table = document.getElementById('transaction-list');
+    const rows = table.querySelectorAll('tr');
+    rows.forEach(row => {
+        row.classList.remove('selected'); // Remove 'selected' class from all rows
+    });
+
+    const row = event.currentTarget;
+    row.classList.add('selected'); // Add 'selected' class to clicked row
+    selectedTransactionId = transaction.id; // Store the selected transaction ID
+
+    // Enable the delete button only if the status is "pending" and the amount is negative
+    const status = transaction.status.toLowerCase();
+    const amount = transaction.transactionAmount;
+
+    if (status === 'pending' && amount < 0) {
+        deleteBtn.disabled = false; // Enable the delete button
+    } else {
+        deleteBtn.disabled = true; // Disable the delete button if not eligible for deletion
+    }
+}
+
+// Handle delete button click
+deleteBtn.addEventListener('click', async function() {
+    if (selectedTransactionId) {
+        // Immediately disable the delete button after clicking
+        deleteBtn.disabled = true; // Disable the delete button
+        try {
+            // First, delete the selected transaction
+            const response1 = await fetch(`/transactions/${selectedTransactionId}`, {
+                method: 'DELETE'
+            });
+
+            if (response1.ok) {
+                // Remove the selected row from the table
+                const selectedRow = document.querySelector(`tr[data-id="${selectedTransactionId}"]`);
+                if (selectedRow) {
+                    selectedRow.remove();
+                }
+
+                // Increment the transaction ID for the next one
+                const nextTransactionId = selectedTransactionId + 1;
+                
+                // Now, delete the next transaction
+                await fetch(`/transactions/${nextTransactionId}`, {
+                    method: 'DELETE'
+                });
+
+                // Reset the selected transaction ID
+                selectedTransactionId = null; // Clear the selected transaction ID
+            }
+        } catch (error) {
+            console.error('Error:', error); // Only log errors in the console, no alert shown
+        }
+    } 
+});
+
+
 
 // State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
 let ttsEnabled = false;
