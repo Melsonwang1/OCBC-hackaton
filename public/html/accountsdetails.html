@@ -115,17 +115,34 @@
                 </div>
             </div>
  
-            <div class="recent-transactions">
-                <h3>Recent Transactions:</h3>
-                <div class="transaction-legend">
-                    <div class="legend-item date">Date</div>
-                    <div class="legend-item description">Description</div>
-                    <div class="legend-item amount">Transaction Amount</div>
-                    <div class="'legend-item status">Status</div>
+            <div class="transaction-records" style="padding-top: 50px;">
+                <h3 style="text-align: center;">Recent Transaction Records</h3>
+                <p style="font-size: 20px; margin-bottom:50px; line-height: 25px;">Select a row to delete. Only transactions that are in <b>pending</b> status, 
+                    <br>with a negative amount (outgoing transfer) can be deleted.</p>
+                <table id="transaction-records-table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Transaction Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-list">
+                        <!-- Rows will be dynamically added here -->
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="button-container">
+                    <button id="delete-transaction-btn" disabled>Delete Selected Transaction</button>
                 </div>
-
-                <!-- Transaction List Container -->
-                <div id="transaction-list"></div>
 
             </div>
             

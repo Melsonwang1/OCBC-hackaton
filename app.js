@@ -32,6 +32,8 @@ app.post("/user/login", userController.loginUser); //Use POST function to login 
 app.get("/transactions/:account_id", transactionsController.getTransactionsbyaccountid);
 app.post("/transactions", validateTransactions, transactionsController.createTransaction);
 
+app.delete("/transactions/:transaction_id", transactionsController.deleteTransactionByTransactionId);
+
 // Account Page (Zheng Bin)
 app.get("/accounts/user/:user_id", accountController.getAccountsById);
 app.get("/accounts/account/:account_id", accountController.getAccountByAccountId);

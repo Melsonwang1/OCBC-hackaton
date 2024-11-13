@@ -22,6 +22,24 @@ const getTransactionsbyaccountid = async (req, res) => {
     }
 };
 
+const deleteTransactionByTransactionId = async (req, res) => {
+    const transaction_id = parseInt(req.params.transaction_id); // Get transactionId from parameters
+    
+    try {
+      // Call the static method from the Transaction model to delete the transaction
+      const success = await Transaction.deleteTransactionByTransactionId(transaction_id);
+      
+      if (!success) {
+        return res.status(404).send("Transaction not found"); // Transaction not found
+      }
+      
+      res.status(204).send(); // Success: No Content, the transaction has been deleted
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error deleting transaction"); // Internal Server Error
+    }
+};
+
 const createTransaction = async (req, res) => { 
     const { account_id, phoneNumber, nric, amount, description, status } = req.body;
 
@@ -56,16 +74,8 @@ const createTransaction = async (req, res) => {
 };
 
 
-
-module.exports = createTransaction;
-
-
-
-
-
-
-
 module.exports = {
     getTransactionsbyaccountid,
-    createTransaction
+    createTransaction,
+    deleteTransactionByTransactionId
 };
