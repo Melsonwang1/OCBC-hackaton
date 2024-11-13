@@ -19,7 +19,7 @@ class Transaction {
             connection = await sql.connect(dbConfig);
             
             const sqlQuery = `
-                SELECT date_of_transaction, description, amount AS transaction_amount, status 
+                SELECT transaction_id, date_of_transaction, description, amount AS transaction_amount, status 
                 FROM Transactions 
                 WHERE account_id = @account_id
             `;
@@ -32,6 +32,7 @@ class Transaction {
     
             // Return the necessary data for each transaction
             return result.recordset.map(row => ({
+                id: row.transaction_id,
                 date: row.date_of_transaction,
                 description: row.description,
                 transactionAmount: row.transaction_amount,
@@ -48,8 +49,20 @@ class Transaction {
         }
     }
     
-    
+    static async deleteTransactionByTransactionId(transaction_id){
 
+        const connection = await sql.connect(dbConfig);
+    
+        const sqlQuery = `DELETE FROM Transactions WHERE transaction_id = @transaction_id`; // Parameterized query. Delete the specific medical record by record id.
+    
+        const request = connection.request();
+        request.input("transaction_id", transaction_id);
+        const result = await request.query(sqlQuery);
+    
+        connection.close();
+    
+        return result.rowsAffected > 0; // Indicate success based on affected rows
+    }
     
 
     static async createTransaction(account_id, amount, description, status, phoneNumber = null, nric = null) {
