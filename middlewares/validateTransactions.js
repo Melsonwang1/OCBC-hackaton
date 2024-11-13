@@ -2,12 +2,12 @@ const Joi = require('joi');
 
 const validateTransaction = (req, res, next) => {
     const schema = Joi.object({
-        user_id: Joi.number().integer().positive().required()
+        account_id: Joi.number().integer().positive().required()
             .messages({
-                "number.base": "User ID must be a number",
-                "number.integer": "User ID must be an integer",
-                "number.positive": "User ID must be a positive number",
-                "any.required": "User ID is required"
+                "number.base": "Account ID must be a number",
+                "number.integer": "Account ID must be an integer",
+                "number.positive": "Account ID must be a positive number",
+                "any.required": "Account ID is required"
             }),
         amount: Joi.number().positive().precision(2).required()
             .messages({
@@ -38,6 +38,7 @@ const validateTransaction = (req, res, next) => {
             })
     })
     .custom((value, helpers) => {
+        // Ensure either phoneNumber or nric is provided, but not both
         if ((value.phoneNumber === null && value.nric === null) || (value.phoneNumber && value.nric)) {
             return helpers.message("Please provide either phoneNumber or nric, with one explicitly set to null.");
         }

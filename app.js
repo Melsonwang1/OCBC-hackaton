@@ -42,8 +42,8 @@ app.get("/users", authorize, userController.getUserById);
 app.get("/user", userController.getUserByPhoneorNric);
 
 // Investment Page (Zhe Kai)
-app.get("/investments/:account_id", investmentController.getInvestmentsByAccountId);
-app.get("/investments/growth/:account_id", investmentController.getInvestmentGrowthByAccountId);
+app.get("/investments/:user_id", investmentController.getInvestmentsByUserId);
+app.get("/investments/growth/:user_id", investmentController.getInvestmentGrowthByUserId);
 
 
 app.listen(port, async () => {

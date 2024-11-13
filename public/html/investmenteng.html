@@ -19,15 +19,30 @@
     <header class="header">
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+        </div>    
+
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">Hover to listen: <b>OFF</b></span>
         </div>
 
         <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
+            </div>
+            
             <div class="language-switch">
                 <a href="investmentchi.html" class="language-btn">中文</a>
             </div>
     
             <div class="logout">
-                <button id="logout-btn">
+                <button id="logout-btn" onmouseover="speakText('Click here to Logout')">
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -35,37 +50,56 @@
         </div>
     </header>
 
-    <div class="container">
-        <div class="welcome">Welcome, <span id="user-name"></span></div>
-        <h2 class="welcome-message">What would you like to do today?</h2>
+    <div class="container"> 
+        <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+
+        <!-- Keyboard Shortcuts Note -->
+        <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+            <p id="keyboard-shortcut-header">
+                <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
+            </p>
+            <ul id="shortcut-list">
+                <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
+                <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
+                <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
+                <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">C</span> → Chinese Translation</li>
+                <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">L</span> → Log Out</li>
+                <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
+                <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
+                <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
+                <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
+            </ul>
+        </div>
+
+        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <div class="navbar">
-            <a href="../html/accountseng.html">
+            <a href="../html/accountseng.html" onmouseover="speakText('Click here to View Accounts')">
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts</a>
-            <a href="../html/transfer.html">
+            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 Transfer Money</a>
-            <a href="../html/investmenteng.html" class="active">
+            <a href="../html/investmenteng.html" class="active" onmouseover="speakText('Click here to view Investments')">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments</a> 
         </div>
     </div>
 
-    <h1>Investment Growth Over Time</h1>
+    <h1 onmouseover="speakText('Here is the investment growth over time')">Investment Growth Over Time</h1>
     <canvas id="investmentChart"></canvas>
     
     <div class="content">
         <div class="dropdown">
-            <button class="dropdown-btn" onclick="toggleDropdown('fixedDeposit')">Fixed Deposit Accounts ▼</button>
+            <button class="dropdown-btn" onclick="toggleDropdown('fixedDeposit'); speakText('Here are some recommended fixed deposit accounts. Our picks offer competitive interest rates, starting at 2.75% annually. Just pick a plan that suits you!')">Fixed Deposit Accounts ▼</button>
             <div id="fixedDeposit" class="dropdown-content">
-                <div class="card">
+                <div class="card" onmouseover="speakText('Our top pick, XYZ Fixed Deposit Plan, offers 3.50 percent annually with a minimum of five thousand dollars for a one-year term.')">
                     <h2>Our Pick</h2>
                     <h3>XYZ Fixed Deposit Plan</h3>
                     <p>Interest Rate: 3.50% per annum</p>
                     <p>Minimum Deposit: $5,000</p>
                     <p>Duration: 1 Year</p>
                 </div>
-                <div class="card">
+                <div class="card" onmouseover="speakText('Our top pick, ABC Savings Plan, offers 2.75 percent per annum with a minimum deposit of one thousand dollars for six months.')">
                     <h2>Our Pick</h2>
                     <h3>ABC Savings Plan</h3>
                     <p>Interest Rate: 2.75% per annum</p>
@@ -76,9 +110,9 @@
         </div>
         
         <div class="dropdown">
-            <button class="dropdown-btn" onclick="toggleDropdown('unitTrust')">Unit Trusts and ETFs ▼</button>
+            <button class="dropdown-btn" onclick="toggleDropdown('unitTrust'); speakText('Here are top unit trusts and ETFs. These options vary in risk and performance to fit your investment style.')">Unit Trusts and ETFs ▼</button>
             <div id="unitTrust" class="dropdown-content">
-                <div class="card">
+                <div class="card" onmouseover="speakText('AB American Income Portfolio A2, a growth-focused unit trust, shows a solid performance of 10 percent in the past year. It is priced at twenty dollars fifty-five cents.')">
                     <h2>Our Pick</h2>
                     <h3>AB American Income Portfolio A2 ACC SGD-H</h3>
                     <p>Risk: Growth</p>
@@ -86,7 +120,7 @@
                     <p>Indicative Price: $20.55</p>
                     <p>1-year Performance: 10.01%</p>
                 </div>
-                <div class="card">
+                <div class="card" onmouseover="speakText('AB American Income Portfolio AT offers growth with a dividend yield of 4.53 percent. Priced at ten dollars fifty-nine cents, it performed well with nearly 10 percent growth last year.')">
                     <h2>Our Pick</h2>
                     <h3>AB American Income Portfolio AT SGD-H</h3>
                     <p>Risk: Growth</p>
@@ -95,7 +129,7 @@
                     <p>1-year Performance: 9.97%</p>
                     <p>Annualised Dividend Yield: 4.53%</p>
                 </div>
-                <div class="card">
+                <div class="card" onmouseover="speakText('AB SICAV I Low Volatility Equity Portfolio A is a growth-oriented investment with an impressive 23.55 percent performance last year. Priced at thirty-six dollars sixty-two cents.')">
                     <h2>Our Pick</h2>
                     <h3>AB SICAV I - Low Volatility Equity Portfolio A SGD-H</h3>
                     <p>Risk: Growth</p>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/account.css">
-    <title>OCBC - View Accounts</title>
+    <title>OCBC - 查看账户</title>
 
     <!-- Import Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,39 +18,63 @@
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
+        
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">语音助读: <b>关闭</b></span>
+        </div>
     
         <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
+            </div>
+
             <div class="language-switch">
                 <a href="accountseng.html" class="language-btn">English</a>
             </div>
     
             <div class="logout">
-                <button id="logout-btn"> 
+                <button id="logout-btn" onmouseover="speakText('点击这里登出')"> 
                     登出
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
             </div>
         </div>
     </header>
+    
 
     <div class="container">
-        <!-- Welcome message -->
-        <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
 
-        <!-- Keyboard shortcuts note-->
-        <!--<div id="keyboard-shortcut-note" class="keyboard-note">
-            <p><strong>Press the following keys to quickly navigate: </strong></p>
-            <ul>
-                <li><strong>1</strong>  → View Accounts</li>
-                <li><strong>2</strong>  → Transfer Money</li>
-                <li><strong>3</strong>  → Investments</li>
-                <li><strong>c</strong>  → Chinese Translation</li>
-                <li><strong>l</strong>  → Log Out</li>
+        <!-- Welcome message -->
+        <div class="welcome" id="welcome-message" onmouseover="speakText('欢迎使用华侨银行, ' + document.getElementById('user-name').innerText)">您好！欢迎, <span id="user-name"></span></div>
+
+        <!-- Keyboard Shortcuts Note -->
+        <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+            <p id="keyboard-shortcut-header">
+                <strong>键盘快捷键:</strong> <span id="dropdown-icon"></span>
+            </p>
+            <ul id="shortcut-list">
+                <li onmouseover="speakText('查看账户请选择 1')"><span class="shortcut-key">1</span> → 查看账户</li>
+                <li onmouseover="speakText('转账与支付请选择 2')"><span class="shortcut-key">2</span> → 转账与支付</li>
+                <li onmouseover="speakText('投资页面请选择 3')"><span class="shortcut-key">3</span> → 投资</li>
+                <li onmouseover="speakText('翻译成华文请点击 C')"><span class="shortcut-key">C</span> → 翻译成华文</li>
+                <li onmouseover="speakText('登出请点击 L')"><span class="shortcut-key">L</span> → 登出</li>
+                <li onmouseover="speakText('返回上一页面请点击左箭头')"><span class="shortcut-key">←</span> → 上一页</li>
+                <li onmouseover="speakText('跳到下一页面请点击右箭头')"><span class="shortcut-key">→</span> → 下一页</li>
+                <li onmouseover="speakText('向上滑动请点击上箭头')"><span class="shortcut-key">↑</span> → 向上滑动</li>
+                <li onmouseover="speakText('向下滑动请点击下箭头')"><span class="shortcut-key">↓</span> → 向下滑动</li>
             </ul>
-        </div>-->
+        </div>
+        
 
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message">请问您需要什么服务呢?</h2>
+        <h2 class="welcome-message" onmouseover="speakText('请问您需要什么服务呢?')">请问您需要什么服务呢?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
             <a href="../html/accountschi.html" class="active">
@@ -61,18 +85,18 @@
                 转账与支付</a>
             <a href="../html/investmentchi.html">
                 <img src="../pics/investment.png" alt="Investments Icon">
-                投资</a> 
+                投资</a>
         </div>
             
     </div>
 
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
-        <!--<div class="account-selection-note">
-            <p><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
-        </div> -->       
-        <h2>我的银行账户:</h2>
-        <p>请选择一个账户以查看详细信息。</p>
+        <div class="account-selection-note">
+            <p onmouseover="speakText('使用Tab键跳转, 按Enter键查看')"><strong>提示:</strong> 使用 <strong>Tab</strong> 键跳转， 按<strong>Enter</strong>键查看.</p>
+        </div>      
+        <h2 onmouseover="speakText('以下是您的银行账户')">您的银行账户:</h2>
+        <p onmouseover="speakText('选择以下账户查看相关信息')">选择一下账户查看相关信息.</p>
         <div id="accounts-list">
             <!-- Account cards will be inserted here by JavaScript -->
         </div>

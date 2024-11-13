@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             user = userData;
             // Display the user's name
             document.getElementById("user-name").innerText = user.name.toUpperCase();
+
+            let user_id = user.user_id;
+            console.log(user_id);
+            await fetchAndPlotData(user_id);
         } catch (error) {
             console.log('Error in getUserData:', error.message);
             // Step 2: Handle invalid or expired token
@@ -58,78 +62,70 @@ document.addEventListener('DOMContentLoaded', async function() {
         history.replaceState(null, null, "logineng.html");
     });
 
-    let account_id = "ALL";
-
-    // Wait for user data to load before fetching bank accounts
     await getUserData();
-    await fetchAndPlotData(account_id);
 });
 
-async function fetchAndPlotData(account_id) {
+async function fetchAndPlotData(user_id) {
     try {
-        const response = await fetch(`/investments/growth/${account_id}`);
+        const response = await fetch(`/investments/growth/${user_id}`);
         if (!response.ok) throw new Error("Failed to fetch investment growth data");
 
         const data = await response.json();
         console.log(data);
 
-        // Adjust the starting value to 100 instead of zero
+        // Check if data array is empty
+        if (data.length === 0) {
+            alert("No investment growth data found for this account.");
+            return; // Exit the function if there's no data
+        }
+
+        // Initialize starting investment value
         const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const values = data.map((item, index) => index === 0 ? initialInvestment : initialInvestment + item.profit_loss);
+        const values = data.map((item, index) => 
+            index === 0 ? initialInvestment : initialInvestment + item.profit_loss
+        );
 
-        const filteredData = filterDataByRange({ labels, values }, range);
+        const barColors = values.map(value => 
+            value < initialInvestment ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'
+        );
 
-        investmentChart.data.labels = filteredData.labels;
-        investmentChart.data.datasets[0].data = filteredData.values;
+        investmentChart.data.labels = labels;
+        investmentChart.data.datasets[0].data = values;
+        investmentChart.data.datasets[0].backgroundColor = barColors;
         investmentChart.update();
 
-        // Announce each point on the chart
-        announceInvestmentGrowth(filteredData);
-        startListeningForNavigation();
+        if (!ttsEnabled) {
+            // Announce each point on the chart
+            announceInvestmentGrowth(labels, values);
+            startListeningForNavigation();
+        }
+        
     } catch (error) {
         console.error("Error fetching or updating chart data:", error);
     }
 }
 
-function filterDataByRange(data, range) {
-    const { labels, values } = data;
-    const today = new Date();
-    let startIndex;
-
-    switch (range) {
-        case "3M":
-            startIndex = labels.length - 3;
-            break;
-        case "6M":
-            startIndex = labels.length - 6;
-            break;
-        case "YTD":
-            startIndex = labels.findIndex(date => date.startsWith(today.getFullYear()));
-            break;
-        case "2Y":
-            startIndex = labels.length - 24;
-            break;
-        case "ALL":
-        default:
-            return data;
-    }
-    startIndex = Math.max(0, startIndex);
-    return { labels: labels.slice(startIndex), values: values.slice(startIndex) };
-}
-
 const ctx = document.getElementById("investmentChart").getContext("2d");
 const investmentChart = new Chart(ctx, {
-    type: "line",
+    type: "bar",
     data: {
         labels: [],
         datasets: [{
             label: "Investment Growth",
             data: [],
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1
-        }]
+        },
+        {
+            label: "Investment Shrink",
+            data: [],
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "rgba(75, 192, 192, 0.2)",
+            borderWidth: 1
+        }
+    ]
     },
     options: {
         scales: {
@@ -166,6 +162,34 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+let currentFontSize = 25; // Default font size for tracking changes only
+
+function changeFontSize(sizeChange) {
+    currentFontSize += sizeChange;
+
+    // Apply font size change to elements inside .container and .content
+    document.querySelectorAll('.container, .container *').forEach(element => {
+        element.style.fontSize = `${currentFontSize}px`;
+    });
+
+    document.querySelectorAll('.content, .content *').forEach(element => {
+        element.style.fontSize = `${currentFontSize}px`;
+    });
+}
+
+function resetFontSize() {
+    // Reset font size by removing inline styles
+    document.querySelectorAll('.container, .container *').forEach(element => {
+        element.style.fontSize = ''; // Clear inline style to revert to CSS default
+    });
+
+    document.querySelectorAll('.content, .content *').forEach(element => {
+        element.style.fontSize = ''; // Clear inline style to revert to CSS default
+    });
+
+    currentFontSize = 25;
+}
+
 function narrate(message) {
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(message);
@@ -177,24 +201,26 @@ function narrate(message) {
     }
 }
 
-function announceInvestmentGrowth(data) {
+function announceInvestmentGrowth(labels, values) {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     narrate("Welcome to your investments page.");
 
-    if (data.labels && data.labels.length > 0) {
-        data.labels.forEach((label, index) => {
+    if (labels && labels.length > 0) {
+        labels.forEach((label, index) => {
             const day = label.getDate();
             const month = label.toLocaleDateString('en-US', { month: 'long' });
             const year = label.getFullYear();
             const date = `${day} ${month} ${year}`;
 
-            const value = data.values[index];
+            const value = values[index];
             const valueText = value % 1 === 0 ? value.toFixed(0) : value.toFixed(2);  // Format without decimals if whole number
 
             let message = `On ${date}, your investment was ${valueText} SGD`;
 
             // Announce growth only from the second data point onwards
             if (index > 0) {
-                const previousValue = data.values[index - 1];
+                const previousValue = values[index - 1];
                 const growthAmount = value - previousValue;
                 const growthPercentage = ((growthAmount / previousValue) * 100).toFixed(2);
                 const growthAmountText = growthAmount % 1 === 0 ? growthAmount.toFixed(0) : growthAmount.toFixed(2);
@@ -213,6 +239,8 @@ function announceInvestmentGrowth(data) {
 
 // Initialize speech recognition and listen for navigation commands indefinitely
 function startListeningForNavigation() {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     if (!('webkitSpeechRecognition' in window)) {
         console.error("Speech Recognition is not supported in this browser.");
         return;
@@ -228,7 +256,7 @@ function startListeningForNavigation() {
     };
 
     recognition.onerror = function(event) {
-        if (event.error !== 'no-speech') {
+        if (!ttsEnabled && event.error !== 'no-speech') {
             narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions.");
         }
     };
@@ -242,6 +270,8 @@ function startListeningForNavigation() {
 
 // Handle the user's response to navigation prompt
 function handleUserResponse(response) {
+    if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
+
     if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transferring")) {
         window.location.href = "transfer.html";
     } else if (response.includes("transaction") || response.includes("transactions") || response.includes("transacting")) {
@@ -252,6 +282,46 @@ function handleUserResponse(response) {
         narrate("Sorry, I didn't understand that. Please say Transfer Money, Check accounts, or View Transactions");
     }
 }
+
+// State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
+let ttsEnabled = false;
+
+// Function to trigger speech
+function speakText(text) {
+    if (ttsEnabled) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        // Create a new utterance and speak the text
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.7; // Speed of speech (1 is normal speed)
+        utterance.pitch = 0.7; // Pitch of speech (1 is normal pitch)
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// Toggle the TTS state (on/off)
+function toggleTTS() {
+    ttsEnabled = !ttsEnabled;
+    const statusText = document.getElementById('tts-status');
+    const toggleButton = document.getElementById('toggle-tts');
+    if (ttsEnabled) {
+        statusText.innerHTML = 'Hover to listen: <strong>ON</strong>';
+    } else {
+        statusText.innerHTML = 'Hover to listen: <strong>OFF</strong>';
+    }
+}
+
+// You can also trigger speech for dynamic content
+window.onload = function () {
+    // Welcome message will be spoken when the page loads if TTS is enabled
+    if (ttsEnabled) {
+        const welcomeMessage = document.getElementById('welcome-message');
+        speakText(welcomeMessage.innerText); // Speak "Welcome, user" message
+    }
+};
 
 document.addEventListener('DOMContentLoaded', function () {
     // Find the account list and account cards
@@ -305,6 +375,34 @@ document.addEventListener('keydown', function(event) {
     } else if (event.key === 'ArrowRight') {
         // Go to the next page (like redo)
         window.history.forward();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Show the list by default on page load
+    shortcutList.style.display = "block";
+    icon.classList.add("up");  // Initially show the downward arrow
+    keyboardNote.style.maxHeight = "500px"; // Adjust to accommodate the expanded list
+});
+
+document.getElementById("keyboard-shortcut-header").addEventListener("click", function() {
+    var shortcutList = document.getElementById("shortcut-list");
+    var icon = document.getElementById("dropdown-icon");
+    var keyboardNote = document.querySelector(".keyboard-note");
+
+    // Toggle the visibility of the shortcut list with animation
+    if (shortcutList.classList.contains("collapsed")) {
+        shortcutList.classList.remove("collapsed");
+        icon.classList.add("up");
+        keyboardNote.style.maxHeight = "500px"; // Adjust based on content
+    } else {
+        shortcutList.classList.add("collapsed");
+        icon.classList.remove("up");
+        keyboardNote.style.maxHeight = "50px"; // Collapse back
     }
 });
 

@@ -80,15 +80,15 @@ VALUES
 /* Investment Table */
 CREATE TABLE Investment (
     investment_id INT PRIMARY KEY IDENTITY(1,1),    -- Changed from AUTO_INCREMENT
-    account_id INT,                                  
+    user_id INT,                                  
     amount DECIMAL(10, 2) NOT NULL,                       
     period_start DATETIME,  
     period_end DATETIME,   
     profit_loss DECIMAL(10, 2),
-    FOREIGN KEY (account_id) REFERENCES Account(account_id)  
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)  
 );
 
-INSERT INTO Investment (account_id, amount, period_start, period_end, profit_loss)
+INSERT INTO Investment (user_id, amount, period_start, period_end, profit_loss)
 VALUES 
 (1, 1000, '2024-01-05', '2024-01-31', 100),
 (1, 1500, '2024-01-15', '2024-01-31', 200),

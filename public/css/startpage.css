@@ -13,13 +13,6 @@ body {
     flex-direction: column;
 }
 
-/* Container that holds header, main and pushes footer to the bottom */
-.page-container {
-    flex: 1; /* This makes the main content stretch to take up the available space */
-    display: flex;
-    flex-direction: column;
-}
-
 /* Header styling */
 header {
     background-color: #ffffff;
@@ -36,17 +29,63 @@ header .logo img {
     margin-top: 15px;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Language switch button styling */
+.language-switch {
+    margin-right: 20px; /* Space between language switch and logout button */
+}
+
+.font-size-controls {
+    margin-right: 20px;
+}
+
+.font-size-controls button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; /* Increased font size */
+    padding: 8px 15px; /* Adjusted padding */
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px; /* Slightly larger border radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.font-size-controls button:hover {
+    background-color: #d3d3d3;
+}
+
+.language-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; /* Increased font size */
+    padding: 8px 15px; /* Adjusted padding */
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px; /* Slightly larger border radius */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.language-btn:hover {
+    background-color: #d3d3d3;
+}
+
 header .login button {
     display: flex;
     align-items: center; /* Aligns text and icon vertically */
     background-color: #ff0000; /* Replace with your desired color */
     color: white;
     border: none;
-    padding: 10px 20px;
-    margin-right: 50px;
-    margin-top: -15px;
+    padding: 10px 15px;
     cursor: pointer;
-    font-size: 26px;
+    font-size: 22px;
     border-radius: 10px;
 }
 
@@ -61,26 +100,54 @@ header .login button .login-icon {
 }
 
 /* Main Styles */
-main {
-    flex: 1; 
+/* Main promo section styling */
+.pic-section {
+    display: flex;
+    align-items: center;
     padding: 20px;
+    background-color: #e7e7e7;
+}
+
+/* Left promo banner and character images */
+.pic-left {
+    flex: 1;
     text-align: center;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-right: 20px;
 }
 
-.welcome-message, .highlights {
-    background-color: #e0e0e0;
+.pic-banner h2 {
+    font-size: 32px;
+    font-weight: bold;
     margin: 20px 0;
-    padding: 40px;
-    border-radius: 8px;
+    line-height: 1.2;
 }
 
-.welcome-message {
-    height: 300px;
-    font-size: 26px;
+.highlight {
+    color: #ffeb3b;
 }
 
-.highlights {
-    height: 200px;
+/* Right section with event details */
+.pic-right {
+    flex: 1;
+    color: #333;
+}
+
+.promo-right h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.promo-right ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.promo-right ul li {
+    margin-bottom: 10px;
+    line-height: 1.5;
 }
 
 /* Footer Styles */
@@ -110,9 +177,10 @@ main {
     max-width: 700px; 
 }
 
-.logo img {
-    width: 180px;
-    margin-bottom: 30px; 
+header .logo img {
+    width: 200px;
+    margin-left: 70px; 
+    margin-top: 15px;
 }
 
 /* Links and Contact Sections */

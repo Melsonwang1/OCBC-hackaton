@@ -1,3 +1,25 @@
+
+let currentFontSize = 25; // Default font size for tracking changes only
+
+function changeFontSize(sizeChange) {
+    currentFontSize += sizeChange;
+
+    // Apply font size change to elements inside .container and .content
+    document.querySelectorAll('main, main *').forEach(element => {
+        element.style.fontSize = `${currentFontSize}px`;
+    });
+}
+
+function resetFontSize() {
+    // Reset font size by removing inline styles
+    document.querySelectorAll('main, main *').forEach(element => {
+        element.style.fontSize = ''; // Clear inline style to revert to CSS default
+    });
+
+    currentFontSize = 25;
+}
+
+
 // Function to check if the user is currently focused on an input or textarea
 function isTyping() {
     const activeElement = document.activeElement;
@@ -116,48 +138,49 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Wait for user data to load before fetching bank accounts
     await getUserData();
     await fetchAccDetails(user.user_id)
+    announceAccountsAndListen(user.user_id);
 
 });
 
-async function fetchAccDetails(userId){
-    try {
-        const response = await fetch(`/accounts/accountnameandnumber/${userId}`); 
-        if (!response.ok) {
-            throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
-        }
-        const accountsData = await response.json();
-
-        // Check if accountsData.account exists and is an array
-        if (!accountsData.account || !Array.isArray(accountsData.account)) {
-            console.error('Expected an array but received:', accountsData);
-            return;
-        }
-
-        const transferFromDropdown = document.getElementById('transfer-from');
-        
-        // Populate the dropdown with account data
-        accountsData.account.forEach(account => {
-            const option = document.createElement('option');
-            option.value = account.account_id; // Set account ID as value
-            option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
-            transferFromDropdown.appendChild(option);
-        });
-
-        // Display and show balance when an account is selected (zb)
-        transferFromDropdown.addEventListener('change', async (event) => {
-            const selectedAccountId = event.target.value;
-            if (selectedAccountId) {
-                document.getElementById('balance').style.display = 'block'; // Show balance display
-                await fetchAndDisplayBalance(selectedAccountId); // Fetch and show balance
-            } else {
-                document.getElementById('balance').style.display = 'none'; // Hide balance if no account is selected
+    async function fetchAccDetails(userId){
+        try {
+            const response = await fetch(`/accounts/accountnameandnumber/${userId}`); 
+            if (!response.ok) {
+                throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
             }
-        });
-    } catch (error) {
-        console.error('Error fetching bank accounts:', error);
-        alert('No bank account records data found'); // Alert the user if no bank accounts are found
+            const accountsData = await response.json();
+
+            // Check if accountsData.account exists and is an array
+            if (!accountsData.account || !Array.isArray(accountsData.account)) {
+                console.error('Expected an array but received:', accountsData);
+                return;
+            }
+
+            const transferFromDropdown = document.getElementById('transfer-from');
+            
+            // Populate the dropdown with account data
+            accountsData.account.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.account_id; // Set account ID as value
+                option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
+                transferFromDropdown.appendChild(option);
+            });
+
+            // Display and show balance when an account is selected (zb)
+            transferFromDropdown.addEventListener('change', async (event) => {
+                const selectedAccountId = event.target.value;
+                if (selectedAccountId) {
+                    document.getElementById('balance').style.display = 'block'; // Show balance display
+                    await fetchAndDisplayBalance(selectedAccountId); // Fetch and show balance
+                } else {
+                    document.getElementById('balance').style.display = 'none'; // Hide balance if no account is selected
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching bank accounts:', error);
+            alert('No bank account records data found'); // Alert the user if no bank accounts are found
+        }
     }
-}
 
     // Function to fetch and display the balance (zb)
     async function fetchAndDisplayBalance(accountId) {       
@@ -259,7 +282,7 @@ form.addEventListener('submit', async (event) => {
     }
 
     console.log("Transaction data being sent:", {
-        user_id: transferFrom,
+        account_id: transferFrom,
         amount,
         description,
         phoneNumber,
@@ -269,7 +292,7 @@ form.addEventListener('submit', async (event) => {
 
     try {
         const requestData = {
-            user_id: transferFrom,
+            account_id: transferFrom,
             amount: parseFloat(amount),
             description,
             phoneNumber,
@@ -393,3 +416,130 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
         keyboardNote.style.maxHeight = "50px"; // Collapse back
     }
 });
+
+async function announceAccountsAndListen(userId) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US'; // Set recognition language
+    recognition.continuous = true; // Listen indefinitely
+    recognition.interimResults = false; // Only get finalized speech
+
+    try {
+        const response = await fetch(`/accounts/accountnameandnumber/${userId}`);
+        if (!response.ok) {
+            throw new Error(`Error status: ${response.status}`);
+        }
+
+        const accountsData = await response.json();
+        const accounts = accountsData.account;
+
+        if (!accounts || accounts.length === 0) {
+            alert('No accounts found.');
+            return;
+        }
+
+        // Populate the dropdown with account options
+        const transferFromDropdown = document.getElementById('transfer-from');
+        if (!transferFromDropdown) {
+            console.error('Dropdown element not found!');
+            return;
+        }
+
+        transferFromDropdown.innerHTML = '<option value="" disabled selected>Select an account</option>'; // Reset dropdown
+        accounts.forEach((account, index) => {
+            const option = document.createElement('option');
+            option.value = account.account_id; // Set account ID as value
+            option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
+            transferFromDropdown.appendChild(option);
+        });
+
+        // Announce account options using Text-to-Speech
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance();
+        let accountListText = 'Here are your accounts: ';
+        
+        accounts.forEach((account, index) => {
+            accountListText += `Option ${index + 1}: ${account.account_name}, account number ${account.account_number}. `;
+        });
+
+        utterance.text = accountListText;
+        synth.speak(utterance);
+
+        // Wait for TTS to finish before starting speech recognition
+        utterance.onend = () => {
+            console.log('Text-to-Speech complete. Starting speech recognition...');
+            recognition.start();
+        };
+
+        // Handle speech recognition for account selection
+        recognition.onresult = async (event) => {
+            const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+            console.log('You said:', transcript);
+
+            // Check if the user selects an account by speaking the option number
+            const optionNumber = parseInt(transcript, 10);
+            if (!isNaN(optionNumber) && optionNumber >= 1 && optionNumber <= accounts.length) {
+                const selectedAccount = accounts[optionNumber - 1];
+                console.log('Selected Account:', selectedAccount);
+
+                // Stop listening once selection is made
+                recognition.stop();
+
+                // Update the dropdown to select the chosen option
+                transferFromDropdown.value = selectedAccount.account_id;
+
+                // Fetch and display balance for the selected account
+                await fetchAndDisplayBalance(selectedAccount.account_id);
+
+                // Announce options for transferring money
+                const transferMethodPrompt = new SpeechSynthesisUtterance(
+                    'Do you want to transfer using a mobile number or an NRIC? Please say mobile or NRIC.'
+                );
+                synth.speak(transferMethodPrompt);
+
+                transferMethodPrompt.onend = () => {
+                    recognition.start();
+                };
+
+                // Handle speech recognition for transfer method
+                recognition.onresult = (event) => {
+                    const methodTranscript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                    console.log('You said:', methodTranscript);
+
+                    if (methodTranscript.includes('mobile')) {
+                        document.querySelector('input[name="transfer-to"][value="mobile"]').click();
+                        console.log('Mobile number selected.');
+                        synth.speak(new SpeechSynthesisUtterance('Mobile number selected.'));
+                    } else if (methodTranscript.includes('nric')) {
+                        document.querySelector('input[name="transfer-to"][value="nric"]').click();
+                        console.log('NRIC selected.');
+                        synth.speak(new SpeechSynthesisUtterance('NRIC selected.'));
+                    } else {
+                        console.error('Invalid transfer method. Listening again...');
+                        synth.speak(new SpeechSynthesisUtterance('Invalid option, please say mobile or NRIC.'));
+                    }
+                };
+            } else {
+                console.error('Invalid selection. Listening again...');
+                synth.speak(new SpeechSynthesisUtterance('Invalid option, please try again.'));
+            }
+        };
+
+        // Handle recognition errors
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            recognition.stop(); // Stop recognition and restart
+            synth.speak(new SpeechSynthesisUtterance('Sorry, there was an error. Listening again.'));
+            recognition.start();
+        };
+
+        recognition.onend = () => {
+            console.log('Recognition ended. Restarting...');
+            recognition.start(); // Restart listening
+        };
+
+    } catch (error) {
+        console.error('Error announcing accounts:', error);
+        alert('Could not retrieve or announce accounts. Please try again later.');
+    }
+}

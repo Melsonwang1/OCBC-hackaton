@@ -16,13 +16,21 @@
 
 <body>
     <!-- Header Section -->
-    <header>
+    <header class="header">
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
-        </div>
-        <!-- Language Switch Button -->
-        <div class="language-switch">
-            <a href="logineng.html" class="language-btn">English</a>
+        </div>    
+
+        <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
+            </div>
+            
+            <div class="language-switch">
+                <a href="logineng.html" class="language-btn">English</a>
+            </div>
         </div>
     </header>
 
@@ -52,10 +60,6 @@
                 <h3 id="message"><b></b></h3>
                 
                 <button type="submit" class="login-btn" id="login-button">登录</button>
-
-                <div class="or">或</div>
-
-                <button type="button" class="singpass-btn">Singpass 登录</button>
             </form>
         </div>
     </main>

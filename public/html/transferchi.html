@@ -21,13 +21,27 @@
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
         </div>
 
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">语音助读: <b>关闭</b></span>
+        </div>
+
         <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
+            </div>
+
             <div class="language-switch">
                 <a href="transfer.html" class="language-btn">English</a>
             </div>
-
             <div class="logout">
-                <button id="logout-btn">
+                <button id="logout-btn"> 
                     登出
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -41,17 +55,35 @@
             <!-- Welcome message -->
             <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
 
+            <!-- Keyboard Shortcuts Note -->
+            <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+                <p id="keyboard-shortcut-header">
+                    <strong>键盘快捷键:</strong> <span id="dropdown-icon"></span>
+                </p>
+                <ul id="shortcut-list">
+                    <li onmouseover="speakText('查看账户请选择 1')"><span class="shortcut-key">1</span> → 查看账户</li>
+                    <li onmouseover="speakText('转账与支付请选择 2')"><span class="shortcut-key">2</span> → 转账与支付</li>
+                    <li onmouseover="speakText('投资页面请选择 3')"><span class="shortcut-key">3</span> → 投资</li>
+                    <li onmouseover="speakText('翻译成华文请点击 C')"><span class="shortcut-key">C</span> → 翻译成华文</li>
+                    <li onmouseover="speakText('登出请点击 L')"><span class="shortcut-key">L</span> → 登出</li>
+                    <li onmouseover="speakText('返回上一页面请点击左箭头')"><span class="shortcut-key">←</span> → 上一页</li>
+                    <li onmouseover="speakText('跳到下一页面请点击右箭头')"><span class="shortcut-key">→</span> → 下一页</li>
+                    <li onmouseover="speakText('向上滑动请点击上箭头')"><span class="shortcut-key">↑</span> → 向上滑动</li>
+                    <li onmouseover="speakText('向下滑动请点击下箭头')"><span class="shortcut-key">↓</span> → 向下滑动</li>
+                </ul>
+            </div>
+
             <!-- What would you like to do today? -->
             <h2 class="welcome-message">请问您需要什么服务呢?</h2>
             <!-- Navigation bar -->
             <div class="navbar">
-                <a href="../html/accountseng.html">
+                <a href="../html/accountschi.html">
                     <img src="../pics/view-account.png" alt="View Icon">
                     查看账户</a>
-                <a href="../html/transfer.html" class="active">
+                <a href="../html/transferchi.html" class="active">
                     <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                     转账与支付</a>
-                <a href="../html/investmenteng.html">
+                <a href="../html/investmentchi.html">
                     <img src="../pics/investment.png" alt="Investments Icon">
                     投资</a>
             </div>
@@ -108,13 +140,16 @@
 
                 <div class="form-group">
                     <label for="description">4. 转账用途:</label>
-                    <p style="padding-bottom:5px;">请写下转账的目的以及名子
+                    <p style="padding-bottom:5px;">请写下您的名字以及转账的目的
                         <br>例如: 用于支付学费, 付款人: JANE SMITH</p>
                     <!-- Description input field to be filled with dynamic value -->
                     <input type="text" id="description" placeholder="Description">
                     <!-- Checkbox for saving as a favorite transaction -->
                     <label>
-                        <br><input type="checkbox" id="status-checkbox"> 设为待完成
+                        <input type="checkbox" id="status-checkbox"> 启用24小时延迟转账 (可选)
+                        <span class="info-icon">这是什么?
+                            <span class="tooltip-text">该选项会将转账延迟24小时。在此期间, 您可以随时取消交易。24小时后, 资金将自动从您的账户扣除并完成转账。</span>
+                        </span>
                     </label> 
                 </div>
 
@@ -123,9 +158,16 @@
                     <button type="submit" class="transfer-btn">转账</button>
                 </div>
             </form>
+            <div id="update-msg" style="display: none;">
+                <div class="alert alert-success" role="alert">
+                    <dotlottie-player src="https://lottie.host/3a0e448a-e059-491a-ba78-53734f104751/5XWEjdqtkJ.json" background="transparent" speed="0.7" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+                </div>
+            </div>
+            
         </div>
     </main>
 
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 <<<<<<< HEAD
     <!-- Leave it here first -->
     <script>
@@ -169,5 +211,6 @@
       </script>
 =======
 >>>>>>> 2d143b5a9be60a4fed04cbb99b36ce088c30c16e
+    <script src="../js/transfer.js"></script>
 </body>
 </html>
