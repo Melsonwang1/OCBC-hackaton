@@ -3,7 +3,7 @@ const sql = require("mssql");
 const path = require('path');
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
-const authorize = require("./middlewares/authorize");
+const authorize = require("./middlewares/authorize"); // Middleware Authorization for JWT (Zheng Bin)
 
 // Middlewares
 const validateTransactions = require("./middlewares/validateTransactions"); // Transaction Page (Melson)
@@ -11,7 +11,7 @@ const validateTransactions = require("./middlewares/validateTransactions"); // T
 // Controllers
 const transactionsController = require("./controllers/transactionsController"); // Transaction Page (Melson)
 const accountController = require("./controllers/accountController"); // Account Page (Zheng Bin)
-const userController = require("./controllers/userController");
+const userController = require("./controllers/userController"); // User Page (Zheng Bin)
 const investmentController = require("./controllers/investmentController"); // Investment Page (Zhe Kai)
 
 const { profile } = require("console");
@@ -25,14 +25,13 @@ app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware);
 
 // Login Page (Zheng Bin)
-app.post('/user/register', userController.createUser);
-app.post("/user/login", userController.loginUser); //Use POST function to login for user
+app.post('/user/register', userController.createUser); 
+app.post("/user/login", userController.loginUser); 
 
 // Transaction Page (Melson)
 app.get("/transactions/:account_id", transactionsController.getTransactionsbyaccountid);
 app.post("/transactions", validateTransactions, transactionsController.createTransaction);
-
-app.delete("/transactions/:transaction_id", transactionsController.deleteTransactionByTransactionId);
+app.delete("/transactions/:transaction_id", transactionsController.deleteTransactionByTransactionId); // Part of Zheng Bin's Feature
 
 // Account Page (Zheng Bin)
 app.get("/accounts/user/:user_id", accountController.getAccountsById);

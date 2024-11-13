@@ -89,7 +89,7 @@ class Users {
     // Method to find user by ID
     static async getUserById(user_id) {
         const connection = await sql.connect(dbConfig);
-        const query = `SELECT * FROM Users WHERE user_id = @user_id`; //select patient with the id passed by controller
+        const query = `SELECT * FROM Users WHERE user_id = @user_id`; 
         const request = connection.request();
         request.input("user_id",user_id);
         const result = await request.query(query);
