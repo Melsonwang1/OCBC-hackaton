@@ -76,28 +76,21 @@ async function fetchAndPlotData(user_id) {
         // Check if data array is empty
         if (data.length === 0) {
             alert("No investment growth data found for this account.");
-            return; // Exit the function if there's no data
+            return;
         }
 
-        // Initialize starting investment value
         const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const values = data.map((item, index) => 
-            index === 0 ? initialInvestment : initialInvestment + item.profit_loss
-        );
-
-        const barColors = values.map(value => 
-            value < initialInvestment ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'
-        );
+        const amounts = data.map((item, index) => initialInvestment);
+        const profits = data.map(item => item.profit_loss);
 
         investmentChart.data.labels = labels;
-        investmentChart.data.datasets[0].data = values;
-        investmentChart.data.datasets[0].backgroundColor = barColors;
+        investmentChart.data.datasets[0].data = amounts;
+        investmentChart.data.datasets[1].data = profits;
         investmentChart.update();
 
         if (!ttsEnabled) {
-            // Announce each point on the chart
-            announceInvestmentGrowth(labels, values);
+            announceInvestmentGrowth(labels, amounts.map((amount, i) => amount + profits[i]));
             startListeningForNavigation();
         }
         
@@ -111,19 +104,48 @@ const investmentChart = new Chart(ctx, {
     type: "bar",
     data: {
         labels: [],
-        datasets: [{
-            label: "Investment Growth",
-            data: [],
-            backgroundColor: "rgba(255, 99, 132, 0.2)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1
-        }
-    ]
+        datasets: [
+            {
+                label: "Invested Amount",
+                data: [],
+                backgroundColor: "rgba(75, 192, 192, 0.8)", // Base color for initial investment
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 1
+            },
+            {
+                label: "Profit/Loss",
+                data: [],
+                backgroundColor: "rgba(75, 192, 192, 0.2)", // Color for profit/loss
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 1
+            }
+        ]
     },
     options: {
         scales: {
-            x: { type: "time", time: { unit: "month" } },
-            y: { beginAtZero: true }
+            x: { 
+                stacked: true, // Enable stacking on the x-axis
+                type: "time", 
+                time: { unit: "month" } 
+            },
+            y: { 
+                beginAtZero: true, 
+                stacked: true // Enable stacking on the y-axis as well
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.dataset.label || '';
+                        const value = context.raw || 0;
+                        const total = context.chart.data.datasets.reduce((sum, dataset, index) => {
+                            return sum + (context.datasetIndex === index ? 0 : dataset.data[context.dataIndex]);
+                        }, value);
+                        return `${label}: $${value} (Total: $${total})`;
+                    }
+                }
+            }
         }
     }
 });
