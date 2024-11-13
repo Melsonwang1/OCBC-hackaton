@@ -53,7 +53,7 @@ class Transaction {
 
         const connection = await sql.connect(dbConfig);
     
-        const sqlQuery = `DELETE FROM Transactions WHERE transaction_id = @transaction_id`; // Parameterized query. Delete the specific medical record by record id.
+        const sqlQuery = `DELETE FROM Transactions WHERE transaction_id = @transaction_id`;
     
         const request = connection.request();
         request.input("transaction_id", transaction_id);
