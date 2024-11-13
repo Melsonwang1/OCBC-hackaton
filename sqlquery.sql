@@ -44,19 +44,19 @@ INSERT INTO Account (account_number, account_name, user_id, balance_have, balanc
 VALUES 
 ('123-456789-001', 'My Account', 1, 1500.75, 0.00),
 ('123-456789-002', 'My OCBC Savings Account', 1, 2000.75, 0.00),
-('123-456789-011', 'Fixed Deposit Account', 1, 1000.00, 0.00),
+('123-456789-011', 'Fixed Deposit Account', 1, 1063.62, 0.00),
 ('124-987654-003', 'My Account', 2, 2000.00, 0.00),
 ('124-987654-004', 'My Credit Account', 2, 0.00, 500.00),
-('124-987654-012', 'Fixed Deposit Account', 2, 1000.00, 0.00),
+('124-987654-012', 'Fixed Deposit Account', 2, 1065.01, 0.00),
 ('125-123456-005', 'My Account', 3, 2100.00, 0.00),
 ('125-123456-006', 'My Investment Account', 3, 2000.00, 0.00),
-('125-123456-014', 'Fixed Deposit Account', 3, 1000.00, 0.00),
+('125-123456-014', 'Fixed Deposit Account', 3, 1062.93, 0.00),
 ('126-789456-007', 'My Account', 4, 850.00, 0.00),
 ('126-789456-008', 'My Loan Account', 4, 0.00, 2500.00),
-('126-789456-013', 'Fixed Deposit Account', 4, 1000.00, 0.00),
+('126-789456-013', 'Fixed Deposit Account', 4, 1059.47, 0.00),
 ('127-654321-009', 'My Account', 5, 2000.00, 0.00),
 ('127-654321-010', 'My Savings Account', 5, 750.00, 0.00),
-('127-654321-015', 'Fixed Deposit Account', 5, 1000.00, 0.00);
+('127-654321-015', 'Fixed Deposit Account', 5, 1063.68, 0.00);
 
 /* Transaction Table */
 CREATE TABLE Transactions (
