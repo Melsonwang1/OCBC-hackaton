@@ -406,7 +406,10 @@ document.addEventListener('keydown', function (event) {
         window.location.href = "../html/accountschi.html";
     }
     if (event.key === 'l') {
-        window.location.href = 'logineng.html';
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
     }
 });
 
