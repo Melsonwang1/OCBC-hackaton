@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Fetch user data and display recipient name or error
-    function fetchUserData() {
+     // Fetch user data and display recipient name or error
+     function fetchUserData() {
         const mobileInput = document.getElementById("mobile");
         const nricInput = document.getElementById("nric");
         let url = 'http://localhost:3000/user';
@@ -240,6 +240,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 document.getElementById("error").style.display = 'block'; // Show error
             });
     }
+
 
     // Add event listener to the form for transaction submission
 const form = document.querySelector('.transfer-container form');
@@ -420,15 +421,68 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
 async function announceAccountsAndListen(userId) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US'; // Set recognition language
-    recognition.continuous = true; // Listen indefinitely
-    recognition.interimResults = false; // Only get finalized speech
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    let isRecognitionActive = false;
+
+    const spokenToCharMap = {
+        "hey": "A", "ay": "A", "a": "A","诶":"A", "bee": "B", "b": "B","be":"B", "see": "C", "sea": "C", "c": "C", 
+        "dee": "D", "d": "D","的":"D", "ee": "E", "e": "E","一":"E", "eff": "F", "f": "F", "gee": "G", "g": "G", 
+        "aitch": "H", "h": "H", "eye": "I", "i": "I", "jay": "J", "j": "J", "kay": "K", "k": "K", 
+        "ell": "L", "l": "L", "em": "M", "m": "M","im":"M","an":"N","anne":"N","and":"N","嗯":"N", "en": "N", "n": "N", "oh": "O", "o": "O","哦":"O", 
+        "pee": "P","屁":"P", "p": "P", "queue": "Q", "q": "Q","kill":"Q","二":"R", "are": "R", "r": "R", "ess": "S", "s": "S", 
+        "tee": "T", "tea": "T", "t": "T", "you": "U", "u": "U","we":"V", "vee": "V", "v": "V", 
+        "double you": "W", "w": "W", "ex": "X", "x": "X", "why": "Y", "y": "Y", "zee": "Z", "z": "Z","the":"Z",
+        "zero": "0", "one": "1", "two": "2","兔":"2","tree":"3", "three": "3","for":"4", "four": "4", "five": "5", "six": "6", 
+        "seven": "7", "eight": "8", "nine": "9", "dollar": "$", "dollar sign": "$", "hash": "#", 
+        "hashtag": "#","hash tag":"#", "exclamation": "!", "exclamation mark": "!", "at": "@", "percent": "%","per cent": "%", 
+        "caret": "^", "carrot": "^", "ampersand": "&", "plus": "+", "equal": "=","一锅":"=","equals":"=",
+    
+        // Numbers with Chinese translations
+        "zero": "0", "一": "1", "one": "1", "二": "2", "two": "2", "三": "3", "tree": "3", "three": "3", 
+        "四": "4", "for": "4", "four": "4", "五": "5", "five": "5", "六": "6", "six": "6", 
+        "七": "7", "seven": "7", "八": "8", "eight": "8", "九": "9", "nine": "9", 
+    
+        // Special characters with Chinese translations
+        "dollar": "$", "dollar sign": "$", "美元": "$", "hash": "#", "hashtag": "#", "hash tag": "#", "井号": "#", 
+        "exclamation": "!", "exclamation mark": "!", "感叹号": "!", "at": "@", "艾特": "@", "percent": "%", "per cent": "%", "百分号": "%", 
+        "caret": "^", "carrot": "^", "插入符号": "^", "ampersand": "&", "和号": "&", "plus": "+", "加号": "+", 
+        "equal": "=", "equals": "=", "等号": "=", "left bracket": "[", "right bracket": "]", 
+        "left parenthesis": "(", "right parenthesis": ")", "左括号": "(", "右括号": ")", 
+        "left curly bracket": "{", "right curly bracket": "}", "左大括号": "{", "右大括号": "}", 
+        "colon": ":", "冒号": ":", "semicolon": ";", "分号": ";", 
+        "quote": "\"", "double quote": "\"", "双引号": "\"", "single quote": "'", "单引号": "'", 
+        "comma": ",", "逗号": ",", "period": ".", "句号": ".", 
+        "slash": "/", "斜杠": "/", "backslash": "\\", "反斜杠": "\\", 
+        "pipe": "|", "竖线": "|", "less than": "<", "小于号": "<", 
+        "greater than": ">", "大于号": ">", "question mark": "?", "问号": "?", 
+        "tilde": "~", "波浪号": "~", "grave": "`", "重音符": "`"
+    };
+
+    const convertSpokenToChar = (spokenInput) => {
+        return spokenToCharMap[spokenInput] || spokenInput.charAt(0);
+    };
+
+    async function fetchAndDisplayBalance(accountId) {
+        try {
+            const accountResponse = await fetch(`/accounts/account/${accountId}`);
+            if (!accountResponse.ok) throw new Error("Failed to fetch account data");
+
+            const accountData = await accountResponse.json();
+            const balanceHave = accountData.account.balance_have.toFixed(2);
+            document.getElementById('balance-amount').innerText = balanceHave; // Display balance
+            const synth = window.speechSynthesis;
+            synth.speak(new SpeechSynthesisUtterance(`Your balance is ${balanceHave} dollars.`));
+        } catch (error) {
+            console.error('Error fetching account balance:', error);
+        }
+    }
 
     try {
         const response = await fetch(`/accounts/accountnameandnumber/${userId}`);
-        if (!response.ok) {
-            throw new Error(`Error status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Error status: ${response.status}`);
 
         const accountsData = await response.json();
         const accounts = accountsData.account;
@@ -438,22 +492,20 @@ async function announceAccountsAndListen(userId) {
             return;
         }
 
-        // Populate the dropdown with account options
         const transferFromDropdown = document.getElementById('transfer-from');
         if (!transferFromDropdown) {
             console.error('Dropdown element not found!');
             return;
         }
 
-        transferFromDropdown.innerHTML = '<option value="" disabled selected>Select an account</option>'; // Reset dropdown
+        transferFromDropdown.innerHTML = '<option value="" disabled selected>Select an account</option>';
         accounts.forEach((account, index) => {
             const option = document.createElement('option');
-            option.value = account.account_id; // Set account ID as value
-            option.textContent = `${account.account_name} (${account.account_number})`; // Display name and number
+            option.value = account.account_id;
+            option.textContent = `${account.account_name} (${account.account_number})`;
             transferFromDropdown.appendChild(option);
         });
 
-        // Announce account options using Text-to-Speech
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance();
         let accountListText = 'Here are your accounts: ';
@@ -465,81 +517,171 @@ async function announceAccountsAndListen(userId) {
         utterance.text = accountListText;
         synth.speak(utterance);
 
-        // Wait for TTS to finish before starting speech recognition
         utterance.onend = () => {
-            console.log('Text-to-Speech complete. Starting speech recognition...');
-            recognition.start();
+            if (!isRecognitionActive) {
+                recognition.start();
+                isRecognitionActive = true;
+            }
         };
 
-        // Handle speech recognition for account selection
         recognition.onresult = async (event) => {
             const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-            console.log('You said:', transcript);
+            if (transcript.includes("done")) {
+                recognition.stop();
+                isRecognitionActive = false;
+                document.getElementById("enterBtn").click();
+                return;
+            }
 
-            // Check if the user selects an account by speaking the option number
-            const optionNumber = parseInt(transcript, 10);
+            const convertedInput = convertSpokenToChar(transcript);
+            const optionNumber = parseInt(convertedInput, 10);
             if (!isNaN(optionNumber) && optionNumber >= 1 && optionNumber <= accounts.length) {
                 const selectedAccount = accounts[optionNumber - 1];
-                console.log('Selected Account:', selectedAccount);
-
-                // Stop listening once selection is made
                 recognition.stop();
+                isRecognitionActive = false;
 
-                // Update the dropdown to select the chosen option
                 transferFromDropdown.value = selectedAccount.account_id;
+                synth.speak(new SpeechSynthesisUtterance(`You selected ${selectedAccount.account_name}, account number ${selectedAccount.account_number}.`));
 
-                // Fetch and display balance for the selected account
-                await fetchAndDisplayBalance(selectedAccount.account_id);
-
-                // Announce options for transferring money
-                const transferMethodPrompt = new SpeechSynthesisUtterance(
-                    'Do you want to transfer using a mobile number or an NRIC? Please say mobile or NRIC.'
-                );
+                const transferMethodPrompt = new SpeechSynthesisUtterance('Do you want to transfer using a mobile number or an NRIC? Please say mobile or NRIC.');
                 synth.speak(transferMethodPrompt);
 
-                transferMethodPrompt.onend = () => {
-                    recognition.start();
-                };
-
-                // Handle speech recognition for transfer method
                 recognition.onresult = (event) => {
                     const methodTranscript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-                    console.log('You said:', methodTranscript);
+                    const mobileRadio = document.querySelector('input[name="transfer-to"][value="mobile"]');
+                    const nricRadio = document.querySelector('input[name="transfer-to"][value="nric"]');
+                    const mobileInput = document.getElementById('mobile');
+                    const nricInput = document.getElementById('nric');
+                    const transferInputGroup = document.querySelector('.transfer-input-group');
+                    const errorElement = document.getElementById('error');
 
                     if (methodTranscript.includes('mobile')) {
-                        document.querySelector('input[name="transfer-to"][value="mobile"]').click();
-                        console.log('Mobile number selected.');
-                        synth.speak(new SpeechSynthesisUtterance('Mobile number selected.'));
+                        mobileRadio.checked = true;
+                        synth.speak(new SpeechSynthesisUtterance('You are now at the mobile number field. Please say a mobile number starting with 8 or 9, followed by 7 digits.'));
+
+                        transferInputGroup.style.display = 'block';
+                        mobileInput.style.display = 'block';
+                        nricInput.style.display = 'none';
+
+                        if (!isRecognitionActive) {
+                            recognition.start();
+                            isRecognitionActive = true;
+                        }
+
+                        recognition.onresult = (event) => {
+                            const spokenInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                            if (spokenInput.includes("done")) {
+                                recognition.stop();
+                                isRecognitionActive = false;
+                                synth.speak(new SpeechSynthesisUtterance(`Your mobile number is ${mobileInput.value}.`));
+                                document.getElementById("enterBtn").click();
+                                return;
+                            }
+                        
+                            const convertedInput = convertSpokenToChar(spokenInput);
+                            
+                            // Only allow digits for mobile numbers
+                            if (mobileRadio.checked && !isNaN(convertedInput) && mobileInput.value.length < 8) {
+                                mobileInput.value += convertedInput;
+                                synth.speak(new SpeechSynthesisUtterance(`Added ${convertedInput}`));
+                            } else if (mobileRadio.checked && isNaN(convertedInput)) {
+                                synth.speak(new SpeechSynthesisUtterance("Please only enter digits for mobile number."));
+                            }
+                        };
+                        
+
                     } else if (methodTranscript.includes('nric')) {
-                        document.querySelector('input[name="transfer-to"][value="nric"]').click();
-                        console.log('NRIC selected.');
-                        synth.speak(new SpeechSynthesisUtterance('NRIC selected.'));
+                        nricRadio.checked = true;
+                        synth.speak(new SpeechSynthesisUtterance('You are now at the NRIC field. Please say an NRIC starting with a letter, followed by 7 digits, and another letter.'));
+
+                        transferInputGroup.style.display = 'block';
+                        mobileInput.style.display = 'none';
+                        nricInput.style.display = 'block';
+
+                        if (!isRecognitionActive) {
+                            recognition.start();
+                            isRecognitionActive = true;
+                        }
+
+                        recognition.onresult = (event) => {
+                            const spokenInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                            if (spokenInput.includes("done")) {
+                                recognition.stop();
+                                isRecognitionActive = false;
+                                document.getElementById("enterBtn").click();
+                                return;
+                            }
+
+                            const convertedNric = convertSpokenToChar(spokenInput);
+                            if (nricInput.value.length < 9) {
+                                nricInput.value += convertedNric;
+                            }
+                        };
                     } else {
-                        console.error('Invalid transfer method. Listening again...');
-                        synth.speak(new SpeechSynthesisUtterance('Invalid option, please say mobile or NRIC.'));
+                        synth.speak(new SpeechSynthesisUtterance('Invalid option. Say mobile or NRIC.'));
                     }
                 };
+
+                // Announce balance after verifying the account
+                fetchAndDisplayBalance(selectedAccount.account_id);
             } else {
-                console.error('Invalid selection. Listening again...');
                 synth.speak(new SpeechSynthesisUtterance('Invalid option, please try again.'));
             }
         };
 
-        // Handle recognition errors
         recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-            recognition.stop(); // Stop recognition and restart
-            synth.speak(new SpeechSynthesisUtterance('Sorry, there was an error. Listening again.'));
+            recognition.stop();
+            isRecognitionActive = false;
             recognition.start();
         };
 
         recognition.onend = () => {
-            console.log('Recognition ended. Restarting...');
-            recognition.start(); // Restart listening
+            if (!isRecognitionActive) {
+                recognition.start();
+                isRecognitionActive = true;
+            }
+        };
+
+        document.getElementById("enterBtn").onclick = async function() {
+            const mobileInput = document.getElementById('mobile');
+            const nricInput = document.getElementById('nric');
+            const errorElement = document.getElementById('error');
+            const mobileRadio = document.querySelector('input[name="transfer-to"][value="mobile"]');
+
+            let input, url;
+            if (mobileRadio.checked && /^[89]\d{7}$/.test(mobileInput.value)) {
+                input = mobileInput.value;
+                url = `/user?phoneNumber=${encodeURIComponent(input)}`; 
+            } else if (/^[A-Z]\d{7}[A-Z]$/.test(nricInput.value)) {
+                input = nricInput.value;
+                url = `/user/${input}`;
+            } else {
+                errorElement.textContent = 'Invalid input. Please re-enter.';
+                errorElement.style.display = 'block';
+                if (mobileRadio.checked) mobileInput.value = '';
+                else nricInput.value = '';
+                return;
+            }
+
+            try {
+                const verifyResponse = await fetch(url);
+                if (!verifyResponse.ok) throw new Error();
+
+                const data = await verifyResponse.json();
+                if (data.name) {
+                    synth.speak(new SpeechSynthesisUtterance(`Verified. The name is ${data.name}.`));
+                    errorElement.textContent = `Verified. The name is ${data.name}.`;
+                    await fetchAndDisplayBalance(selectedAccount.account_id); // Announce balance here
+                } else {
+                    synth.speak(new SpeechSynthesisUtterance('Invalid input. Please try again.'));
+                }
+            } catch (error) {
+                
+                errorElement.style.display = 'block';
+            }
         };
 
     } catch (error) {
-        console.error('Error announcing accounts:', error);
-        alert('Could not retrieve or announce accounts. Please try again later.');
+        console.error('Error fetching accounts:', error);
     }
 }
