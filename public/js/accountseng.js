@@ -294,7 +294,10 @@ document.addEventListener('keydown', function (event) {
 
     // Shortcut for "Log Out" (L key)
     if (event.key === 'l') {
-        window.location.href = 'logineng.html';
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        window.location.href = "logineng.html";
+        history.replaceState(null, null, "logineng.html");
     }
 
 });
