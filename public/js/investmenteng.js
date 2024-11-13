@@ -79,9 +79,8 @@ async function fetchAndPlotData(user_id) {
             return;
         }
 
-        const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const amounts = data.map((item, index) => initialInvestment);
+        const amounts = data.map(item => item.amount);
         const profits = data.map(item => item.profit_loss);
 
         investmentChart.data.labels = labels;
@@ -174,7 +173,6 @@ function enableDropdownNavigation() {
 
 // Call the function after the dropdown content is loaded
 enableDropdownNavigation();
-
 
 document.addEventListener("keydown", (event) => {
     if (event.altKey || event.ctrlKey || event.metaKey) return;

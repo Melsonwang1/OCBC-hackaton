@@ -296,6 +296,10 @@ h1 {
     margin-top: 20px;
 }
 
+.dropdown-btn:hover {
+    background-color: #5e5e5e;
+}
+
 .dropdown-content {
     display: none;
     padding: 10px;

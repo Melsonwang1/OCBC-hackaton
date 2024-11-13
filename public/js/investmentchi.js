@@ -79,25 +79,17 @@ async function fetchAndPlotData(user_id) {
             return; // Exit the function if there's no data
         }
 
-        // Initialize starting investment value
-        const initialInvestment = 100;
         const labels = data.map(item => new Date(item.period_start));
-        const values = data.map((item, index) =>
-            index === 0 ? initialInvestment : initialInvestment + item.profit_loss
-        );
-
-        const barColors = values.map(value =>
-            value < initialInvestment ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'
-        );
+        const amounts = data.map(item => item.amount);
+        const profits = data.map(item => item.profit_loss);
 
         investmentChart.data.labels = labels;
-        investmentChart.data.datasets[0].data = values;
-        investmentChart.data.datasets[0].backgroundColor = barColors;
+        investmentChart.data.datasets[0].data = amounts;
+        investmentChart.data.datasets[1].data = profits;
         investmentChart.update();
 
         if (!ttsEnabled) {
-            // Announce each point on the chart
-            announceInvestmentGrowth(labels, values);
+            announceInvestmentGrowth(labels, amounts.map((amount, i) => amount + profits[i]));
             startListeningForNavigation();
         }
 
@@ -112,25 +104,46 @@ const investmentChart = new Chart(ctx, {
     data: {
         labels: [],
         datasets: [{
-            label: "投资增长",
+            label: "投资",
             data: [],
-            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            backgroundColor: "rgba(75, 192, 192, 0.8)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1
         },
         {
-            label: "投资减少",
+            label: "投资的增长",
             data: [],
-            backgroundColor: "rgba(255, 99, 132, 0.2)",
-            borderColor: "rgba(75, 192, 192, 0.2)",
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1
         }
         ]
     },
     options: {
         scales: {
-            x: { type: "time", time: { unit: "month" } },
-            y: { beginAtZero: true }
+            x: { 
+                stacked: true, // Enable stacking on the x-axis
+                type: "time", 
+                time: { unit: "month" } 
+            },
+            y: { 
+                beginAtZero: true, 
+                stacked: true // Enable stacking on the y-axis as well
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.dataset.label || '';
+                        const value = context.raw || 0;
+                        const total = context.chart.data.datasets.reduce((sum, dataset, index) => {
+                            return sum + (context.datasetIndex === index ? 0 : dataset.data[context.dataIndex]);
+                        }, value);
+                        return `${label}: $${value} (Total: $${total})`;
+                    }
+                }
+            }
         }
     }
 });
@@ -139,6 +152,26 @@ function toggleDropdown(id) {
     const content = document.getElementById(id);
     content.style.display = content.style.display === "block" ? "none" : "block";
 }
+
+// Function to handle navigation to account details
+function navigateToAccountDetails(accountId) {
+    window.location.href = `accountdetailschi.html?accountId=${accountId + 2}`;
+}
+
+// Function to make dropdown items clickable
+function enableDropdownNavigation() {
+    // Get all dropdown items
+    const dropdownItems = document.querySelectorAll("#fixedDeposit .card");
+
+    dropdownItems.forEach((item, index) => {
+        // Assuming each card corresponds to a specific account ID
+        const accountId = index + 1; // Update this based on actual account IDs
+        item.onclick = () => navigateToAccountDetails(accountId);
+    });
+}
+
+// Call the function after the dropdown content is loaded
+enableDropdownNavigation();
 
 document.addEventListener("keydown", (event) => {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
