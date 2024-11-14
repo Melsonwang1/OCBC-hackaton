@@ -1,4 +1,3 @@
-
 let currentFontSize = 25; // Default font size for tracking changes only
 
 function changeFontSize(sizeChange) {
@@ -33,17 +32,17 @@ document.addEventListener('keydown', function(event) {
 
     // General page navigation shortcuts
     if (event.key === '1') {
-        window.location.href = "../html/accountseng.html";
-    } else if (event.key === '2') {
-        window.location.href = "../html/transfer.html";
-    } else if (event.key === '3') {
-        window.location.href = "../html/investmenteng.html";
-    } else if (event.key === 't') {
         window.location.href = "../html/accountschi.html";
+    } else if (event.key === '2') {
+        window.location.href = "../html/transferchi.html";
+    } else if (event.key === '3') {
+        window.location.href = "../html/investmentchi.html";
+    } else if (event.key === 'e') {
+        window.location.href = "../html/transfer.html";
     } else if (event.key === 'l') {
         localStorage.removeItem("token"); // Properly remove the token
-        window.location.href = "logineng.html";
-        history.replaceState(null, null, "logineng.html");
+        window.location.href = "loginchi.html";
+        history.replaceState(null, null, "loginchi.html");
     }
 });
 
@@ -84,8 +83,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Check if token is null before proceeding
     if (!token) {
-        alert("Your session has expired or you are not logged in. Please log in again.");
-        window.location.href = "logineng.html"; // Redirect to login page
+        alert("您已被登出, 请重新登录以继续");
+        window.location.href = "loginchi.html"; // Redirect to login page
         return; // Stop execution
     }
 
@@ -116,14 +115,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) {
             console.log('Error in getUserData:', error.message);
             if (error.message === 'Forbidden: Invalid or expired token') {
-                alert("Times out. Please login again!");
+                alert("请您重新登录以继续!");
                 localStorage.setItem("token", null); // Clear token from local storage
-                window.location.href = "logineng.html"; // Redirect to login
+                window.location.href = "loginchi.html"; // Redirect to login
             } else if (error.message === 'Unauthorized') {
-                alert("Please login first!");
-                window.location.href = "logineng.html"; // Redirect to login
+                alert("请先登录!");
+                window.location.href = "loginchi.html"; // Redirect to login
             } else {
-                console.error('Unexpected error:', error);
+                console.error('出现错误:', error);
             }
         }
     }
@@ -131,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Log Out Button functionality
     document.getElementById("logout-btn").addEventListener("click", function() {
         localStorage.removeItem("token"); // Properly remove the token
-        window.location.href = "logineng.html";
+        window.location.href = "loginchi.html";
         history.replaceState(null, null, "logineng.html");
     });
 
@@ -152,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             // Check if accountsData.account exists and is an array
             if (!accountsData.account || !Array.isArray(accountsData.account)) {
-                console.error('Expected an array but received:', accountsData);
+                console.error('无法获取正确账户信息, 但接收到了:', accountsData);
                 return;
             }
 
@@ -177,8 +176,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             });
         } catch (error) {
-            console.error('Error fetching bank accounts:', error);
-            alert('No bank account records data found'); // Alert the user if no bank accounts are found
+            console.error('无法获取账户:', error);
+            alert('未找到银行账户信息'); // Alert the user if no bank accounts are found
         }
     }
 
@@ -188,13 +187,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             const accountResponse = await fetch(`/accounts/account/${accountId}`);
             if (!accountResponse.ok) {
                 const errorData = await accountResponse.json();
-                throw new Error(errorData.message || "Failed to fetch account data");
+                throw new Error(errorData.message || "无法获取账户信息");
             }
             const accountData = await accountResponse.json();
             const balanceHave = accountData.account.balance_have.toFixed(2);
             document.getElementById('balance-amount').innerText = balanceHave; // Display balance
         } catch (error) {
-            console.error('Error fetching account balance:', error);
+            console.error('无法获取账户余额:', error);
         }
     }
 
@@ -228,7 +227,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Show error if user is not found
                     document.getElementById("user-namee").textContent = "";
                     document.getElementById("name").style.display = 'none'; // Hide recipient name if no user
-                    document.getElementById("error").textContent = "User not found."; // Display error message
+                    document.getElementById("error").textContent = "未找到用户."; // Display error message
                     document.getElementById("error").style.display = 'block'; // Show error
                 }
             })
@@ -236,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.error("Error fetching user data:", error);
                 document.getElementById("user-namee").textContent = "";
                 document.getElementById("name").style.display = 'none'; // Hide recipient name if error occurs
-                document.getElementById("error").textContent = "Error fetching user data."; // Display error message
+                document.getElementById("error").textContent = "无法获取用户资料"; // Display error message
                 document.getElementById("error").style.display = 'block'; // Show error
             });
     }
@@ -272,13 +271,13 @@ form.addEventListener('submit', async (event) => {
             nric = document.getElementById('nric').value;
         }
     } else {
-        alert("Please select a transfer method.");
+        alert("请选择一种转账方式");
         return;
     }
 
     // Validate form fields
     if (!transferFrom || isNaN(amount) || amount <= 0) {
-        alert("Please select an account, enter a valid amount, and choose a transfer method.");
+        alert("请选择一个账户，输入金额，并选择转账方式。");
         return;
     }
 
@@ -330,8 +329,8 @@ form.addEventListener('submit', async (event) => {
             throw new Error(result.error || "Transaction failed");
         }
     } catch (error) {
-        console.error("Error creating transaction:", error);
-        alert("Transaction error: " + error.message);
+        console.error("转账出现错误:", error);
+        alert("转账出现错误: " + error.message);
     }
 });
 
@@ -468,15 +467,15 @@ async function announceAccountsAndListen(userId) {
     async function fetchAndDisplayBalance(accountId) {
         try {
             const accountResponse = await fetch(`/accounts/account/${accountId}`);
-            if (!accountResponse.ok) throw new Error("Failed to fetch account data");
+            if (!accountResponse.ok) throw new Error("无法获取账户信息");
 
             const accountData = await accountResponse.json();
             const balanceHave = accountData.account.balance_have.toFixed(2);
             document.getElementById('balance-amount').innerText = balanceHave; // Display balance
             const synth = window.speechSynthesis;
-            synth.speak(new SpeechSynthesisUtterance(`Your balance is ${balanceHave} dollars.`));
+            synth.speak(new SpeechSynthesisUtterance(`您的余额是${balanceHave}`));
         } catch (error) {
-            console.error('Error fetching account balance:', error);
+            console.error('无法获取账户余额:', error);
         }
     }
 
@@ -488,7 +487,7 @@ async function announceAccountsAndListen(userId) {
         const accounts = accountsData.account;
 
         if (!accounts || accounts.length === 0) {
-            alert('No accounts found.');
+            alert('未找到账户');
             return;
         }
 
@@ -498,7 +497,7 @@ async function announceAccountsAndListen(userId) {
             return;
         }
 
-        transferFromDropdown.innerHTML = '<option value="" disabled selected>Select an account</option>';
+        transferFromDropdown.innerHTML = '<option value="" disabled selected>选择一个账户</option>';
         accounts.forEach((account, index) => {
             const option = document.createElement('option');
             option.value = account.account_id;
@@ -542,9 +541,7 @@ async function announceAccountsAndListen(userId) {
                 isRecognitionActive = false;
 
                 transferFromDropdown.value = selectedAccount.account_id;
-                const selectedacc =(new SpeechSynthesisUtterance(`您选择了 ${selectedAccount.account_name}，账户号码是 ${selectedAccount.account_number}。`));
-                selectedacc.lang = 'zh-CN';
-                synth.speak(selectedacc);
+                synth.speak(new SpeechSynthesisUtterance(`您选择了 ${selectedAccount.account_name}，账户号码是 ${selectedAccount.account_number}。`));
 
                 const transferMethodPrompt = new SpeechSynthesisUtterance("您想使用手机号还是 NRIC 进行转账？请说 '手机号' 或 'NRIC'。");
                 transferMethodPrompt.lang = 'zh-CN';
@@ -561,9 +558,7 @@ async function announceAccountsAndListen(userId) {
 
                     if (methodTranscript.includes('mobile')) {
                         mobileRadio.checked = true;
-                        const mobileerror = (new SpeechSynthesisUtterance("您现在在手机号字段。请说一个以 8 或 9 开头的手机号，后面加上 7 位数字。"));
-                        mobileerror.lang = 'zh-CN';
-                        synth.speak(mobileerror);
+                        synth.speak(new SpeechSynthesisUtterance("您现在在手机号字段。请说一个以 8 或 9 开头的手机号，后面加上 7 位数字。"));
 
                         transferInputGroup.style.display = 'block';
                         mobileInput.style.display = 'block';
@@ -579,9 +574,7 @@ async function announceAccountsAndListen(userId) {
                             if (spokenInput.includes("完成")) {
                                 recognition.stop();
                                 isRecognitionActive = false;
-                                const mobilenum = (new SpeechSynthesisUtterance(`您的手机号是  ${mobileInput.value}.`));
-                                mobilenum.lang = 'zh-CN';
-                                synth.speak(mobilenum);
+                                synth.speak(new SpeechSynthesisUtterance(`您的手机号是  ${mobileInput.value}.`));
                                 document.getElementById("enterBtn").click();
                                 return;
                             }
@@ -593,19 +586,14 @@ async function announceAccountsAndListen(userId) {
                                 mobileInput.value += convertedInput;
                                 synth.speak(new SpeechSynthesisUtterance(`Added ${convertedInput}`));
                             } else if (mobileRadio.checked && isNaN(convertedInput)) {
-                                const digited = (new SpeechSynthesisUtterance("请输入数字作为手机号。"));
-                                digited.lang = 'zh-CN';
-                                synth.speak(digited);
+                                synth.speak(new SpeechSynthesisUtterance("请输入数字作为手机号。"));
                             }
                         };
                         
 
                     } else if (methodTranscript.includes('nric')) {
                         nricRadio.checked = true;
-                        const nricerror = (new SpeechSynthesisUtterance("您现在在 NRIC 字段。请说一个以字母开头，后跟 7 位数字，再加一个字母的 NRIC。"));
-                        nricerror.lang = 'zh-CN';
-                        synth.speak(nricerror);
-
+                        synth.speak(new SpeechSynthesisUtterance("您现在在 NRIC 字段。请说一个以字母开头，后跟 7 位数字，再加一个字母的 NRIC。"));
 
                         transferInputGroup.style.display = 'block';
                         mobileInput.style.display = 'none';
@@ -631,9 +619,7 @@ async function announceAccountsAndListen(userId) {
                             }
                         };
                     } else {
-                        const selection1 = (new SpeechSynthesisUtterance("无效选项。请说 '手机号' 或 'NRIC'。"));
-                        selection1.lang = 'zh-CN';
-                        synth.speak(selection1);
+                        synth.speak(new SpeechSynthesisUtterance("无效选项。请说 '手机号' 或 'NRIC'。"));
                     }
                 };
 
@@ -672,7 +658,7 @@ async function announceAccountsAndListen(userId) {
                 input = nricInput.value;
                 url = `/user/${input}`;
             } else {
-                errorElement.textContent = 'Invalid input. Please re-enter.';
+                errorElement.textContent = '出现错误, 请重新填写.';
                 errorElement.style.display = 'block';
                 if (mobileRadio.checked) mobileInput.value = '';
                 else nricInput.value = '';
@@ -685,15 +671,11 @@ async function announceAccountsAndListen(userId) {
         
                 const data = await verifyResponse.json();
                 if (data.name) {
-                    const name1 = (new SpeechSynthesisUtterance(`已验证。名字是  ${data.name}.`));
-                    name1.lang = 'zh-CN';
-                    synth.speak(name1);
+                    synth.speak(new SpeechSynthesisUtterance(`已验证。名字是  ${data.name}.`));
                     errorElement.textContent = `已验证。名字是  ${data.name}.`;
         
                     // Ask the user to enter the dollar amount, digit by digit
-                    const money1 = (new SpeechSynthesisUtterance("请逐位说出您想转账的金额，单位是美元。完成时请说 '完成'。"));
-                    money1.lang = 'zh-CN';
-                    synth.speak(money1);
+                    synth.speak(new SpeechSynthesisUtterance("请逐位说出您想转账的金额，单位是美元。完成时请说 '完成'。"));
         
                     let transferAmount = { dollars: '', cents: '' };
                     let isDollarInputComplete = false;
@@ -705,22 +687,16 @@ async function announceAccountsAndListen(userId) {
                         if (spokenInput.includes("finish")) {
                             if (!isDollarInputComplete) {
                                 isDollarInputComplete = true;
-                                const cents1 = (new SpeechSynthesisUtterance(`您输入了 ${transferAmount.dollars} 美元。现在，请逐位说出金额的分数部分。完成时请说 '完成'。`));
-                                cents1.lang = 'zh-CN';
-                                synth.speak(cents1);
+                                synth.speak(new SpeechSynthesisUtterance(`您输入了 ${transferAmount.dollars} 美元。现在，请逐位说出金额的分数部分。完成时请说 '完成'。`));
                                 transferAmount.cents = '';
                             } else {
                                 recognition.stop();
                                 const totalAmount = `${transferAmount.dollars}.${transferAmount.cents.padStart(2, '0')}`;
                                 document.getElementById('amount').value = totalAmount;
-                                const total1 = (new SpeechSynthesisUtterance(`您的 ${totalAmount} 新元转账金额已填写在金额字段中。`));
-                                total1.lang = 'zh-CN';
-                                synth.speak(total1);
+                                synth.speak(new SpeechSynthesisUtterance(`您的 ${totalAmount} 新元转账金额已填写在金额字段中。`));
         
                                 // Prompt for description
-                               const desc =(new SpeechSynthesisUtterance("您希望为这笔转账添加什么描述？请说出您的描述，并在完成时说 '完成'。"));
-                                desc.lang = 'zh-CN';
-                                synth.speak(desc);
+                                synth.speak(new SpeechSynthesisUtterance("您希望为这笔转账添加什么描述？请说出您的描述，并在完成时说 '完成'。"));
         
                                 let descriptionText = '';
                                 recognition.onresult = (event) => {
@@ -730,14 +706,10 @@ async function announceAccountsAndListen(userId) {
                                     if (descriptionInput.includes("完成")) {
                                         recognition.stop();
                                         document.getElementById('description').value = descriptionText;
-                                        const desct = (new SpeechSynthesisUtterance(`您的描述已添加为： ${descriptionText}`));
-                                        desct.lang = 'zh-CN';
-                                        synth.speak(desct);
+                                        synth.speak(new SpeechSynthesisUtterance(`您的描述已添加为： ${descriptionText}`));
         
                                         // Prompt to enable 24-hour delay
-                                        const yes1 = (new SpeechSynthesisUtterance("您是否希望将转账延迟24小时？说 '是' 以启用，或说 '否' 以立即进行。"));
-                                        yes1.lang = 'zh-CN';
-                                        synth.speak(yes1);
+                                        synth.speak(new SpeechSynthesisUtterance("您是否希望将转账延迟24小时? 说 '是' 以启用，或说 '否' 以立即进行。"));
                                         // After confirming delay response
                                         recognition.onresult = (event) => {
                                             const delayResponse = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
@@ -745,9 +717,7 @@ async function announceAccountsAndListen(userId) {
 
                                             if (delayResponse.includes("是")) {
                                                 statusCheckbox.checked = true;
-                                                const delay = (new SpeechSynthesisUtterance('The 24-hour delay has been enabled.'));
-                                                delay.lang = 'zh-CN';
-                                                synth.speak(delay);
+                                                synth.speak(new SpeechSynthesisUtterance('The 24-hour delay has been enabled.'));
                                                 document.querySelector('.transfer-btn').click(); // Trigger the transfer button click
                                                 synth.speak(new SpeechSynthesisUtterance("转账成功完成。"));
                                             } else if (delayResponse.includes("否")) {
@@ -756,7 +726,7 @@ async function announceAccountsAndListen(userId) {
                                                 document.querySelector('.transfer-btn').click(); // Trigger the transfer button click
                                                 synth.speak(new SpeechSynthesisUtterance("转账成功完成。"));
                                             } else {
-                                                synth.speak(new SpeechSynthesisUtterance('Invalid response. Please say "yes" or "no".'));
+                                                synth.speak(new SpeechSynthesisUtterance('回复无法识别, 请说 "是" 或 "否"'));
                                             }
                                         };
 
@@ -804,6 +774,6 @@ async function announceAccountsAndListen(userId) {
         
 
     } catch (error) {
-        console.error('Error fetching accounts:', error);
+        console.error('无法获取账户信息:', error);
     }
 }
