@@ -647,6 +647,7 @@ async function announceAccountsAndListen(userId) {
             const nricInput = document.getElementById('nric');
             const errorElement = document.getElementById('error');
             const mobileRadio = document.querySelector('input[name="transfer-to"][value="mobile"]');
+            const statusCheckbox = document.getElementById('status-checkbox');
         
             let input, url;
             if (mobileRadio.checked && /^[89]\d{7}$/.test(mobileInput.value)) {
@@ -677,50 +678,84 @@ async function announceAccountsAndListen(userId) {
         
                     let transferAmount = { dollars: '', cents: '' };
                     let isDollarInputComplete = false;
-                    
+        
                     recognition.onresult = (event) => {
                         const spokenInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
                         console.log(`Heard: ${spokenInput}`);
-                    
+        
                         if (spokenInput.includes("finish")) {
                             if (!isDollarInputComplete) {
-                                // Move to cents input after dollars are complete
                                 isDollarInputComplete = true;
-                                console.log(`Dollars entered: ${transferAmount.dollars}`);
                                 synth.speak(new SpeechSynthesisUtterance(`You entered ${transferAmount.dollars} dollars. Now, please say the amount in cents, digit by digit. Say "finish" when you are done.`));
-                                transferAmount.cents = ''; // Reset cents input
+                                transferAmount.cents = '';
                             } else {
-                                // Complete the amount entry
                                 recognition.stop();
                                 const totalAmount = `${transferAmount.dollars}.${transferAmount.cents.padStart(2, '0')}`;
                                 document.getElementById('amount').value = totalAmount;
-                                console.log(`Final Transfer Amount: $${totalAmount}`);
                                 synth.speak(new SpeechSynthesisUtterance(`Your transfer of ${totalAmount} SGD has been populated in the amount field.`));
-                                return;
+        
+                                // Prompt for description
+                                synth.speak(new SpeechSynthesisUtterance('What would you like to add as a description for this transfer? Please say your description and say "completed" when you are done.'));
+        
+                                let descriptionText = '';
+                                recognition.onresult = (event) => {
+                                    const descriptionInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                                    console.log(`Description heard: ${descriptionInput}`);
+        
+                                    if (descriptionInput.includes("completed")) {
+                                        recognition.stop();
+                                        document.getElementById('description').value = descriptionText;
+                                        synth.speak(new SpeechSynthesisUtterance(`Your description has been added as: ${descriptionText}`));
+        
+                                        // Prompt to enable 24-hour delay
+                                        synth.speak(new SpeechSynthesisUtterance('Would you like to delay the transfer by 24 hours? Say "yes" to enable, or "no" to proceed immediately.'));
+                                        // After confirming delay response
+                                        recognition.onresult = (event) => {
+                                            const delayResponse = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                                            console.log(`Delay response: ${delayResponse}`);
+
+                                            if (delayResponse.includes("yes")) {
+                                                statusCheckbox.checked = true;
+                                                synth.speak(new SpeechSynthesisUtterance('The 24-hour delay has been enabled.'));
+                                                document.querySelector('.transfer-btn').click(); // Trigger the transfer button click
+                                                synth.speak(new SpeechSynthesisUtterance('Transfer completed successfully.'));
+                                            } else if (delayResponse.includes("no")) {
+                                                statusCheckbox.checked = false;
+                                                synth.speak(new SpeechSynthesisUtterance('Proceeding with immediate transfer.'));
+                                                document.querySelector('.transfer-btn').click(); // Trigger the transfer button click
+                                                synth.speak(new SpeechSynthesisUtterance('Transfer completed successfully.'));
+                                            } else {
+                                                synth.speak(new SpeechSynthesisUtterance('Invalid response. Please say "yes" or "no".'));
+                                            }
+                                        };
+
+                                        recognition.start();
+                                    } else {
+                                        descriptionText += descriptionInput + ' ';
+                                    }
+                                };
+        
+                                recognition.onend = () => {
+                                    if (!descriptionText.includes("completed")) recognition.start();
+                                };
                             }
                         } else {
                             const digit = parseInt(spokenInput, 10);
-                    
                             if (!isNaN(digit) && digit >= 0 && digit <= 9) {
                                 if (!isDollarInputComplete) {
                                     transferAmount.dollars += digit;
-                                    console.log(`Current dollar amount: ${transferAmount.dollars}`);
                                     synth.speak(new SpeechSynthesisUtterance(`Current dollar amount is ${transferAmount.dollars}.`));
                                 } else {
                                     transferAmount.cents += digit;
-                                    console.log(`Current cents amount: ${transferAmount.cents}`);
                                     synth.speak(new SpeechSynthesisUtterance(`Current cents amount is ${transferAmount.cents}.`));
                                 }
                             } else {
-                                console.log('Invalid input, please say a valid single digit.');
                                 synth.speak(new SpeechSynthesisUtterance('Please say a valid single digit.'));
                             }
                         }
                     };
-                    
         
                     recognition.onend = () => {
-                        // Only restart recognition if we're still collecting input
                         if (!isDollarInputComplete || transferAmount.cents === '') recognition.start();
                     };
                 } else {
@@ -730,6 +765,7 @@ async function announceAccountsAndListen(userId) {
                 errorElement.style.display = 'block';
             }
         };
+        
         
         
         
