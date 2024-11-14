@@ -516,6 +516,7 @@ async function announceAccountsAndListen(userId) {
 
         utterance.text = accountListText;
         synth.speak(utterance);
+        synth.speak(new SpeechSynthesisUtterance('Please say the number of the account you want to transfer from.'));
 
         utterance.onend = () => {
             if (!isRecognitionActive) {
@@ -648,6 +649,7 @@ async function announceAccountsAndListen(userId) {
             const errorElement = document.getElementById('error');
             const mobileRadio = document.querySelector('input[name="transfer-to"][value="mobile"]');
             const statusCheckbox = document.getElementById('status-checkbox');
+            const verifiedName = document.getElementById("verifiedName");
         
             let input, url;
             if (mobileRadio.checked && /^[89]\d{7}$/.test(mobileInput.value)) {
@@ -663,15 +665,17 @@ async function announceAccountsAndListen(userId) {
                 else nricInput.value = '';
                 return;
             }
-        
             try {
                 const verifyResponse = await fetch(url);
                 if (!verifyResponse.ok) throw new Error();
         
                 const data = await verifyResponse.json();
                 if (data.name) {
-                    synth.speak(new SpeechSynthesisUtterance(`Verified. The name is ${data.name}.`));
-                    errorElement.textContent = `Verified. The name is ${data.name}.`;
+                    // Display the name in verifiedName div
+                    verifiedName.style.display = 'block';
+                    verifiedName.textContent = `Verified complete. The senders name is ${data.name}.`;
+                    synth.speak(new SpeechSynthesisUtterance(`The sender name is ${data.name}.`));
+                    errorElement.style.display = 'none'; // Hide any previous error messages
         
                     // Ask the user to enter the dollar amount, digit by digit
                     synth.speak(new SpeechSynthesisUtterance('Please say the amount you want to transfer in dollars, digit by digit. Say "finish" when you are done.'));
@@ -760,6 +764,7 @@ async function announceAccountsAndListen(userId) {
                     };
                 } else {
                     synth.speak(new SpeechSynthesisUtterance('Invalid input. Please try again.'));
+                    
                 }
             } catch (error) {
                 errorElement.style.display = 'block';
