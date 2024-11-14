@@ -153,7 +153,7 @@ if (!SpeechRecognition) {
                 speakBack("您现在在用户 ID 字段。请说“切换到密码”以输入密码，或“完成”以结束。请输入字母。", "zh-CN");
                 currentField = 'user-id';
             } else if (spokenWord === "不是") {
-                window.location.href = "startpageeng.html";
+                window.location.href = "startpagchi.html";
             } else {
                 speakBack("请说“是”或“不是”。", "zh-CN");
                 return;
