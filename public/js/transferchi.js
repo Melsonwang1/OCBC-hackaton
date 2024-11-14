@@ -421,7 +421,7 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
 async function announceAccountsAndListen(userId) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
+    recognition.lang = 'zh-CN';
     recognition.continuous = true;
     recognition.interimResults = false;
 
@@ -508,10 +508,10 @@ async function announceAccountsAndListen(userId) {
 
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance();
-        let accountListText = 'Here are your accounts: ';
+        let accountListText = '以下是您的账户：';
         
         accounts.forEach((account, index) => {
-            accountListText += `Option ${index + 1}: ${account.account_name}, account number ${account.account_number}. `;
+            accountListText += `选项 ${index + 1}: ${account.account_name},账户号码 ${account.account_number}. `;
         });
 
         utterance.text = accountListText;
@@ -526,7 +526,7 @@ async function announceAccountsAndListen(userId) {
 
         recognition.onresult = async (event) => {
             const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-            if (transcript.includes("done")) {
+            if (transcript.includes("完成")) {
                 recognition.stop();
                 isRecognitionActive = false;
                 document.getElementById("enterBtn").click();
@@ -541,9 +541,9 @@ async function announceAccountsAndListen(userId) {
                 isRecognitionActive = false;
 
                 transferFromDropdown.value = selectedAccount.account_id;
-                synth.speak(new SpeechSynthesisUtterance(`You selected ${selectedAccount.account_name}, account number ${selectedAccount.account_number}.`));
+                synth.speak(new SpeechSynthesisUtterance(`您选择了 ${selectedAccount.account_name}，账户号码是 ${selectedAccount.account_number}。`));
 
-                const transferMethodPrompt = new SpeechSynthesisUtterance('Do you want to transfer using a mobile number or an NRIC? Please say mobile or NRIC.');
+                const transferMethodPrompt = new SpeechSynthesisUtterance("您想使用手机号还是 NRIC 进行转账？请说 '手机号' 或 'NRIC'。");
                 synth.speak(transferMethodPrompt);
 
                 recognition.onresult = (event) => {
@@ -557,7 +557,7 @@ async function announceAccountsAndListen(userId) {
 
                     if (methodTranscript.includes('mobile')) {
                         mobileRadio.checked = true;
-                        synth.speak(new SpeechSynthesisUtterance('You are now at the mobile number field. Please say a mobile number starting with 8 or 9, followed by 7 digits.'));
+                        synth.speak(new SpeechSynthesisUtterance("您现在在手机号字段。请说一个以 8 或 9 开头的手机号，后面加上 7 位数字。"));
 
                         transferInputGroup.style.display = 'block';
                         mobileInput.style.display = 'block';
@@ -570,10 +570,10 @@ async function announceAccountsAndListen(userId) {
 
                         recognition.onresult = (event) => {
                             const spokenInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-                            if (spokenInput.includes("done")) {
+                            if (spokenInput.includes("完成")) {
                                 recognition.stop();
                                 isRecognitionActive = false;
-                                synth.speak(new SpeechSynthesisUtterance(`Your mobile number is ${mobileInput.value}.`));
+                                synth.speak(new SpeechSynthesisUtterance(`您的手机号是  ${mobileInput.value}.`));
                                 document.getElementById("enterBtn").click();
                                 return;
                             }
@@ -585,14 +585,14 @@ async function announceAccountsAndListen(userId) {
                                 mobileInput.value += convertedInput;
                                 synth.speak(new SpeechSynthesisUtterance(`Added ${convertedInput}`));
                             } else if (mobileRadio.checked && isNaN(convertedInput)) {
-                                synth.speak(new SpeechSynthesisUtterance("Please only enter digits for mobile number."));
+                                synth.speak(new SpeechSynthesisUtterance("请输入数字作为手机号。"));
                             }
                         };
                         
 
                     } else if (methodTranscript.includes('nric')) {
                         nricRadio.checked = true;
-                        synth.speak(new SpeechSynthesisUtterance('You are now at the NRIC field. Please say an NRIC starting with a letter, followed by 7 digits, and another letter.'));
+                        synth.speak(new SpeechSynthesisUtterance("您现在在 NRIC 字段。请说一个以字母开头，后跟 7 位数字，再加一个字母的 NRIC。"));
 
                         transferInputGroup.style.display = 'block';
                         mobileInput.style.display = 'none';
@@ -605,7 +605,7 @@ async function announceAccountsAndListen(userId) {
 
                         recognition.onresult = (event) => {
                             const spokenInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-                            if (spokenInput.includes("done")) {
+                            if (spokenInput.includes("完成")) {
                                 recognition.stop();
                                 isRecognitionActive = false;
                                 document.getElementById("enterBtn").click();
@@ -618,14 +618,14 @@ async function announceAccountsAndListen(userId) {
                             }
                         };
                     } else {
-                        synth.speak(new SpeechSynthesisUtterance('Invalid option. Say mobile or NRIC.'));
+                        synth.speak(new SpeechSynthesisUtterance("无效选项。请说 '手机号' 或 'NRIC'。"));
                     }
                 };
 
                 // Announce balance after verifying the account
                 fetchAndDisplayBalance(selectedAccount.account_id);
             } else {
-                synth.speak(new SpeechSynthesisUtterance('Invalid option, please try again.'));
+                synth.speak(new SpeechSynthesisUtterance("无效选项，请再试一次。"));
             }
         };
 
@@ -670,11 +670,11 @@ async function announceAccountsAndListen(userId) {
         
                 const data = await verifyResponse.json();
                 if (data.name) {
-                    synth.speak(new SpeechSynthesisUtterance(`Verified. The name is ${data.name}.`));
-                    errorElement.textContent = `Verified. The name is ${data.name}.`;
+                    synth.speak(new SpeechSynthesisUtterance(`已验证。名字是  ${data.name}.`));
+                    errorElement.textContent = `已验证。名字是  ${data.name}.`;
         
                     // Ask the user to enter the dollar amount, digit by digit
-                    synth.speak(new SpeechSynthesisUtterance('Please say the amount you want to transfer in dollars, digit by digit. Say "finish" when you are done.'));
+                    synth.speak(new SpeechSynthesisUtterance("请逐位说出您想转账的金额，单位是美元。完成时请说 '完成'。"));
         
                     let transferAmount = { dollars: '', cents: '' };
                     let isDollarInputComplete = false;
@@ -686,44 +686,44 @@ async function announceAccountsAndListen(userId) {
                         if (spokenInput.includes("finish")) {
                             if (!isDollarInputComplete) {
                                 isDollarInputComplete = true;
-                                synth.speak(new SpeechSynthesisUtterance(`You entered ${transferAmount.dollars} dollars. Now, please say the amount in cents, digit by digit. Say "finish" when you are done.`));
+                                synth.speak(new SpeechSynthesisUtterance(`您输入了 ${transferAmount.dollars} 美元。现在，请逐位说出金额的分数部分。完成时请说 '完成'。`));
                                 transferAmount.cents = '';
                             } else {
                                 recognition.stop();
                                 const totalAmount = `${transferAmount.dollars}.${transferAmount.cents.padStart(2, '0')}`;
                                 document.getElementById('amount').value = totalAmount;
-                                synth.speak(new SpeechSynthesisUtterance(`Your transfer of ${totalAmount} SGD has been populated in the amount field.`));
+                                synth.speak(new SpeechSynthesisUtterance(`您的 ${totalAmount} 新元转账金额已填写在金额字段中。`));
         
                                 // Prompt for description
-                                synth.speak(new SpeechSynthesisUtterance('What would you like to add as a description for this transfer? Please say your description and say "completed" when you are done.'));
+                                synth.speak(new SpeechSynthesisUtterance("您希望为这笔转账添加什么描述？请说出您的描述，并在完成时说 '完成'。"));
         
                                 let descriptionText = '';
                                 recognition.onresult = (event) => {
                                     const descriptionInput = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
                                     console.log(`Description heard: ${descriptionInput}`);
         
-                                    if (descriptionInput.includes("completed")) {
+                                    if (descriptionInput.includes("完成")) {
                                         recognition.stop();
                                         document.getElementById('description').value = descriptionText;
-                                        synth.speak(new SpeechSynthesisUtterance(`Your description has been added as: ${descriptionText}`));
+                                        synth.speak(new SpeechSynthesisUtterance(`您的描述已添加为： ${descriptionText}`));
         
                                         // Prompt to enable 24-hour delay
-                                        synth.speak(new SpeechSynthesisUtterance('Would you like to delay the transfer by 24 hours? Say "yes" to enable, or "no" to proceed immediately.'));
+                                        synth.speak(new SpeechSynthesisUtterance("您是否希望将转账延迟24小时？说 '是' 以启用，或说 '否' 以立即进行。"));
                                         // After confirming delay response
                                         recognition.onresult = (event) => {
                                             const delayResponse = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
                                             console.log(`Delay response: ${delayResponse}`);
 
-                                            if (delayResponse.includes("yes")) {
+                                            if (delayResponse.includes("是")) {
                                                 statusCheckbox.checked = true;
                                                 synth.speak(new SpeechSynthesisUtterance('The 24-hour delay has been enabled.'));
                                                 document.querySelector('.transfer-btn').click(); // Trigger the transfer button click
-                                                synth.speak(new SpeechSynthesisUtterance('Transfer completed successfully.'));
-                                            } else if (delayResponse.includes("no")) {
+                                                synth.speak(new SpeechSynthesisUtterance("转账成功完成。"));
+                                            } else if (delayResponse.includes("否")) {
                                                 statusCheckbox.checked = false;
                                                 synth.speak(new SpeechSynthesisUtterance('Proceeding with immediate transfer.'));
                                                 document.querySelector('.transfer-btn').click(); // Trigger the transfer button click
-                                                synth.speak(new SpeechSynthesisUtterance('Transfer completed successfully.'));
+                                                synth.speak(new SpeechSynthesisUtterance("转账成功完成。"));
                                             } else {
                                                 synth.speak(new SpeechSynthesisUtterance('Invalid response. Please say "yes" or "no".'));
                                             }
@@ -736,7 +736,7 @@ async function announceAccountsAndListen(userId) {
                                 };
         
                                 recognition.onend = () => {
-                                    if (!descriptionText.includes("completed")) recognition.start();
+                                    if (!descriptionText.includes("完成")) recognition.start();
                                 };
                             }
                         } else {
@@ -744,13 +744,13 @@ async function announceAccountsAndListen(userId) {
                             if (!isNaN(digit) && digit >= 0 && digit <= 9) {
                                 if (!isDollarInputComplete) {
                                     transferAmount.dollars += digit;
-                                    synth.speak(new SpeechSynthesisUtterance(`Current dollar amount is ${transferAmount.dollars}.`));
+                                    synth.speak(new SpeechSynthesisUtterance(`当前的美元金额是 ${transferAmount.dollars}.`));
                                 } else {
                                     transferAmount.cents += digit;
-                                    synth.speak(new SpeechSynthesisUtterance(`Current cents amount is ${transferAmount.cents}.`));
+                                    synth.speak(new SpeechSynthesisUtterance(`当前的分金额是 ${transferAmount.cents}.`));
                                 }
                             } else {
-                                synth.speak(new SpeechSynthesisUtterance('Please say a valid single digit.'));
+                                synth.speak(new SpeechSynthesisUtterance('请说一个有效的单个数字。'));
                             }
                         }
                     };
@@ -759,7 +759,7 @@ async function announceAccountsAndListen(userId) {
                         if (!isDollarInputComplete || transferAmount.cents === '') recognition.start();
                     };
                 } else {
-                    synth.speak(new SpeechSynthesisUtterance('Invalid input. Please try again.'));
+                    synth.speak(new SpeechSynthesisUtterance('无效的输入。请再试一次。'));
                 }
             } catch (error) {
                 errorElement.style.display = 'block';
