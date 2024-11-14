@@ -29,7 +29,7 @@ function isTyping() {
 // General page navigation shortcuts
 document.addEventListener('keydown', function(event) {
     // Ensure we're not in an input field or similar element
-    if (isTyping()) return;
+    if (isTyping() || event.ctrlKey || event.metaKey) return;
 
     // General page navigation shortcuts
     if (event.key === '1') {

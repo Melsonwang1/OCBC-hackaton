@@ -38,7 +38,7 @@ app.get("/accounts/user/:user_id", accountController.getAccountsById);
 app.get("/accounts/account/:account_id", accountController.getAccountByAccountId);
 app.get("/accounts/accountnameandnumber/:account_id", accountController.getAccountnameandnumberByAccountId);
 
-// User (Zheng Bin)
+// User Page (Zheng Bin)
 app.get("/users", authorize, userController.getUserById);
 app.get("/user", userController.getUserByPhoneorNric);
 
