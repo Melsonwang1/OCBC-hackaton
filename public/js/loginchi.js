@@ -18,70 +18,91 @@ function resetFontSize() {
     currentFontSize = 25;
 }
 
-// login
-document.addEventListener('DOMContentLoaded', async function(){
-    document.getElementById("login-button").addEventListener("click",async function(e){
+function resetFields() {
+    document.getElementById("user-id").value = "";
+    document.getElementById("pin").value = "";
+    currentField = 'user-id';
+
+    // Reset voice recognition state
+    awaitingForgotPassword = false; 
+    awaitingRememberMeConfirmation = false; 
+    awaitingLoginConfirmation = false;
+
+    speakBack("Login failed. Please enter your User ID again, letter by letter.");
+}
+
+
+document.addEventListener('DOMContentLoaded', async function() {
+    document.getElementById("login-button").addEventListener("click", async function(e) {
         e.preventDefault();
         const message = document.getElementById("message");
         let nric = document.getElementById("user-id").value;
         let password = document.getElementById("pin").value;
+        const rememberMe = document.getElementById("remember-me").checked;
 
-        if(!nric || !password){
-            message.innerHTML = "请填写所有空格!";
+        if (!nric || !password) {
+            message.innerHTML = "Please input all fields!";
             return;
-        }
-        else{
-            await login(nric, password);
+        } else {
+            await login(nric, password, rememberMe);
         }
     });
-    
-    //Login user
-    async function login(nric,password){
-        try{
-            //fetch the endpoint with method POST
+
+    async function login(nric, password, rememberMe) {
+        try {
             const response = await fetch('/user/login', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ nric, password }), //pass in the body using JSON stringify
+                body: JSON.stringify({ nric, password, rememberMe }),
             });
-            // Handle specific response statuses
+    
             if (response.status === 404) {
-                alert("未找到用户!");
+                resetFields(); // Clears fields and prompts re-entry
                 return;
             }
             if (response.status === 401) {
-                alert("密码错误!");
+                
+                resetFields(); // Clears fields and prompts re-entry
                 return;
             }
-            //Throw new error is response not ok
-            if(!response.ok){
-                throw new Error('登录失败');
+            
+            if (!response.ok) {
+                throw new Error('Error logging in');
             }
-            const data = await response.json(); //await the data
-            token = data.token;
-            localStorage.setItem("token",token); //set the token
-            alert("登录成功!");
-            window.location.href = "accountschi.html" //direct user to patient home page
-            return token;
-
-        }
-        //Catch the error if something happen
-        catch{
-            alert("账号或密码错误!");
+    
+            const data = await response.json();
+            const token = data.token;
+    
+            // Store token based on rememberMe preference
+            if (rememberMe) {
+                localStorage.setItem("token", token);
+            } else {
+                sessionStorage.setItem("token", token);
+            }
+    
+            
+            window.location.href = "accountschi.html";
+        } catch (error) {
+            
+            resetFields();
         }
     }
+    
+
+    
+    
 });
 
 // Check if SpeechRecognition is supported in this browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (!SpeechRecognition) {
-    alert("Speech recognition is not supported in this browser.");
+    alert("此浏览器不支持语音识别。");
 } else {
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
-    recognition.lang = 'zh-CN'; // Start with Chinese language for initial prompt
+    recognition.lang = 'zh-CN';
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
@@ -91,29 +112,24 @@ if (!SpeechRecognition) {
     let awaitingRememberMeConfirmation = false; // Tracks remember-me prompt
     let awaitingLoginConfirmation = false; // Tracks login confirmation
 
-    // Start with forgot password prompt in Chinese
-    speakBack("您忘记密码了吗？请说是或不是。", "zh-CN");
+    // Start with forgot password prompt
+    speakBack("欢迎来到 OCBC 银行。您当前在登录页面。您想要登录吗？请说“是”或“不是”。", "zh-CN");
 
     // Start voice recognition
     startVoiceRecognition();
 
     function startVoiceRecognition() {
         recognition.start();
-        console.log("Starting voice recognition...");
+        console.log("开始语音识别...");
     }
 
     recognition.onstart = () => {
         hasMicPermission = true;
-        console.log("Microphone permission granted, listening...");
+        console.log("已授予麦克风权限，正在监听...");
     };
 
     recognition.onresult = (event) => {
         processRecognitionResult(event);
-    };
-
-    recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        speakBack(`Error: ${event.error}`);
     };
 
     recognition.onend = () => {
@@ -123,105 +139,111 @@ if (!SpeechRecognition) {
     };
 
     function processRecognitionResult(event) {
-        let spokenWord = event.results[0][0].transcript.trim().toLowerCase();
-        console.log("Recognized word (raw):", spokenWord);
-
-        // Clean the word and handle simplified Chinese responses
-        spokenWord = spokenWord.replace(/[^a-zA-Z0-9\u4e00-\u9fa5\s]/gi, '');
-        console.log("Cleaned recognized word:", spokenWord);
-
-        // Handle forgot password confirmation in Chinese
+        // Capture the spoken word and trim it
+        let spokenWord = event.results[0][0].transcript.trim();
+    
+        // Remove any Chinese full stop (。) but keep other Chinese characters
+        spokenWord = spokenWord.replace(/。/g, '');
+    
+        console.log("识别的词（原始）：", spokenWord);
+    
+        // Handle forgot password confirmation
         if (awaitingForgotPassword) {
             if (spokenWord === "是") {
-                speakBack("您选择了是", "zh-CN");
-                window.location.href = "rememberpassword.html";
-                awaitingForgotPassword = false;
-                return;
-            } else if (spokenWord === "不是" || spokenWord === "不") {
-                speakBack("您在用户 ID 字段中。请说 '切换到密码' 以输入密码，或完成时说 '完成'。", "zh-CN");
+                speakBack("您现在在用户 ID 字段。请说“切换到密码”以输入密码，或“完成”以结束。请输入字母。", "zh-CN");
                 currentField = 'user-id';
-                awaitingForgotPassword = false;
-                return;
+            } else if (spokenWord === "不是") {
+                window.location.href = "startpageeng.html";
             } else {
-                speakBack("请说是或不是。", "zh-CN");
+                speakBack("请说“是”或“不是”。", "zh-CN");
                 return;
             }
+            awaitingForgotPassword = false;
+            return;
         }
-
+    
         // Process special characters and letter/numbers
         const specialCharacterMap = {
-            "left bracket": "[", "right bracket": "]", "left parenthesis": "(", "right parenthesis": ")",
-            "underscore": "_", "under score": "_", "dash": "-", "star": "*", "asterisk": "*", "estrus": "*"
+            "左括号": "[", "右括号": "]", "左括号": "(", "右括号": ")", 
+            "下划线": "_", "破折号": "-", "星号": "*", "星号": "*", "星号": "*"
         };
         if (specialCharacterMap[spokenWord]) {
             processSpokenCharacter(specialCharacterMap[spokenWord], spokenWord);
             return;
         }
-
+    
         // Handle remember me confirmation
         if (awaitingRememberMeConfirmation) {
             if (spokenWord === "是") {
                 document.getElementById("remember-me").checked = true;
-                speakBack("记住我”选项现在已被选中。您准备好登录吗？请说是或不是。" , "zh-CN");
-        
+                speakBack("已选择“记住我”选项。您准备好登录了吗？请说“是”或“不是”。", "zh-CN");
                 awaitingLoginConfirmation = true;
                 awaitingRememberMeConfirmation = false;
                 return;
-            } else if (spokenWord === "不是" || spokenWord === "不") {
+            } else if (spokenWord === "不是") {
                 document.getElementById("remember-me").checked = false;
-                speakBack("记住我选项已被禁用。您准备好登录吗？请说是或不是。" , "zh-CN");
-        
+                speakBack("未选择“记住我”选项。您准备好登录了吗？请说“是”或“不是”。", "zh-CN");
                 awaitingLoginConfirmation = true;
                 awaitingRememberMeConfirmation = false;
                 return;
             } else {
-                speakBack("请说是或不是。", "zh-CN");
-
+                speakBack("请说“是”或“不是”。", "zh-CN");
                 return;
             }
         }
-
+    
         // Handle login confirmation
         if (awaitingLoginConfirmation) {
             if (spokenWord === "是") {
                 document.querySelector(".login-btn").click();
                 awaitingLoginConfirmation = true;
-            } else if (spokenWord === "不是" || spokenWord === "不") {
-                speakBack("好的，如果您需要进一步的帮助，请告诉我。" , "zh-CN");
+            } else if (spokenWord === "不是") {
+                speakBack("好的，如果您需要帮助，请告诉我。", "zh-CN");
                 awaitingLoginConfirmation = false;
             } else {
-                speakBack("请说是或不是。" , "zh-CN");
-
+                speakBack("请说“是”或“不是”。", "zh-CN");
             }
             return;
         }
-
+    
         // Switch between fields based on spoken words
-        if (spokenWord.includes("密码") || spokenWord.includes("切换到密码")) {
+        if (spokenWord.includes("切换到密码") || spokenWord.includes("密码") || spokenWord.includes("pin")) {
             currentField = 'pin';
-            speakBack("切换到密码字段。", "zh-CN");
+            speakBack("已切换到密码字段。", "zh-CN");
             return;
-        } else if (spokenWord.includes("切换到用户名") || spokenWord.includes("用户名")  || spokenWord.includes("user id")) {
+        } else if (spokenWord.includes("切换到用户名") || spokenWord.includes("用户名") || spokenWord.includes("user id")) {
             currentField = 'user-id';
-            speakBack("切换到用户名字段。", "zh-CN");
+            speakBack("已切换到用户名字段。", "zh-CN");
             return;
         }
-
+    
         // Handle character deletion
-        if (spokenWord.includes("返回") || spokenWord.includes("删除") || spokenWord.includes("remove") || spokenWord.includes("erase")) {
+        if (spokenWord.includes("返回") || spokenWord.includes("删除") || spokenWord.includes("移除") || spokenWord.includes("清除")) {
             deleteLastCharacter();
             return;
-        } else if (spokenWord === "完成" || spokenWord === "完") {
+        }
+    
+        // Handle the "done" keyword
+        if (spokenWord === "完成") {
             const userId = document.getElementById("user-id").value;
             const password = document.getElementById("pin").value;
-            speakBack(`用户 ID: ${userId}。密码: ${password}。您想让我记住您吗？请说是或不是。`, "zh-CN");
+    
+            // Validation check: If fields are empty, reset and prompt again
+            if (!userId || !password) {
+                resetFields();
+                speakBack("字段不完整。请从用户 ID 开始重新输入字母。", "zh-CN");
+                return;
+            }
+    
+            // If both fields are filled, proceed to Remember Me confirmation
+            speakBack(`用户 ID：${userId}。密码：${password}。是否记住您的信息？请说“是”或“不是”。`, "zh-CN");
             awaitingRememberMeConfirmation = true;
             return;
         }
-
+    
         // Map common letters, numbers, and symbols
         const spokenToCharMap = {
-            "hey": "A", "ay": "A", "a": "A","诶":"A", "bee": "B", "b": "B","be":"B", "see": "C", "sea": "C", "c": "C", 
+           "hey": "A", "ay": "A", "a": "A","诶":"A", "bee": "B", "b": "B","be":"B","逼":"B", "see": "C", "sea": "C", "c": "C","C":"C", 
             "dee": "D", "d": "D","的":"D", "ee": "E", "e": "E","一":"E", "eff": "F", "f": "F", "gee": "G", "g": "G", 
             "aitch": "H", "h": "H", "eye": "I", "i": "I", "jay": "J", "j": "J", "kay": "K", "k": "K", 
             "ell": "L", "l": "L", "em": "M", "m": "M","im":"M","an":"N","anne":"N","and":"N","嗯":"N", "en": "N", "n": "N", "oh": "O", "o": "O","哦":"O", 
@@ -251,37 +273,49 @@ if (!SpeechRecognition) {
             "slash": "/", "斜杠": "/", "backslash": "\\", "反斜杠": "\\", 
             "pipe": "|", "竖线": "|", "less than": "<", "小于号": "<", 
             "greater than": ">", "大于号": ">", "question mark": "?", "问号": "?", 
-            "tilde": "~", "波浪号": "~", "grave": "`", "重音符": "`"
+            "tilde": "~", "波浪号": "~", "grave": "`", "重音符": "`" 
         };
+    
         const character = spokenToCharMap[spokenWord];
         if (character) {
             processSpokenCharacter(character, spokenWord);
         } else {
-            speakBack(`Error: unrecognized input "${spokenWord}"`);
+            speakBack(`错误：无法识别的输入“${spokenWord}”`, "zh-CN");
         }
     }
+    
 
     function processSpokenCharacter(character, charName) {
         const inputField = document.getElementById(currentField);
         if (inputField) {
-            inputField.value += character;
-            speakBack(`当前输入的字符是: ${charName}`, "zh-CN");
+            if (currentField === 'user-id') {
+                if (/^[a-zA-Z0-9]$/.test(character)) {
+                    inputField.value += character;
+                    speakBack(`添加了 ${charName}`, "zh-CN");
+                } else {
+                    speakBack("错误：用户 ID 只能包含字母和数字。", "zh-CN");
+                }
+            } else if (currentField === 'pin') {
+                inputField.value += character;
+                speakBack(`添加了 ${charName}`, "zh-CN");
+            }
         } else {
-            speakBack("Error: Field not found.");
+            speakBack("错误：字段未找到。", "zh-CN");
         }
     }
+    
 
     function deleteLastCharacter() {
         const inputField = document.getElementById(currentField);
         if (inputField && inputField.value.length > 0) {
             inputField.value = inputField.value.slice(0, -1);
-            speakBack("Deleted last character");
+            speakBack("已删除最后一个字符", "zh-CN");
         } else {
-            speakBack("Field is empty, nothing to delete.");
+            speakBack("字段为空，无法删除。", "zh-CN");
         }
     }
 
-    function speakBack(message, lang = "en-US") {
+    function speakBack(message, lang = "zh-CN") {
         const speech = new SpeechSynthesisUtterance(message);
         speech.lang = lang;
         window.speechSynthesis.speak(speech);
