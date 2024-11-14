@@ -673,8 +673,8 @@ async function announceAccountsAndListen(userId) {
                 if (data.name) {
                     // Display the name in verifiedName div
                     verifiedName.style.display = 'block';
-                    verifiedName.textContent = `Verified complete. The senders name is ${data.name}.`;
-                    synth.speak(new SpeechSynthesisUtterance(`The sender name is ${data.name}.`));
+                    verifiedName.textContent = `Verified complete. The recipient name is ${data.name}.`;
+                    synth.speak(new SpeechSynthesisUtterance(`The recipient name is ${data.name}.`));
                     errorElement.style.display = 'none'; // Hide any previous error messages
         
                     // Ask the user to enter the dollar amount, digit by digit
