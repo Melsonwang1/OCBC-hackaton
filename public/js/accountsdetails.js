@@ -403,7 +403,7 @@ document.addEventListener('keydown', function (event) {
         window.location.href = "../html/investmenteng.html";
     }
     if (event.key == 'c') {
-        window.location.href = "../html/accountschi.html";
+        window.location.href = "../html/accountdetailschi.html";
     }
     if (event.key === 'l') {
         localStorage.removeItem("token");

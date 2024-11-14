@@ -38,8 +38,8 @@ document.addEventListener('keydown', function(event) {
         window.location.href = "../html/transfer.html";
     } else if (event.key === '3') {
         window.location.href = "../html/investmenteng.html";
-    } else if (event.key === 't') {
-        window.location.href = "../html/accountschi.html";
+    } else if (event.key === 'c') {
+        window.location.href = "../html/transferchi.html";
     } else if (event.key === 'l') {
         localStorage.removeItem("token"); // Properly remove the token
         window.location.href = "logineng.html";

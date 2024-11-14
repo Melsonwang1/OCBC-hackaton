@@ -26,11 +26,11 @@ function resetFontSize() {
     currentFontSize = 25;
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     var user = {}; // The current user
-    let token = localStorage.getItem("token"); // Get token from local storage
+    let token = localStorage.getItem("token") || sessionStorage.getItem("token"); // Check both storages for token
 
-    // Check if token is null before proceeding
+    // Step 1: Check if token is present on page load
     if (!token) {
         alert("请您重新登录以继续");
         window.location.href = "loginchi.html"; // Redirect to login page
@@ -77,12 +77,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Log Out Button functionality
-    document.getElementById("logout-btn").addEventListener("click", function() {
+    document.getElementById("logout-btn").addEventListener("click", function () {
         localStorage.removeItem("token"); // Properly remove the token
         window.location.href = "loginchi.html";
         history.replaceState(null, null, "loginchi.html");
     });
-    
+
     // Wait for user data to load before fetching bank accounts
     await getUserData();
 
@@ -95,10 +95,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 
-
 async function fetchBankAccounts(userId) {
     try {
-        const response = await fetch(`/accounts/user/${userId}`); 
+        const response = await fetch(`/accounts/user/${userId}`);
         if (!response.ok) {
             throw new Error(`Error status: ${response.status}`); // Throw an error if response is not ok
         }
@@ -145,7 +144,7 @@ function startListeningForNavigation() {
     if (ttsEnabled) return;  // If TTS is enabled, don't start navigation listenin (zb)
 
     if (!('webkitSpeechRecognition' in window)) {
-        console.error("该浏览器不支持语音识别。");
+        console.error("该浏览器不支持语音识别");
         return;
     }
 
@@ -153,20 +152,20 @@ function startListeningForNavigation() {
     recognition.continuous = true; // Keep listening for continuous speech
     recognition.lang = 'zh-CN';
 
-    recognition.onresult = function(event) {
+    recognition.onresult = function (event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().replace(/\.$/, ""); // Remove trailing period
         console.log("User said: " + transcript);  // Log what the user said
         handleUserResponse(transcript.toLowerCase());
     };
 
-    recognition.onerror = function(event) {
+    recognition.onerror = function (event) {
         if (event.error !== 'no-speech') {
             narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易记录。");
         }
     };
 
     // Restart listening when speech ends
-    recognition.onend = function() {
+    recognition.onend = function () {
         recognition.start();
     };
 
@@ -176,16 +175,16 @@ function startListeningForNavigation() {
 // Handle the user's response to navigation prompt
 function handleUserResponse(response) {
     if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
-    if (response.includes("转账") || response.includes("汇款") || response.includes("转移")) {
+    if (response.includes("转账") || response.includes("汇款") || response.includes("汇") || response.includes("转") || response.includes("支付")) {
         window.location.href = "transferchi.html";
-    } else if (response.includes("投资") || response.includes("查看投资") || response.includes("理财")) {
+    } else if (response.includes("投资") || response.includes("查看投资") || response.includes("理财") || response.includes("股权") || response.includes("股票")) {
         window.location.href = "investmentchi.html";
-    } else if (response.includes("交易记录") || response.includes("查看交易") || response.includes("账户详情") || response.includes("账户")) {
-        window.location.href = "accountsdetailschi.html";
+    } else if (response.includes("账户") || response.includes("我的账户") || response.includes("账户信息")) {
+        window.location.href = "accountschi.html";
     } else {
-        narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易记录。");
+        narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易。");
     }
-    
+
 }
 
 // State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
@@ -238,18 +237,18 @@ function displayAccounts(accounts) {
         accountCard.href = `accountdetailschi.html?accountId=${account.account_id}`;
         accountCard.className = 'account-card';
 
-        accountCard.innerHTML = 
+        accountCard.innerHTML =
             `<div>
                 <h3>${account.account_name}</h3>
                 <p>账户号码: ${account.account_number}</p>
             </div>
             <p class="balance"><span class="currency">SGD</span> ${account.balance_have.toFixed(2)}</p>`;
-        
+
         accountsList.appendChild(accountCard);
 
-        
+
         // Add text-to-speech functionality on mouse hover only if TTS is enabled
-        accountCard.onmouseover = function() {
+        accountCard.onmouseover = function () {
             if (ttsEnabled) {
                 const accountDetails = `点击查看 ${account.account_name}, 账号为 ${account.account_number}. 您的余额是SGD ${account.balance_have.toFixed(2)}.`;
                 speakText(accountDetails); // Use speakText function to narrate account details
@@ -259,7 +258,7 @@ function displayAccounts(accounts) {
 
     // Only announce account details and start navigation listening if TTS is NOT enabled
     if (!ttsEnabled) {
-        announceAccountDetails(accounts); 
+        announceAccountDetails(accounts);
         startListeningForNavigation();
     }
 }
@@ -285,8 +284,8 @@ document.addEventListener('keydown', function (event) {
     }
 
     // Shortcut for "Chinese Translation"
-    if(event.key == 'c'){
-        window.location.href = "../html/accountschi.html";
+    if(event.key == 'e'){
+        window.location.href = "../html/accountseng.html";
     }
 
     // Shortcut for "Log Out" (L key)
@@ -319,12 +318,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Call function to create account cards
     createAccountCards();
     // Handle Tab navigation only within account selection
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         // Only process Tab key (Forward or Shift + Tab for backward)
         if (event.key === 'Tab') {
             const focusableElements = Array.from(accountsList.querySelectorAll('.account-card'));
             const currentIndex = focusableElements.findIndex(el => el === document.activeElement);
-            if (event.shiftKey) { 
+            if (event.shiftKey) {
                 // If Shift + Tab, go backward
                 const prevIndex = currentIndex > 0 ? currentIndex - 1 : focusableElements.length - 1;
                 focusableElements[prevIndex].focus();
@@ -340,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Event listener for keydown event
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     // Check if the left or right arrow key is pressed
     if (event.key === 'ArrowLeft') {
         // Go to the previous page (like undo)
@@ -351,7 +350,7 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     var shortcutList = document.getElementById("shortcut-list");
     var icon = document.getElementById("dropdown-icon");
     var keyboardNote = document.querySelector(".keyboard-note");
@@ -362,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardNote.style.maxHeight = "500px"; // Adjust to accommodate the expanded list
 });
 
-document.getElementById("keyboard-shortcut-header").addEventListener("click", function() {
+document.getElementById("keyboard-shortcut-header").addEventListener("click", function () {
     var shortcutList = document.getElementById("shortcut-list");
     var icon = document.getElementById("dropdown-icon");
     var keyboardNote = document.querySelector(".keyboard-note");

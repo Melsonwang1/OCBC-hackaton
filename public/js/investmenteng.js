@@ -196,7 +196,7 @@ document.addEventListener('keydown', function (event) {
 
     // Shortcut for "Chinese Translation"
     if(event.key == 'c'){
-        window.location.href = "../html/accountschi.html";
+        window.location.href = "../html/investmentchi.html";
     }
 
     // Shortcut for "Log Out" (L key)

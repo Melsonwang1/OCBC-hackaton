@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../pics/ocbc-title-logo.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/accountdetails.css">
-    <title>OCBC - View Account Details</title>
+    <title>OCBC - 账户信息</title>
 
     <!-- Import Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +27,7 @@
                 <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
                 <span class="slider"></span>
             </label>
-            <span id="tts-status">Hover to listen: <b>OFF</b></span>
+            <span id="tts-status">语音助读: <b>关闭</b></span>
         </div>
     
         <div class="header-right">
@@ -36,22 +36,23 @@
                 <button onclick="resetFontSize()">A</button>
                 <button onclick="changeFontSize(2)">A+</button>
             </div>
-
+            
             <div class="language-switch">
                 <a href="accountseng.html" class="language-btn">English</a>
             </div>
     
             <div class="logout">
-                <button id="logout-btn"> 
+                <button id="logout-btn" onmouseover="speakText('登出请点击这里')"> 
                     登出
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
             </div>
         </div>
     </header>
+
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome">您好！欢迎, <span id="user-name"></span></div>
+        <div class="welcome" id="welcome-message" onmouseover="speakText('欢迎使用华侨银行, ' + document.getElementById('user-name').innerText)">您好！欢迎, <span id="user-name"></span></div>
 
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -62,7 +63,7 @@
                 <li onmouseover="speakText('查看账户请选择 1')"><span class="shortcut-key">1</span> → 查看账户</li>
                 <li onmouseover="speakText('转账与支付请选择 2')"><span class="shortcut-key">2</span> → 转账与支付</li>
                 <li onmouseover="speakText('投资页面请选择 3')"><span class="shortcut-key">3</span> → 投资</li>
-                <li onmouseover="speakText('翻译成华文请点击 C')"><span class="shortcut-key">C</span> → 翻译成华文</li>
+                <li onmouseover="speakText('翻译成华文请点击 E')"><span class="shortcut-key">E</span> → 翻译成英文</li>
                 <li onmouseover="speakText('登出请点击 L')"><span class="shortcut-key">L</span> → 登出</li>
                 <li onmouseover="speakText('返回上一页面请点击左箭头')"><span class="shortcut-key">←</span> → 上一页</li>
                 <li onmouseover="speakText('跳到下一页面请点击右箭头')"><span class="shortcut-key">→</span> → 下一页</li>
@@ -71,42 +72,43 @@
             </ul>
         </div>
 
+
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message">请问您需要什么服务呢?</h2>
+        <h2 class="welcome-message" onmouseover="speakText('请问您需要什么服务呢?')">请问您需要什么服务呢?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountschi.html">
+            <a href="../html/accountschi.html" class="active" onmouseover="speakText('查看账户请点击这里')">
                 <img src="../pics/view-account.png" alt="View Icon">
                 查看账户</a>
-            <a href="../html/transferchi.html">
+            <a href="../html/transferchi.html" onmouseover="speakText('转账与支付请点击这里')">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 转账与支付</a>
-            <a href="../html/investmentchi.html" class="active">
+            <a href="../html/investmentchi.html" onmouseover="speakText('查看投资页面请点击这里')">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 投资</a> 
         </div>
 
         <!-- Account Details Section -->
         <div class="account-details">
-            <h2></h2>
-            <p>账号号码: <span class="account-number"></span></p>
+            <h2 onmouseover="speakText('这是' + document.querySelector('.account-details h2').textContent)"></h2>
+            <p onmouseover="speakText('您的账号是' + document.querySelector('.account-number').textContent)">账号: <span class="account-number"></span></p>
 
             <div class="balance-summary">
-                <div class="balance-item positive"> 
+                <div class="balance-item positive" onmouseover="speakText('目前您有 ' + document.querySelector('.balance-item.positive .value').textContent)"> 
                     <div class="balance-icon positive">
                         <img src="../pics/what_you_have.png" alt="What You Have Icon" class="what-you-have-icon">
                     </div>
-                    <p>您拥有的:</p>
+                    <p >您的余额:</p>
                     <p class="amount positive">
                         <span class="currency">SGD</span> 
                         <span class="value">0.00</span> 
                     </p>
                 </div>
-                <div class="balance-item negative"> 
+                <div class="balance-item negative" onmouseover="speakText('目前您所欠' + document.querySelector('.balance-item.negative .value').textContent)"> 
                     <div class="balance-icon negative">
                         <img src="../pics/what_you_owe.png" alt="What You Owe Icon" class="what-you-owe-icon">
                     </div>
-                    <p>您欠的:</p>
+                    <p>您的欠款:</p>
                     <p class="amount negative">
                         <span class="currency">SGD</span> 
                         <span class="value">0.00</span> 
@@ -114,17 +116,34 @@
                 </div>
             </div>
  
-            <div class="recent-transactions">
-                <h3>最近的交易:</h3>
-                <div class="transaction-legend">
-                    <div class="legend-item date">日期</div>
-                    <div class="legend-item description">描述</div>
-                    <div class="legend-item amount">交易金额</div>
-                    <div class="'legend-item status">状态 </div>
+            <div class="transaction-records" style="padding-top: 50px;">
+                <h3 style="text-align: center;">近期转账信息</h3>
+                <p style="font-size: 20px; margin-bottom:50px; line-height: 25px;">选择一行进行删除。仅限状态为<b>待处理</b>且金额为负数（转账出账）的交易可以删除。<br>
+                </p>
+                <table id="transaction-records-table">
+                    <thead>
+                        <tr>
+                            <th>转账 ID</th>
+                            <th>日期</th>
+                            <th>备注</th>
+                            <th>转账余额</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-list">
+                        <!-- Rows will be dynamically added here -->
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="button-container">
+                    <button id="delete-transaction-btn" disabled>删除选定的转账</button>
                 </div>
-
-                <!-- Transaction List Container -->
-                <div id="transaction-list"></div>
 
             </div>
             

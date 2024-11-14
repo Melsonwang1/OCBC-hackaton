@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', async function () {
                 alert("请您重新登录以继续!");
                 localStorage.setItem("token", null); // Properly remove token from local storage
                 sessionStorage.removeItem("token"); // Remove token from session storage
-                window.location.href = "logineng.html"; // Redirect to login
+                window.location.href = "loginchi.html"; // Redirect to login
             } else if (error.message === 'Unauthorized') {
                 alert("请先登录!");
-                window.location.href = "logineng.html"; // Redirect to login
+                window.location.href = "loginchi.html"; // Redirect to login
             } else {
                 console.error('出现错误:', error);
             }
@@ -186,8 +186,8 @@ document.addEventListener("keydown", (event) => {
         case "3":
             window.location.href = "../html/investmentchi.html";
             break;
-        case "c":
-            window.location.href = "../html/accountschi.html";
+        case "e":
+            window.location.href = "../html/investmenteng.html";
             break;
         case "l":
             window.location.href = "loginchi.html";
@@ -305,14 +305,14 @@ function startListeningForNavigation() {
 function handleUserResponse(response) {
     if (ttsEnabled) return; // Exit early if TTS is enabled (zb)
 
-    if (response.includes("transfer") || response.includes("sending") || response.includes("send") || response.includes("transfers") || response.includes("transferring")) {
-        window.location.href = "transfer.html";
-    } else if (response.includes("transaction") || response.includes("transactions") || response.includes("transacting")) {
-        window.location.href = "accountsdetails.html";
-    } else if (response.includes("account") || response.includes("accounts")) {
-        window.location.href = "accountseng.html";
+    if (response.includes("转账")||response.includes("汇款")|| response.includes("汇")|| response.includes("转")|| response.includes("支付")) {
+        window.location.href = "transferchi.html";
+    } else if (response.includes("投资")||response.includes("查看投资")||response.includes("理财")||response.includes("股权")||response.includes("股票")) {
+        window.location.href = "investmentchi.html";
+    } else if (response.includes("账户")||response.includes("我的账户")||response.includes("账户信息")) {
+        window.location.href = "accountschi.html";
     } else {
-        narrate("抱歉，我没听清楚。请说转账、查看账户，或查看交易记录。");
+        narrate("抱歉，我没有听清楚。请说转账、查看投资或查看交易。");
     }
 }
 
