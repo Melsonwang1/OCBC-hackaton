@@ -31,9 +31,9 @@
     
         <div class="header-right">
             <div class="font-size-controls">
-                <button onclick="changeFontSize(-2)">A-</button>
-                <button onclick="resetFontSize()">A</button>
-                <button onclick="changeFontSize(2)">A+</button>
+                <button onclick="changeFontSize(-2)" onmouseover="speakText('Click here to reduce font size')">A-</button>
+                <button onclick="resetFontSize()" onmouseover="speakText('Click here to reset font size to normal')">A</button>
+                <button onclick="changeFontSize(2)" onmouseover="speakText('Click here to increase font size')">A+</button>
             </div>
             
             <div class="language-switch">
@@ -41,7 +41,7 @@
             </div>
     
             <div class="logout">
-                <button id="logout-btn" onmouseover="speakText('Click here to Logout')"> 
+                <button id="logout-btn" onmouseover="speakText('Click here to securely log out of your account.')"> 
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -61,11 +61,11 @@
                 <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
             </p>
             <ul id="shortcut-list">
-                <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
-                <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
-                <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
-                <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">C</span> → Chinese Translation</li>
-                <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">L</span> → Log Out</li>
+                <li onmouseover="speakText('Press the number one key to view your accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
+                <li onmouseover="speakText('Press the number two key to transfer money')"><span class="shortcut-key">2</span> → Transfer Money</li>
+                <li onmouseover="speakText('Press the number three key to view investments')"><span class="shortcut-key">3</span> → Investments</li>
+                <li onmouseover="speakText('Press the C key to switch to Chinese language')"><span class="shortcut-key">C</span> → Chinese Translation</li>
+                <li onmouseover="speakText('Press the L key to log out of your account')"><span class="shortcut-key">L</span> → Log Out</li>
                 <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
                 <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
                 <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
@@ -78,13 +78,13 @@
         <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountseng.html" class="active" onmouseover="speakText('Click here to View Accounts')">
+            <a href="../html/accountseng.html" class="active" onmouseover="speakText('Click here to view your bank accounts and details')">
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts</a>
-            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
+            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money to other people')">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 Transfer Money</a>
-            <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view Investments')">
+            <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view and manage your investments')">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments</a> 
         </div>
@@ -93,10 +93,10 @@
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <div class="account-selection-note">
-            <p onmouseover="speakText('Use the Tab key to navigate and press Enter to view')"><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
+            <p onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')"><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
         </div>      
         <h2 onmouseover="speakText('These are your Bank Accounts')">Your Bank Accounts:</h2>
-        <p onmouseover="speakText('Select an account below to view detailed information.')">Select an account below to view detailed information.</p>
+        <p onmouseover="speakText('Select an account below to view detailed information, such as transaction details and balances.')">Select an account below to view detailed information.</p>
         <div id="accounts-list">
             <!-- Account cards will be inserted here by JavaScript -->
         </div>

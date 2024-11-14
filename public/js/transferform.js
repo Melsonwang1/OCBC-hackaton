@@ -378,7 +378,7 @@ window.onload = function () {
 // Variable to store the timer
 let inputTimer;
 
-// Function to provide voice feedback (zb)
+// Function to provide voice feedback
 function giveVoiceFeedback(fieldId) {
     // Only provide feedback if TTS is enabled
     if (!ttsEnabled) return;
@@ -389,13 +389,13 @@ function giveVoiceFeedback(fieldId) {
     // Cancel any ongoing speech to prevent repeats
     window.speechSynthesis.cancel();
 
-    // Check if the field is 'amount' or 'description' to provide delayed feedback
-    if (fieldId === 'amount' || fieldId === 'description') {
+    const inputField = document.getElementById(fieldId);
+    const value = inputField.value;
+
+    // Check if field needs delayed feedback (e.g., amount, description, phone number, or NRIC)
+    if (fieldId === 'amount' || fieldId === 'description' || fieldId === 'mobile' || fieldId === 'nric') {
         // Set a delay to trigger feedback after typing stops
         inputTimer = setTimeout(() => {
-            const inputField = document.getElementById(fieldId);
-            const value = inputField.value;
-
             // Only give feedback if there's a value
             if (value) {
                 let speechText = '';
@@ -404,6 +404,10 @@ function giveVoiceFeedback(fieldId) {
                     speechText = `You entered the amount: ${value} SGD. Is that correct?`;
                 } else if (fieldId === 'description') {
                     speechText = `You entered the description: ${value}`;
+                } else if (fieldId === 'mobile') {
+                    speechText = `You have entered the phone number: ${value}. Is that correct?`;
+                } else if (fieldId === 'nric') {
+                    speechText = `You have entered the NRIC: ${value}. Is that correct?`;
                 }
 
                 // Create and configure speech synthesis
@@ -413,17 +417,14 @@ function giveVoiceFeedback(fieldId) {
         }, 500); // Delay of 500ms after typing stops
     } else {
         // Immediate feedback for other fields
-        const inputField = document.getElementById(fieldId);
         const speech = new SpeechSynthesisUtterance();
 
         if (fieldId === 'transfer-from') {
             // Get selected option text for transfer-from dropdown
             const selectedOption = inputField.options[inputField.selectedIndex];
             speech.text = selectedOption && selectedOption.text 
-                ? `You selected the account: ${selectedOption.text}`
+                ? `You have selected the account that you want to transfer from, which is ${selectedOption.text}. Is that correct?`
                 : 'No account selected';
-        } else if (fieldId === 'mobile' || fieldId === 'nric') {
-            speech.text = `You entered: ${inputField.value}`;
         } else if (fieldId === 'status-checkbox') {
             speech.text = inputField.checked 
                 ? 'You enabled the 24-hour delay transfer.' 
@@ -434,6 +435,7 @@ function giveVoiceFeedback(fieldId) {
         window.speechSynthesis.speak(speech);
     }
 }
+
 
 
 // Function to toggle input fields based on selected transfer method
