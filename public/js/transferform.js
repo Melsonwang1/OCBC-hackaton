@@ -335,6 +335,106 @@ form.addEventListener('submit', async (event) => {
     }
 });
 
+// State variable to track if TTS is enabled (Hover mouse to listen to text, zb)
+let ttsEnabled = false;
+
+// Function to trigger speech
+function speakText(text) {
+    if (ttsEnabled) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        // Create a new utterance and speak the text
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.7; // Speed of speech (1 is normal speed)
+        utterance.pitch = 0.7; // Pitch of speech (1 is normal pitch)
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// Toggle the TTS state (on/off)
+function toggleTTS() {
+    ttsEnabled = !ttsEnabled;
+    const statusText = document.getElementById('tts-status');
+    const toggleButton = document.getElementById('toggle-tts');
+    if (ttsEnabled) {
+        statusText.innerHTML = 'Hover to listen: <strong>ON</strong>';
+    } else {
+        statusText.innerHTML = 'Hover to listen: <strong>OFF</strong>';
+    }
+}
+
+// You can also trigger speech for dynamic content
+window.onload = function () {
+    // Welcome message will be spoken when the page loads if TTS is enabled
+    if (ttsEnabled) {
+        const welcomeMessage = document.getElementById('welcome-message');
+        speakText(welcomeMessage.innerText); // Speak "Welcome, user" message
+    }
+};
+
+// Variable to store the timer
+let inputTimer;
+
+// Function to provide voice feedback (zb)
+function giveVoiceFeedback(fieldId) {
+    // Only provide feedback if TTS is enabled
+    if (!ttsEnabled) return;
+
+    // Clear any previous timer to prevent overlapping feedback
+    clearTimeout(inputTimer);
+
+    // Cancel any ongoing speech to prevent repeats
+    window.speechSynthesis.cancel();
+
+    // Check if the field is 'amount' or 'description' to provide delayed feedback
+    if (fieldId === 'amount' || fieldId === 'description') {
+        // Set a delay to trigger feedback after typing stops
+        inputTimer = setTimeout(() => {
+            const inputField = document.getElementById(fieldId);
+            const value = inputField.value;
+
+            // Only give feedback if there's a value
+            if (value) {
+                let speechText = '';
+
+                if (fieldId === 'amount') {
+                    speechText = `You entered the amount: ${value} SGD. Is that correct?`;
+                } else if (fieldId === 'description') {
+                    speechText = `You entered the description: ${value}`;
+                }
+
+                // Create and configure speech synthesis
+                const speech = new SpeechSynthesisUtterance(speechText);
+                window.speechSynthesis.speak(speech);
+            }
+        }, 500); // Delay of 500ms after typing stops
+    } else {
+        // Immediate feedback for other fields
+        const inputField = document.getElementById(fieldId);
+        const speech = new SpeechSynthesisUtterance();
+
+        if (fieldId === 'transfer-from') {
+            // Get selected option text for transfer-from dropdown
+            const selectedOption = inputField.options[inputField.selectedIndex];
+            speech.text = selectedOption && selectedOption.text 
+                ? `You selected the account: ${selectedOption.text}`
+                : 'No account selected';
+        } else if (fieldId === 'mobile' || fieldId === 'nric') {
+            speech.text = `You entered: ${inputField.value}`;
+        } else if (fieldId === 'status-checkbox') {
+            speech.text = inputField.checked 
+                ? 'You enabled the 24-hour delay transfer.' 
+                : 'You disabled the 24-hour delay transfer.';
+        }
+
+        // Speak the feedback immediately
+        window.speechSynthesis.speak(speech);
+    }
+}
+
 
 // Function to toggle input fields based on selected transfer method
 function toggleInput(selected) {
@@ -419,6 +519,7 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
 });
 
 async function announceAccountsAndListen(userId) {
+    if (ttsEnabled) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
