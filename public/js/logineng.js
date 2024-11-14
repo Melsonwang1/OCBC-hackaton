@@ -253,7 +253,7 @@ if (!SpeechRecognition) {
     
             // Numbers
             "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5", 
-            "six": "6", "seven": "7", "eight": "8", "nine": "9"
+            "six": "6", "seven": "7", "eight": "8", "nine": "9","1": "1", "2": "2", "3": "3", "4": "4", "5": "5","6": "6", "7": "7", "8": "8", "9": "9",
         };
     
         const character = spokenToCharMap[spokenWord];
@@ -268,12 +268,24 @@ if (!SpeechRecognition) {
     function processSpokenCharacter(character, charName) {
         const inputField = document.getElementById(currentField);
         if (inputField) {
-            inputField.value += character;
-            speakBack(`Added ${charName}`);
+            // Check if the current field is 'user-id' and restrict input to alphanumeric characters
+            if (currentField === 'user-id') {
+                if (/^[a-zA-Z0-9]$/.test(character)) {  // Allow only letters and numbers
+                    inputField.value += character;
+                    speakBack(`Added ${charName}`);
+                } else {
+                    speakBack("Error: User ID can only contain letters and numbers.");
+                }
+            } else if (currentField === 'pin') {
+                // Allow any character for PIN
+                inputField.value += character;
+                speakBack(`Added ${charName}`);
+            }
         } else {
             speakBack("Error: Field not found.");
         }
     }
+    
 
     function deleteLastCharacter() {
         const inputField = document.getElementById(currentField);
