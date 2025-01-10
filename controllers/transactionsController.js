@@ -73,24 +73,23 @@ const deleteTransactionByTransactionId = async (req, res) => {
 };
 
 const createTransaction = async (req, res) => {
-    console.log("Request body:", req.body);
+    console.log("Request body received:", req.body);
 
-    // Validate if req.body exists
     if (!req.body || typeof req.body !== "object") {
         return res.status(400).json({ message: "Request body is missing or invalid." });
     }
 
-    // Destructure and validate required fields
     const { account_id, phoneNumber, nric, amount, description, status } = req.body;
 
     if (!account_id || !amount || !description || !status || (!phoneNumber && !nric)) {
         return res.status(400).json({
-            message: "Missing required fields: account_id, amount, description, status, and either phoneNumber or nric."
+            message: "Missing required fields: account_id, amount, description, status, and either phoneNumber or nric.",
         });
     }
 
     try {
-        // Create the transaction in the database
+        console.log("Transaction details before creation:", { account_id, amount, description, status, phoneNumber, nric });
+
         const transactionCreated = await Transaction.createTransaction(
             account_id,
             amount,
@@ -104,27 +103,49 @@ const createTransaction = async (req, res) => {
             return res.status(400).json({ message: "Failed to create transaction." });
         }
 
-        // Fetch the user associated with the phone number or NRIC
-        const user = await getUserByPhoneorNric({ nric, phoneNumber });
-        if (user && user.email) {
-            // Send an email for transactions exceeding a threshold
-            if (amount > 1000) {
-                const subject = "Large Transaction Alert";
-                const message = `Dear ${user.name},\n\nA transaction of ${amount.toFixed(2)} was made from your account.\n\nDescription: ${description}\n\nIf this was not you, please contact our support team immediately.`;
+        console.log("Transaction created:", transactionCreated);
 
-                const emailResult = await sendEmail(user.email, subject, message);
-                if (!emailResult.success) {
-                    console.warn("Failed to send email:", emailResult.error);
-                }
-            }
+        // Respond with success immediately
+        res.status(201).json({ message: "Transaction created successfully.", transaction: transactionCreated });
+
+        // Trigger email sending in a separate process
+        if (amount > 1000) {
+            sendLargeTransactionEmail({ nric, phoneNumber, amount, description,status }).catch((error) => {
+                console.warn("Failed to send email:", error.message);
+            });
         }
-
-        return res.status(201).json({ message: "Transaction created successfully." });
     } catch (error) {
         console.error("Error creating transaction:", error.message || error);
         return res.status(500).json({ message: "Server error while creating transaction." });
     }
 };
+async function sendLargeTransactionEmail({ account_id, amount, description, phoneNumber, nric }) {
+    try {
+        const user = await getUserByPhoneorNric({ nric, phoneNumber });
+        console.log("Retrieved user:", user); // Debug user data
+
+        if (user && user.email) {
+            const subject = "Large Transaction Alert";
+            const message = `Dear ${user.name},\n\nA transaction of ${amount.toFixed(2)} was made from your account.\n\nDescription: ${description}\n\nIf this was not you, please contact our support team immediately.`;
+
+            const emailResult = await sendEmail(user.email, subject, message);
+            if (!emailResult.success) {
+                console.warn("Failed to send email:", emailResult.error);
+            } else {
+                console.log("Large transaction email sent successfully.");
+            }
+        } else {
+            console.warn("User email not found for large transaction alert.");
+        }
+    } catch (error) {
+        console.error("Error in sendLargeTransactionEmail:", error.message);
+        throw error;
+    }
+}
+
+
+
+
 
 
 module.exports = {
