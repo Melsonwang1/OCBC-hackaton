@@ -157,18 +157,21 @@ const getUserByPhoneNumber = async (req, res) => {
     }
 };
 
-// Controller to handle either NRIC or phone number
 const getUserByPhoneorNric = async (req, res) => {
-    const { nric, phoneNumber } = req.query;
+    // Use default fallback for `req.query` to prevent destructuring errors
+    const { nric = null, phoneNumber = null } = req.query || {};
 
     if (nric) {
-        await getUserByNric(req, res);  // Calls the NRIC handler
+        return await getUserByNric(nric); // Function fetches user by NRIC
     } else if (phoneNumber) {
-        await getUserByPhoneNumber(req, res);  // Calls the phone number handler
+        return await getUserByPhoneNumber(phoneNumber); // Function fetches user by phone number
     } else {
-        res.status(400).json({ message: "Please provide either an NRIC or phone number." });
+        return res.status(400).json({
+            message: "Please provide either an NRIC or phone number."
+        });
     }
 };
+
 
 module.exports = {
     getUserById,

@@ -1,4 +1,36 @@
 const Transaction = require('../models/transactions');
+const nodemailer = require("nodemailer");
+const { getUserByPhoneorNric } = require('./userController');
+
+async function sendEmail(toEmail, subject, message) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "fsdp140606@gmail.com",
+                pass: "rkwl oaui pozg hllr", // Use your App Password
+            },
+        });
+
+        const mailOptions = {
+            from: '"Bank Name" <fsdp140606@gmail.com>',
+            to: toEmail,
+            subject: subject,
+            text: message,
+        };
+
+        // Send the email
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully:", info.response);
+
+        // Optional: Return success information
+        return { success: true, response: info.response };
+    } catch (error) {
+        console.error("Error sending email:", error);
+        return { success: false, error: error.message };
+    }
+}
+
 
 const getTransactionsbyaccountid = async (req, res) => {
     try {
@@ -40,18 +72,25 @@ const deleteTransactionByTransactionId = async (req, res) => {
     }
 };
 
-const createTransaction = async (req, res) => { 
+const createTransaction = async (req, res) => {
+    console.log("Request body:", req.body);
+
+    // Validate if req.body exists
+    if (!req.body || typeof req.body !== "object") {
+        return res.status(400).json({ message: "Request body is missing or invalid." });
+    }
+
+    // Destructure and validate required fields
     const { account_id, phoneNumber, nric, amount, description, status } = req.body;
 
-    // Validate required fields and conditions
-    if (!account_id || !amount || !description || !status || (phoneNumber === null && nric === null) || (phoneNumber !== null && nric !== null)) {
+    if (!account_id || !amount || !description || !status || (!phoneNumber && !nric)) {
         return res.status(400).json({
-            message: 'Please provide account_id, amount, description, status, and either phoneNumber or nric, with one explicitly set to null.'
+            message: "Missing required fields: account_id, amount, description, status, and either phoneNumber or nric."
         });
     }
 
     try {
-        // Attempt to create the transaction
+        // Create the transaction in the database
         const transactionCreated = await Transaction.createTransaction(
             account_id,
             amount,
@@ -61,15 +100,29 @@ const createTransaction = async (req, res) => {
             nric
         );
 
-        // Respond based on success or failure of transaction creation
-        if (transactionCreated) {
-            res.status(201).json({ message: 'Transaction created successfully' });
-        } else {
-            res.status(400).json({ message: 'Failed to create transaction' });
+        if (!transactionCreated) {
+            return res.status(400).json({ message: "Failed to create transaction." });
         }
+
+        // Fetch the user associated with the phone number or NRIC
+        const user = await getUserByPhoneorNric({ nric, phoneNumber });
+        if (user && user.email) {
+            // Send an email for transactions exceeding a threshold
+            if (amount > 1000) {
+                const subject = "Large Transaction Alert";
+                const message = `Dear ${user.name},\n\nA transaction of ${amount.toFixed(2)} was made from your account.\n\nDescription: ${description}\n\nIf this was not you, please contact our support team immediately.`;
+
+                const emailResult = await sendEmail(user.email, subject, message);
+                if (!emailResult.success) {
+                    console.warn("Failed to send email:", emailResult.error);
+                }
+            }
+        }
+
+        return res.status(201).json({ message: "Transaction created successfully." });
     } catch (error) {
-        console.error("Error creating transaction:", error);
-        res.status(500).json({ message: 'Server error while creating transaction' });
+        console.error("Error creating transaction:", error.message || error);
+        return res.status(500).json({ message: "Server error while creating transaction." });
     }
 };
 
