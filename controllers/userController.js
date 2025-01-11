@@ -157,20 +157,21 @@ const getUserByPhoneNumber = async (req, res) => {
     }
 };
 
-const getUserByPhoneorNric = async (req, res) => {
-    // Use default fallback for `req.query` to prevent destructuring errors
-    const { nric = null, phoneNumber = null } = req.query || {};
-
-    if (nric) {
-        return await getUserByNric(nric); // Function fetches user by NRIC
-    } else if (phoneNumber) {
-        return await getUserByPhoneNumber(phoneNumber); // Function fetches user by phone number
-    } else {
-        return res.status(400).json({
-            message: "Please provide either an NRIC or phone number."
-        });
+const getUserByPhoneorNric = async ({ nric, phoneNumber }) => {
+    try {
+        if (nric) {
+            return await Users.getUserByNric(nric); // Fetch user by NRIC
+        } else if (phoneNumber) {
+            return await Users.getUserByPhoneNumber(phoneNumber); // Fetch user by phone number
+        } else {
+            throw new Error("Please provide either an NRIC or phone number.");
+        }
+    } catch (error) {
+        console.error("Error in getUserByPhoneorNric:", error.message);
+        throw error;
     }
 };
+
 
 
 module.exports = {

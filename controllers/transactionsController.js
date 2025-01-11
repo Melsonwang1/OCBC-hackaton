@@ -109,7 +109,9 @@ const createTransaction = async (req, res) => {
         res.status(201).json({ message: "Transaction created successfully.", transaction: transactionCreated });
 
         // Trigger email sending in a separate process
-        if (amount > 1000) {
+        if (amount >= 500) {
+            console.log("Sending large transaction email...");
+            console.log("Transaction details:", { account_id, amount, description, phoneNumber, nric, });
             sendLargeTransactionEmail({ nric, phoneNumber, amount, description,status }).catch((error) => {
                 console.warn("Failed to send email:", error.message);
             });
@@ -119,8 +121,9 @@ const createTransaction = async (req, res) => {
         return res.status(500).json({ message: "Server error while creating transaction." });
     }
 };
-async function sendLargeTransactionEmail({ account_id, amount, description, phoneNumber, nric }) {
+async function sendLargeTransactionEmail({ nric, phoneNumber, amount, description }) {
     try {
+        // Pass nric and phoneNumber as an object
         const user = await getUserByPhoneorNric({ nric, phoneNumber });
         console.log("Retrieved user:", user); // Debug user data
 
@@ -135,7 +138,7 @@ async function sendLargeTransactionEmail({ account_id, amount, description, phon
                 console.log("Large transaction email sent successfully.");
             }
         } else {
-            console.warn("User email not found for large transaction alert.");
+            console.warn("User not found or email missing for large transaction alert.");
         }
     } catch (error) {
         console.error("Error in sendLargeTransactionEmail:", error.message);
