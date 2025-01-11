@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Find OCBC Bank Branches with Transit Routes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 60vh; /* Map takes 60% of the viewport height */
+            width: 100%;
+        }
+        #branches {
+            padding: 10px;
+            max-height: 40vh; /* Remaining space for the list */
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-top: 1px solid #ccc;
+        }
+        .branch-item {
+            margin-bottom: 10px;
+        }
+        .dropdown {
+            margin-top: 5px;
+            display: none;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="branches">
+        <h3>Nearby OCBC Bank Branches</h3>
+        <div id="branch-list"></div>
+    </div>
+    <script>
+        const orsApiKey = "5b3ce3597851110001cf62482cfbe63231f342d792ce122313bf86ae"; // Your OpenRouteService API key
+        let map, userLocation, routeLayer;
+
+        // Initialize the map
+        function initMap() {
+            map = L.map('map').setView([0, 0], 15);
+            routeLayer = L.layerGroup().addTo(map); // Layer group for routes
+
+            // Add OSM tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors',
+            }).addTo(map);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+
+                        // Center the map on the user's location
+                        map.setView(userLocation, 15);
+
+                        // Add a marker for the user's location
+                        L.marker(userLocation).addTo(map).bindPopup("You are here").openPopup();
+
+                        // Find OCBC branches
+                        findNearbyOCBCBranches(userLocation);
+                    },
+                    (error) => {
+                        console.error("Geolocation error:", error.message);
+                        alert("Could not get your location.");
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Function to find nearby OCBC Bank branches
+        function findNearbyOCBCBranches(location) {
+            const { lat, lng } = location;
+
+            // Sample OCBC branch coordinates (replace with actual data)
+            const branches = [
+                { name: "OCBC Branch 1", lat: lat + 0.01, lng: lng + 0.01 },
+                { name: "OCBC Branch 2", lat: lat - 0.01, lng: lng - 0.01 },
+            ];
+
+            const branchList = document.getElementById("branch-list");
+            branchList.innerHTML = "";
+
+            branches.forEach((branch, index) => {
+                // Add a marker for each branch
+                L.marker([branch.lat, branch.lng]).addTo(map).bindPopup(branch.name);
+
+                // Create a branch item in the list
+                const branchItem = document.createElement("div");
+                branchItem.className = "branch-item";
+                branchItem.innerHTML = `
+                    <strong>${branch.name}</strong>
+                    <button onclick="getBusRoutes(${branch.lat}, ${branch.lng}, ${index})">Show Route</button>
+                    <div id="dropdown-${index}" class="dropdown"></div>
+                `;
+                branchList.appendChild(branchItem);
+            });
+        }
+
+        // Function to fetch and display routes
+        function getBusRoutes(destinationLat, destinationLng, index) {
+            if (!userLocation) {
+                alert("User location is not available.");
+                return;
+            }
+
+            routeLayer.clearLayers(); // Clear previous routes
+
+            // OpenRouteService API for routing
+            const orsApiUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsApiKey}&start=${userLocation.lng},${userLocation.lat}&end=${destinationLng},${destinationLat}`;
+
+            fetch(orsApiUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    const coordinates = data.features[0].geometry.coordinates;
+
+                    // Convert coordinates to Leaflet format
+                    const routeCoordinates = coordinates.map(coord => [coord[1], coord[0]]);
+
+                    // Draw the route on the map
+                    L.polyline(routeCoordinates, {
+                        color: 'blue',
+                        weight: 5,
+                        opacity: 0.7,
+                    }).addTo(routeLayer);
+
+                    // Display route information
+                    const dropdown = document.getElementById(`dropdown-${index}`);
+                    dropdown.innerHTML = `<p>Route fetched successfully!</p>`;
+                    dropdown.style.display = "block";
+                })
+                .catch((error) => {
+                    console.error("Error fetching route:", error);
+                    alert("Could not fetch the route.");
+                });
+        }
+
+        // Initialize the map
+        initMap();
+    </script>
+</body>
+</html>
