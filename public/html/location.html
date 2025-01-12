@@ -226,8 +226,6 @@
 
             const routeUrl = `https://www.onemap.gov.sg/api/public/routingsvc/route?start=${start}&end=${end}&routeType=pt&date=${formattedDate}&time=${formattedTime}&mode=TRANSIT&maxWalkDistance=1000&numItineraries=1`;
 
-            console.log("Route URL:", routeUrl);
-
             fetch(routeUrl, {
                 method: 'GET',
                 headers: {
@@ -241,9 +239,32 @@
                     return response.json();
                 })
                 .then((data) => {
-                    console.log("Route fetched successfully:", data);
                     const transportInfo = document.getElementById(`transport-${index}`);
-                    transportInfo.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    const itinerary = data.plan.itineraries[0]; // Assuming the first itinerary is the best one
+                    if (itinerary) {
+                        const durationMinutes = Math.ceil(itinerary.duration / 60);
+                        const walkDistanceMeters = Math.round(itinerary.walkDistance);
+                        const steps = itinerary.legs.map((leg) => {
+                            return `
+                                <li>
+                                    <strong>Mode:</strong> ${leg.mode} <br />
+                                    <strong>Start:</strong> ${leg.from.name || 'Unknown'} <br />
+                                    <strong>End:</strong> ${leg.to.name || 'Unknown'} <br />
+                                    <strong>Distance:</strong> ${Math.round(leg.distance)} meters <br />
+                                    <strong>Time:</strong> ${new Date(leg.startTime).toLocaleTimeString()} - ${new Date(leg.endTime).toLocaleTimeString()}
+                                </li>
+                            `;
+                        }).join('');
+
+                        transportInfo.innerHTML = `
+                            <p><strong>Total Duration:</strong> ${durationMinutes} minutes</p>
+                            <p><strong>Total Walking Distance:</strong> ${walkDistanceMeters} meters</p>
+                            <p>Steps:</p>
+                            <ul>${steps}</ul>
+                        `;
+                    } else {
+                        transportInfo.innerHTML = "No route found.";
+                    }
                 })
                 .catch((error) => {
                     console.error("Error fetching route:", error);
@@ -251,6 +272,7 @@
                     transportInfo.innerHTML = "Could not fetch transport information.";
                 });
         }
+
 
 
 
