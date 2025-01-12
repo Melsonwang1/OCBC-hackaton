@@ -1,4 +1,4 @@
-
+<!-- for accuracy purposes some of the locations had to be hard coded inside because i am using an older map to show, uses your location to show you the nearest 5km branches -->
 
 
 
@@ -72,14 +72,14 @@
 <body>
     <div id="map"></div>
     <div id="locations">
-        <h3>Nearby OCBC Bank Branches and ATMs</h3>
+        <h3>Nearby OCBC Bank Branches</h3>
         <div id="location-list"></div>
     </div>
     <script>
         let map, userLocation;
 
         const staticLocations = [
-            { name: "OCBC Branch - Choa Chu Kang", lat: 1.3856, lng: 103.7441 },
+            { name: "OCBC Branch - Choa Chu Kang", lat: 1.38449406918442, lng: 103.743146477983 },
         ];
 
         const oneMapToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaW50ZXJuYWwtYWxiLW9tLXByZGV6aXQtaXQtbmV3LTE2MzM3OTk1NDIuYXAtc291dGhlYXN0LTEuZWxiLmFtYXpvbmF3cy5jb20vYXBpL3YyL3VzZXIvcGFzc3dvcmQiLCJpYXQiOjE3MzY2MjA3NjcsImV4cCI6MTczNjg3OTk2NywibmJmIjoxNzM2NjIwNzY3LCJqdGkiOiJtcmdRek9OcDlrTGt2ejY1Iiwic3ViIjoiZjY4ZTY4YTQ5ZjJkZWJhYzhiZWRiNzc2MWQ3YzdhMTYiLCJ1c2VyX2lkIjo1NTc1LCJmb3JldmVyIjpmYWxzZX0.g1Ce7A2SNFekQ3r0iPPx46bsXCAa9QzkLPcF5HO0nZM"; // Replace with your OneMap API token
