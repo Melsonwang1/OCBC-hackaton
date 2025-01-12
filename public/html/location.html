@@ -31,6 +31,38 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
+        .step {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step-number {
+            color: #007bff;
+        }
+
+        .step-details {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .step-mode {
+            background: #007bff;
+            color: #fff;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
     </style>
 </head>
 <body>
@@ -102,20 +134,28 @@
                 .then(data => {
                     const locations = [
                         ...data.map(result => ({
-                            name: result.display_name,
+                            name: result.display_name.split(",")[0], // Extract main name
+                            address: result.display_name.split(",").slice(1).join(",").trim(), // Extract address
                             lat: parseFloat(result.lat),
                             lng: parseFloat(result.lon),
                         })),
-                        ...staticLocations,
+                        ...staticLocations.map(staticLoc => ({
+                            ...staticLoc,
+                            address: "Choa Chu Kang, Singapore", // Static address for static locations
+                        })),
                     ];
 
                     locations.forEach(location => {
                         location.distance = haversine(lat, lng, location.lat, location.lng);
                     });
 
-                    locations.sort((a, b) => a.distance - b.distance);
+                    // Filter locations within 5km radius
+                    const filteredLocations = locations.filter(loc => loc.distance <= 5);
 
-                    displayLocations(locations);
+                    // Sort by distance
+                    filteredLocations.sort((a, b) => a.distance - b.distance);
+
+                    displayLocations(filteredLocations);
                 })
                 .catch(error => {
                     console.error("Error fetching locations:", error);
@@ -135,12 +175,14 @@
                         iconAnchor: [12, 41],
                         popupAnchor: [0, -30],
                     }),
-                }).addTo(map).bindPopup(`${location.name}<br>${location.distance.toFixed(2)} km away`);
+                }).addTo(map).bindPopup(`${location.name}<br>${location.address}<br>${location.distance.toFixed(2)} km away`);
 
                 const locationItem = document.createElement("div");
                 locationItem.className = "location-item";
                 locationItem.innerHTML = `
-                    <strong>${location.name}</strong> - ${location.distance.toFixed(2)} km away
+                    <strong>${location.name}</strong><br>
+                    <span>${location.address}</span><br>
+                    <span>${location.distance.toFixed(2)} km away</span><br>
                     <button onclick="fetchTransportInfo(${location.lat}, ${location.lng}, ${index})">Get Public Transport Info</button>
                     <div id="transport-${index}" class="transport-info"></div>
                 `;
@@ -244,17 +286,23 @@
                     if (itinerary) {
                         const durationMinutes = Math.ceil(itinerary.duration / 60);
                         const walkDistanceMeters = Math.round(itinerary.walkDistance);
-                        const steps = itinerary.legs.map((leg) => {
+                        const steps = itinerary.legs.map((leg, index) => {
                             return `
-                                <li>
-                                    <strong>Mode:</strong> ${leg.mode} <br />
-                                    <strong>Start:</strong> ${leg.from.name || 'Unknown'} <br />
-                                    <strong>End:</strong> ${leg.to.name || 'Unknown'} <br />
-                                    <strong>Distance:</strong> ${Math.round(leg.distance)} meters <br />
-                                    <strong>Time:</strong> ${new Date(leg.startTime).toLocaleTimeString()} - ${new Date(leg.endTime).toLocaleTimeString()}
-                                </li>
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">Step ${index + 1}:</span>
+                                        <span class="step-mode">${leg.mode}</span>
+                                    </div>
+                                    <div class="step-details">
+                                        <p><strong>Start:</strong> ${leg.from.name || 'Unknown'}</p>
+                                        <p><strong>End:</strong> ${leg.to.name || 'Unknown'}</p>
+                                        <p><strong>Distance:</strong> ${Math.round(leg.distance)} meters</p>
+                                        <p><strong>Time:</strong> ${new Date(leg.startTime).toLocaleTimeString()} - ${new Date(leg.endTime).toLocaleTimeString()}</p>
+                                    </div>
+                                </div>
                             `;
                         }).join('');
+
 
                         transportInfo.innerHTML = `
                             <p><strong>Total Duration:</strong> ${durationMinutes} minutes</p>
