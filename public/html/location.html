@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Find OCBC Bank Branches with Transit Routes</title>
+    <title>Find OCBC Bank Branches and ATMs</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -11,45 +11,60 @@
             font-family: Arial, sans-serif;
         }
         #map {
-            height: 60vh; /* Map takes 60% of the viewport height */
+            height: 60vh;
             width: 100%;
         }
-        #branches {
+        #locations {
             padding: 10px;
-            max-height: 40vh; /* Remaining space for the list */
+            max-height: 40vh;
             overflow-y: auto;
             background: #f9f9f9;
             border-top: 1px solid #ccc;
         }
-        .branch-item {
+        .location-item {
             margin-bottom: 10px;
         }
-        .dropdown {
+        .transport-info {
             margin-top: 5px;
-            display: none;
             padding: 10px;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
-    <div id="branches">
-        <h3>Nearby OCBC Bank Branches</h3>
-        <div id="branch-list"></div>
+    <div id="locations">
+        <h3>Nearby OCBC Bank Branches and ATMs</h3>
+        <div id="location-list"></div>
     </div>
     <script>
-        const orsApiKey = "5b3ce3597851110001cf62482cfbe63231f342d792ce122313bf86ae"; // Your OpenRouteService API key
-        let map, userLocation, routeLayer;
+        let map, userLocation;
 
-        // Initialize the map
+        const staticLocations = [
+            { name: "OCBC Branch - Choa Chu Kang", lat: 1.3856, lng: 103.7441 },
+        ];
+
+        const oneMapToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaW50ZXJuYWwtYWxiLW9tLXByZGV6aXQtaXQtbmV3LTE2MzM3OTk1NDIuYXAtc291dGhlYXN0LTEuZWxiLmFtYXpvbmF3cy5jb20vYXBpL3YyL3VzZXIvcGFzc3dvcmQiLCJpYXQiOjE3MzY2MjA3NjcsImV4cCI6MTczNjg3OTk2NywibmJmIjoxNzM2NjIwNzY3LCJqdGkiOiJtcmdRek9OcDlrTGt2ejY1Iiwic3ViIjoiZjY4ZTY4YTQ5ZjJkZWJhYzhiZWRiNzc2MWQ3YzdhMTYiLCJ1c2VyX2lkIjo1NTc1LCJmb3JldmVyIjpmYWxzZX0.g1Ce7A2SNFekQ3r0iPPx46bsXCAa9QzkLPcF5HO0nZM"; // Replace with your OneMap API token
+
+        function haversine(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = ((lat2 - lat1) * Math.PI) / 180;
+            const dLon = ((lon2 - lon1) * Math.PI) / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos((lat1 * Math.PI) / 180) *
+                Math.cos((lat2 * Math.PI) / 180) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
         function initMap() {
-            map = L.map('map').setView([0, 0], 15);
-            routeLayer = L.layerGroup().addTo(map); // Layer group for routes
+            map = L.map('map').setView([1.3521, 103.8198], 12); // Default to Singapore
 
-            // Add OSM tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors',
@@ -63,14 +78,10 @@
                             lng: position.coords.longitude,
                         };
 
-                        // Center the map on the user's location
                         map.setView(userLocation, 15);
-
-                        // Add a marker for the user's location
                         L.marker(userLocation).addTo(map).bindPopup("You are here").openPopup();
 
-                        // Find OCBC branches
-                        findNearbyOCBCBranches(userLocation);
+                        findNearbyLocations(userLocation);
                     },
                     (error) => {
                         console.error("Geolocation error:", error.message);
@@ -82,48 +93,147 @@
             }
         }
 
-        // Function to find nearby OCBC Bank branches
-        function findNearbyOCBCBranches(location) {
+        function findNearbyLocations(location) {
             const { lat, lng } = location;
+            const query = `https://nominatim.openstreetmap.org/search?format=json&limit=10&q=OCBC&lat=${lat}&lon=${lng}&radius=5000`;
 
-            // Sample OCBC branch coordinates (replace with actual data)
-            const branches = [
-                { name: "OCBC Branch 1", lat: lat + 0.01, lng: lng + 0.01 },
-                { name: "OCBC Branch 2", lat: lat - 0.01, lng: lng - 0.01 },
-            ];
+            fetch(query)
+                .then(response => response.json())
+                .then(data => {
+                    const locations = [
+                        ...data.map(result => ({
+                            name: result.display_name,
+                            lat: parseFloat(result.lat),
+                            lng: parseFloat(result.lon),
+                        })),
+                        ...staticLocations,
+                    ];
 
-            const branchList = document.getElementById("branch-list");
-            branchList.innerHTML = "";
+                    locations.forEach(location => {
+                        location.distance = haversine(lat, lng, location.lat, location.lng);
+                    });
 
-            branches.forEach((branch, index) => {
-                // Add a marker for each branch
-                L.marker([branch.lat, branch.lng]).addTo(map).bindPopup(branch.name);
+                    locations.sort((a, b) => a.distance - b.distance);
 
-                // Create a branch item in the list
-                const branchItem = document.createElement("div");
-                branchItem.className = "branch-item";
-                branchItem.innerHTML = `
-                    <strong>${branch.name}</strong>
-                    <button onclick="getBusRoutes(${branch.lat}, ${branch.lng}, ${index})">Show Route</button>
-                    <div id="dropdown-${index}" class="dropdown"></div>
+                    displayLocations(locations);
+                })
+                .catch(error => {
+                    console.error("Error fetching locations:", error);
+                    alert("Could not fetch locations.");
+                });
+        }
+
+        function displayLocations(locations) {
+            const locationList = document.getElementById("location-list");
+            locationList.innerHTML = "";
+
+            locations.forEach((location, index) => {
+                L.marker([location.lat, location.lng], {
+                    icon: L.icon({
+                        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [0, -30],
+                    }),
+                }).addTo(map).bindPopup(`${location.name}<br>${location.distance.toFixed(2)} km away`);
+
+                const locationItem = document.createElement("div");
+                locationItem.className = "location-item";
+                locationItem.innerHTML = `
+                    <strong>${location.name}</strong> - ${location.distance.toFixed(2)} km away
+                    <button onclick="fetchTransportInfo(${location.lat}, ${location.lng}, ${index})">Get Public Transport Info</button>
+                    <div id="transport-${index}" class="transport-info"></div>
                 `;
-                branchList.appendChild(branchItem);
+                locationList.appendChild(locationItem);
             });
         }
 
-        // Function to fetch and display routes
-        function getBusRoutes(destinationLat, destinationLng, index) {
+        function findNearestMRT(lat, lng, callback) {
+            const mrtQueryUrl = `https://www.onemap.gov.sg/api/common/elastic/search?searchVal=MRT&returnGeom=Y&getAddrDetails=N&pageNum=1`;
+
+            fetch(mrtQueryUrl, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${oneMapToken}`,
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.results) {
+                        let nearestStation = null;
+                        let minDistance = Infinity;
+
+                        data.results.forEach((station) => {
+                            const stationLat = parseFloat(station.LATITUDE);
+                            const stationLng = parseFloat(station.LONGITUDE);
+                            const distance = haversine(lat, lng, stationLat, stationLng);
+
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                nearestStation = {
+                                    name: station.SEARCHVAL,
+                                    lat: stationLat,
+                                    lng: stationLng,
+                                };
+                            }
+                        });
+
+                        callback(nearestStation);
+                    } else {
+                        callback(null);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching MRT stations:", error);
+                    callback(null);
+                });
+        }
+
+        function fetchTransportInfo(destinationLat, destinationLng, index) {
             if (!userLocation) {
                 alert("User location is not available.");
                 return;
             }
 
-            routeLayer.clearLayers(); // Clear previous routes
+            const transportInfo = document.getElementById(`transport-${index}`);
+            transportInfo.innerHTML = "Fetching transport options...";
 
-            // OpenRouteService API for routing
-            const orsApiUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsApiKey}&start=${userLocation.lng},${userLocation.lat}&end=${destinationLng},${destinationLat}`;
+            // Fetch the route directly from user location to the destination
+            fetchRoute(`${userLocation.lat},${userLocation.lng}`, `${destinationLat},${destinationLng}`, index);
+        }
 
-            fetch(orsApiUrl)
+        function fetchRoute(start, end, index) {
+            if (start === end) {
+                console.error("Start and end coordinates are identical. Routing is not meaningful.");
+                return;
+            }
+
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric',
+            }).replace(/\//g, '-');
+            const formattedTime = now
+                .toTimeString()
+                .split(' ')[0]
+                .replace(/:/g, '');
+
+            const routeUrl = `https://www.onemap.gov.sg/api/public/routingsvc/route?start=${start}&end=${end}&routeType=pt&date=${formattedDate}&time=${formattedTime}&mode=TRANSIT&maxWalkDistance=1000&numItineraries=1`;
+
+            console.log("Route URL:", routeUrl);
+
+            fetch(routeUrl, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${oneMapToken}`,
+                },
+            })
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -131,30 +241,22 @@
                     return response.json();
                 })
                 .then((data) => {
-                    const coordinates = data.features[0].geometry.coordinates;
-
-                    // Convert coordinates to Leaflet format
-                    const routeCoordinates = coordinates.map(coord => [coord[1], coord[0]]);
-
-                    // Draw the route on the map
-                    L.polyline(routeCoordinates, {
-                        color: 'blue',
-                        weight: 5,
-                        opacity: 0.7,
-                    }).addTo(routeLayer);
-
-                    // Display route information
-                    const dropdown = document.getElementById(`dropdown-${index}`);
-                    dropdown.innerHTML = `<p>Route fetched successfully!</p>`;
-                    dropdown.style.display = "block";
+                    console.log("Route fetched successfully:", data);
+                    const transportInfo = document.getElementById(`transport-${index}`);
+                    transportInfo.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
                 })
                 .catch((error) => {
                     console.error("Error fetching route:", error);
-                    alert("Could not fetch the route.");
+                    const transportInfo = document.getElementById(`transport-${index}`);
+                    transportInfo.innerHTML = "Could not fetch transport information.";
                 });
         }
 
-        // Initialize the map
+
+
+
+
+
         initMap();
     </script>
 </body>
