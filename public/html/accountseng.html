@@ -50,10 +50,44 @@
     </header>
     
 
-    <div class="container">
+    <!-- Banner Section -->
+    <div class="banner">
+        <p>🚀 We’ve revamped our website for greater accessibility for everyone!</p>
+        <p>Explore new features designed to make digital banking easier and more inclusive.</p>
+        <button onclick="openAccessibilityMenu()">Try the Accessibility Menu</button>
+    </div>
 
+    <div class="container">
         <!-- Welcome message -->
         <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+
+        <!-- Accessibility Menu -->
+        <div class="accessibility-menu" id="accessibilityMenu">
+            <div class="accessibility-header">
+                <h2>Accessibility Options</h2>
+                <button class="close-button" onclick="closeAccessibilityMenu()">&#10005;</button> <!-- Small cross sign -->
+            </div>
+
+            <!-- Accessibility Options Layout -->
+            <div class="accessibility-options">
+                <div class="accessibility-option" onclick="changeFontSize('increase')">
+                    <div class="icon">A+</div>
+                    <p>Increase Font Size</p>
+                </div>
+                <div class="accessibility-option" onclick="changeFontSize('decrease')">
+                    <div class="icon">A-</div>
+                    <p>Decrease Font Size</p>
+                </div>
+                <div class="accessibility-option" onclick="toggleDarkMode()">
+                    <div class="icon">🌙</div>
+                    <p>Toggle Dark Mode</p>
+                </div>
+                <div class="accessibility-option" onclick="closeAccessibilityMenu()">
+                    <div class="icon">❌</div>
+                    <p>Close Menu</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -108,6 +142,33 @@
 
     <script src="../js/accountseng.js"></script>
     <script>
+        // Function to open the accessibility menu
+        function openAccessibilityMenu() {
+        document.getElementById('accessibilityMenu').classList.add('open');
+        }
+
+        // Function to close the accessibility menu
+        function closeAccessibilityMenu() {
+        document.getElementById('accessibilityMenu').classList.remove('open');
+        }
+
+        // Function to adjust font size
+        function changeFontSize(action) {
+        const body = document.body;
+        let currentSize = parseFloat(window.getComputedStyle(body).fontSize);
+
+        if (action === 'increase') {
+            body.style.fontSize = currentSize * 1.2 + 'px';
+        } else if (action === 'decrease') {
+            body.style.fontSize = currentSize * 0.8 + 'px';
+        }
+        }
+
+        // Function to toggle dark mode
+        function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        }
+
         window.watsonAssistantChatOptions = {
           integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
           region: "us-south", // The region your integration is hosted in.
@@ -119,7 +180,7 @@
           t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
           document.head.appendChild(t);
         });
-      </script>
+    </script>
 </body>
 
 </html>
