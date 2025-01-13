@@ -52,9 +52,33 @@
 
     <!-- Banner Section -->
     <div class="banner">
-        <p>🚀 We’ve revamped our website for greater accessibility for everyone!</p>
-        <p>Explore new features designed to make digital banking easier and more inclusive.</p>
-        <button onclick="openAccessibilityMenu()">Try the Accessibility Menu</button>
+        <!-- Tooltip for the first sentence -->
+        <p>
+            <span class="tooltip" tabindex="0" aria-label="🚀 We’ve revamped our website for greater accessibility for everyone!">
+                🚀 We’ve revamped our website for greater accessibility for everyone!
+            </span>
+        </p>
+    
+        <!-- Tooltip for the second sentence -->
+        <p>
+            <span class="tooltip" tabindex="0" aria-label="Explore new features designed to make digital banking easier and more inclusive.">
+                Explore new features designed to make digital banking easier and more inclusive.
+            </span>
+        </p>
+    
+        <!-- Tooltip for the button -->
+        <button class="tooltip" tabindex="0" aria-label="Try the Accessibility Menu" onclick="openAccessibilityMenu()">
+            Try the Accessibility Menu
+        </button>
+    </div>
+    
+
+    <div class="tooltip-container">
+        <p>
+            <span class="tooltip" tabindex="0" aria-label="Experienced and trusted. listen, we care.">
+                Experienced and trusted. 
+            We listen, we care.</span>
+        </p>
     </div>
 
     <div class="container">
@@ -133,7 +157,7 @@
             <p onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')"><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
         </div>      
         <h2 onmouseover="speakText('These are your Bank Accounts')">Your Bank Accounts:</h2>
-        <p onmouseover="speakText('Select an account below to view detailed information, such as transaction details and balances.')">Select an account below to view detailed information.</p>
+        <p class="text-magnifier" onmouseover="speakText('Select an account below to view detailed information, such as transaction details and balances.')">Select an account below to view detailed information.</p>
         <div id="accounts-list">
             <!-- Account cards will be inserted here by JavaScript -->
         </div>
@@ -142,6 +166,57 @@
 
     <script src="../js/accountseng.js"></script>
     <script>
+        document.querySelectorAll('.text-magnifier').forEach(item => {
+            item.addEventListener('mouseover', () => {
+                item.style.transform = 'scale(1.5)';
+                item.style.zIndex = '1000';
+                item.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                item.style.color = 'white';
+            });
+
+            item.addEventListener('mouseout', () => {
+                item.style.transform = 'scale(1)';
+                item.style.zIndex = 'auto';
+                item.style.backgroundColor = 'transparent';
+                item.style.color = 'inherit';
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+    // Function to wrap each word or sentence in a span
+    function wrapWordsWithSpan(element) {
+        // Check if the element has child nodes
+        element.childNodes.forEach((node) => {
+            // If the node is a text node (not another HTML element)
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+                // Split text into sentences or words
+                const text = node.textContent.trim();
+                const words = text.split(" "); // Split by words (space-separated)
+
+                // Replace text node with spans
+                const wrappedWords = words.map((word) => {
+                    const span = document.createElement("span");
+                    span.textContent = word; // Set the word as the span's content
+                    span.classList.add("text-magnifier"); // Add magnification class
+                    return span.outerHTML + " "; // Re-add space after the word
+                }).join("");
+
+                // Replace the text node with the newly created span elements
+                const wrapper = document.createElement("span");
+                wrapper.innerHTML = wrappedWords;
+                element.replaceChild(wrapper, node);
+            }
+        });
+    }
+
+    // Select elements that contain visible text
+    const textElements = document.querySelectorAll("p, h1, h2, h3, h4, h5, h6, li, span, a, button");
+
+    // Apply wrapping to each element
+    textElements.forEach((element) => wrapWordsWithSpan(element));
+});
+
+
         // Function to open the accessibility menu
         function openAccessibilityMenu() {
         document.getElementById('accessibilityMenu').classList.add('open');
@@ -181,6 +256,7 @@
           document.head.appendChild(t);
         });
     </script>
+    <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 </body>
 
 </html>
