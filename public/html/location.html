@@ -3,69 +3,179 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Find OCBC Bank Branches and ATMs</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/investment.css">
+    <link rel="shortcut icon" href="../pics/ocbc-title-logo.png" type="image/x-icon">
+    <title>OCBC - Nearest Branch</title>
+
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+        </div>    
+
+        <!-- Text-to-Speech Toggle Slider with Status -->
+        <div class="tts-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+                <span class="slider"></span>
+            </label>
+            <span id="tts-status">Hover to listen: <b>OFF</b></span>
+        </div>
+
+        <div class="header-right">
+            <div class="font-size-controls">
+                <button onclick="changeFontSize(-2)">A-</button>
+                <button onclick="resetFontSize()">A</button>
+                <button onclick="changeFontSize(2)">A+</button>
+            </div>
+            
+            <div class="language-switch">
+                <a href="investmentchi.html" class="language-btn">中文</a>
+            </div>
+    
+            <div class="logout">
+                <button id="logout-btn" onmouseover="speakText('Click here to Logout')">
+                    Logout
+                    <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container"> 
+        <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+
+        <!-- Keyboard Shortcuts Note -->
+        <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+            <p id="keyboard-shortcut-header">
+                <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
+            </p>
+            <ul id="shortcut-list">
+                <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
+                <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
+                <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
+                <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">C</span> → Chinese Translation</li>
+                <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">L</span> → Log Out</li>
+                <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
+                <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
+                <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
+                <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
+            </ul>
+        </div>
+
+        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
+        <div class="navbar">
+            <a href="../html/accountseng.html" onmouseover="speakText('Click here to View Accounts')">
+                <img src="../pics/view-account.png" alt="View Icon">
+                View Accounts</a>
+            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
+                <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+                Transfer Money</a>
+            <a href="../html/investmenteng.html"  onmouseover="speakText('Click here to view Investments')">
+                <img src="../pics/investment.png" alt="Investments Icon">
+                Investments</a> 
+            <a href="../html/location.html" class="active" onmouseover="speakText('Click here to find the nearest OCBC Branch')">
+                <img src="../pics/location.png" alt="Location Icon">
+                Nearest Branch</a>
+        </div>
+    </div>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        #map {
-            height: 60vh;
-            width: 100%;
-        }
-        #locations {
-            padding: 10px;
-            max-height: 40vh;
-            overflow-y: auto;
-            background: #f9f9f9;
-            border-top: 1px solid #ccc;
-        }
-        .location-item {
-            margin-bottom: 10px;
-        }
-        .transport-info {
-            margin-top: 5px;
-            padding: 10px;
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
 
-        .step {
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            background: #f9f9f9;
-        }
+    #map {
+        height: 60vh;
+        width: 100%;
+    }
 
-        .step-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+    #locations {
+        padding: 10px;
+        max-height: 40vh;
+        overflow-y: auto;
+        background: #f9f9f9;
+        border-top: 1px solid #ccc;
+    }
 
-        .step-number {
-            color: #007bff;
-        }
+    .location-item {
+        margin-bottom: 10px;
+    }
 
-        .step-details {
-            font-size: 14px;
-            color: #555;
-        }
+    .transport-info {
+        margin-top: 5px;
+        padding: 10px;
+        background: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
 
-        .step-mode {
-            background: #007bff;
-            color: #fff;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
+    .step {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+    }
+
+    .step-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .step-number {
+        color: #007bff;
+    }
+
+    .step-details {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .step-mode {
+        background: #007bff;
+        color: #fff;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    button:active {
+        background-color: #003d80;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
     </style>
 </head>
