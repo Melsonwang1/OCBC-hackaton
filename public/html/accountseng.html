@@ -41,7 +41,7 @@
             </div>
     
             <div class="logout">
-                <button id="logout-btn" onmouseover="speakText('Click here to securely log out of your account.')"> 
+                <button class="tooltip" id="logout-btn" tabindex="0" aria-label="Logout">
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -72,15 +72,6 @@
         </button>
     </div>
     
-
-    <div class="tooltip-container">
-        <p>
-            <span class="tooltip" tabindex="0" aria-label="Experienced and trusted. listen, we care.">
-                Experienced and trusted. 
-            We listen, we care.</span>
-        </p>
-    </div>
-
     <div class="container">
         <!-- Welcome message -->
         <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
@@ -133,36 +124,39 @@
         
 
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
+        <h2 class="welcome-message tooltip" tabindex="0" aria-label="What would you like to do today?" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountseng.html" class="active" onmouseover="speakText('Click here to view your bank accounts and details')">
+            <a href="../html/accountseng.html" class="active tooltip" tabindex="0" aria-label="View Accounts">
                 <img src="../pics/view-account.png" alt="View Icon">
-                View Accounts</a>
-            <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money to other people')">
+                View Accounts
+            </a>
+            <a href="../html/transfer.html" class="tooltip" tabindex="0" aria-label="Transfer Money">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
-                Transfer Money</a>
-            <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view and manage your investments')">
+                Transfer Money
+            </a>
+            <a href="../html/investmenteng.html" class="tooltip" tabindex="0" aria-label="Investments">
                 <img src="../pics/investment.png" alt="Investments Icon">
-                Investments</a> 
-            <a href="../html/location.html" onmouseover="speakText('Click here to find nearby ATMs')">
+                Investments
+            </a> 
+            <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
                 <img src="../pics/location.png" alt="Location Icon">
-                Find ATMs</a>
+                Find ATMs
+            </a>
         </div>
     </div>
 
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <div class="account-selection-note">
-            <p onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')"><strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.</p>
+            <p class="tooltip" data-position="top" onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')" tabindex="0" aria-label="Use the Tab key to navigate and press Enter to view"> 
+                <strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.
+            </p>
         </div>      
-        <h2 onmouseover="speakText('These are your Bank Accounts')">Your Bank Accounts:</h2>
-        <p class="text-magnifier" onmouseover="speakText('Select an account below to view detailed information, such as transaction details and balances.')">Select an account below to view detailed information.</p>
-        <div id="accounts-list">
-            <!-- Account cards will be inserted here by JavaScript -->
-        </div>
+        <h2 class="tooltip" tabindex="0" aria-label="Your bank accounts">Your Bank Accounts:</h2>
+        <p class="tooltip" tabindex="0" aria-label="Select an account below to view detailed information">Select an account below to view detailed information.</p>
+        <div id="accounts-list"></div>
     </section>
-
 
     <script src="../js/accountseng.js"></script>
     <script>

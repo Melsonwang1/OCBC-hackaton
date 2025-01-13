@@ -224,13 +224,9 @@ header .logout button .login-icon {
     color: #fff; /* White text */
 }
 
-/* General Tooltip Styles */
 .tooltip {
-    position: relative;
-    display: inline-block; /* Keeps the original layout of the content */
-    margin-bottom: 20px; /* Adds space between elements */
+    margin-bottom: 10px;
 }
-
 
 /* Tooltip text */
 .tooltip::after {
@@ -243,11 +239,10 @@ header .logout button .login-icon {
     padding: 12px 25px; /* Adjusted padding to make the tooltip wider */
     border-radius: 5px;
     position: absolute;
-    z-index: 1;
+    z-index: 9999;
     font-size: 40px; /* Set font size to 40px */
     line-height: 1.4;
-    white-space: normal; /* Allow text to break naturally at spaces */
-    word-wrap: break-word; /* Ensures long words break if necessary */
+    white-space: initial;
     max-width: 1000px; /* Increased max-width for wider tooltip */
     transition: opacity 0.3s ease, visibility 0.3s ease;
     transform: translateX(-50%);
@@ -256,13 +251,13 @@ header .logout button .login-icon {
 
 /* Tooltip Positions */
 .tooltip[data-position="top"]::after {
-    bottom: 120%; /* Position above the element */
-    left: 50%;
+    left: 65%;
+    bottom: 5%;
 }
 
-.tooltip[data-position="bottom"]::after {
-    top: 120%; /* Position below the element */
-    left: 50%;
+.tooltip[data-position="bottom"]::after {   
+    left: 30%;
+    top: 10%;
 }
 
 .tooltip[data-position="left"]::after {
@@ -292,7 +287,7 @@ header .logout button .login-icon {
 /* Styling for the keyboard shortcut note */
 .keyboard-note {
     position: absolute;
-    top: 20%;
+    top: 50%;
     right: 20px;
     background-color: #ffffff;
     color: #333;

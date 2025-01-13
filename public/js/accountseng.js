@@ -241,6 +241,15 @@ function displayAccounts(accounts) {
         accountCard.href = `accountsdetails.html?accountId=${account.account_id}`;
         accountCard.className = 'account-card';
 
+        // Add tooltip to each account card
+        accountCard.setAttribute('class', 'account-card tooltip');
+        accountCard.setAttribute('data-position', 'top');
+        accountCard.setAttribute('aria-label', 
+            `Account Name: ${account.account_name} ,\n` +
+            `Account Number: ${account.account_number} ,\n` +
+            `Current Balance: SGD ${account.balance_have.toFixed(2)}`
+        );
+        
         accountCard.innerHTML = 
             `<div>
                 <h3>${account.account_name}</h3>
@@ -250,7 +259,6 @@ function displayAccounts(accounts) {
         
         accountsList.appendChild(accountCard);
 
-        
         // Add text-to-speech functionality on mouse hover only if TTS is enabled
         accountCard.onmouseover = function() {
             if (ttsEnabled) {
