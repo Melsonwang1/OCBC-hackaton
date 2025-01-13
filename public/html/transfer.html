@@ -13,6 +13,40 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
+    <style>
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .typing-placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            border-right: 2px solid #333;
+            animation: typing 4s steps(25, end), blink 0.5s step-end infinite alternate;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        input[readonly] {
+            cursor: not-allowed;
+            background-color: #f9f9f9;
+            color: #888;
+            font-style: italic;
+            border: 1px solid #ccc;
+        }
+
+        input:focus {
+            background-color: #fff;
+            color: #000;
+            font-style: normal;
+            border: 1px solid #007bff;
+        }
+    </style>
 </head>
 
 <body>
@@ -130,11 +164,11 @@
                 <!-- Amount and Description -->
                 <div class="form-group">
                     <label for="amount" onmouseover="speakText('Enter the amount that you want to transfer, in Singapore dollars.')">3. Amount to Transfer:</label>
+                    <div class="amount-transfer">
+                        <input type="text" id="amount" placeholder="Amount(SGD)" readonly oninput="giveVoiceFeedback('amount')">
+                    </div>
                     <div id="balance" class="balance-display" style="display: none;">
                         Current Balance: <b><span id="balance-amount"></span> SGD</b>
-                    </div>
-                    <div class="amount-transfer">
-                        <input type="text" id="amount" placeholder="Amount (SGD)" oninput="giveVoiceFeedback('amount')">
                     </div>
                 </div>
 
@@ -143,7 +177,7 @@
                     <p style="padding-bottom:5px;">Can include the purpose and your name 
                         <br>(e.g. Tuition payment - JANE SMITH).</p>
                     <!-- Description input field to be filled with dynamic value -->
-                    <input type="text" id="description" placeholder="Description" oninput="giveVoiceFeedback('description')">
+                    <input type="text" id="description" placeholder="Description" readonly oninput="giveVoiceFeedback('description')">
                     <!-- Checkbox for saving as a favorite transaction -->
                     <label>
                         <input type="checkbox" id="status-checkbox" onchange="giveVoiceFeedback('status-checkbox')"> Enable 24-Hour Delay Transfer (Optional)
@@ -171,6 +205,65 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
+        function typeInInputField(inputElement, text, speed) {
+                    let index = 0;
+                    inputElement.value = ""; // Clear the field before starting the animation
+
+                    const typingInterval = setInterval(() => {
+                        if (index < text.length) {
+                            inputElement.value += text[index];
+                            index++;
+                        } else {
+                            clearInterval(typingInterval);
+                            inputElement.removeAttribute("readonly");
+                        }
+                    }, speed);
+
+                    // Clear the input when the user clicks on it
+                    inputElement.addEventListener("focus", () => {
+                        clearInterval(typingInterval); // Stop the animation if typing is still happening
+                        inputElement.value = ""; // Clear the field
+                        inputElement.removeAttribute("readonly"); // Allow user input
+                    });
+                }
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    const amountInput = document.getElementById("amount");
+                    const descriptionInput = document.getElementById("description");
+
+                    // Array of values to type in sequence
+                    const amountValues = [
+                        "100.00 (Example if you want to transfer SGD 100.00)",
+                        "200.50 (Example if you want to transfer SGD 200.50)",
+                        "50.23 (Example if you want to transfer SGD 50.23)"
+                    ];
+
+                    const descriptionValues = [
+                        "Tuition payment - JANE SMITH (Example)",
+                        "Payment for groceries - JOHN DOE (Example)",
+                        "Online course fee - ALEX LEE (Example)"
+                    ];
+
+                    let amountIndex = 0;
+                    let descriptionIndex = 0;
+
+                    // Function to cycle through values every 5 seconds
+                    function startTypingCycle() {
+                        typeInInputField(amountInput, amountValues[amountIndex], 100);
+                        typeInInputField(descriptionInput, descriptionValues[descriptionIndex], 100);
+
+                        // Move to the next value, loop back to the start if needed
+                        amountIndex = (amountIndex + 1) % amountValues.length;
+                        descriptionIndex = (descriptionIndex + 1) % descriptionValues.length;
+                    }
+
+                    // Start the first typing animation immediately
+                    startTypingCycle();
+
+                    // Repeat the typing animation every 5 seconds
+                    setInterval(startTypingCycle, 10000);
+                });
+
         window.watsonAssistantChatOptions = {
           integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
           region: "us-south", // The region your integration is hosted in.
