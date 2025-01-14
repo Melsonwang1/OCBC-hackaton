@@ -155,7 +155,7 @@
                     
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" readonly style="display: none;" oninput="giveVoiceFeedback('mobile')">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')">
                         <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" oninput="giveVoiceFeedback('nric')">
                         <button type="button" id="enterBtn" class="enter-btn">Verify</button>
                     </div>
@@ -169,7 +169,7 @@
                 <div class="form-group">
                     <label for="amount" onmouseover="speakText('Enter the amount that you want to transfer, in Singapore dollars.')">3. Amount to Transfer:</label>
                     <div class="amount-transfer">
-                        <input type="text" id="amount" placeholder="Amount(SGD)" readonly oninput="giveVoiceFeedback('amount')">
+                        <input type="text" id="amount" placeholder="Amount(SGD)" oninput="giveVoiceFeedback('amount')">
                     </div>
                     <div id="balance" class="balance-display" style="display: none;">
                         Current Balance: <b><span id="balance-amount"></span> SGD</b>
@@ -181,7 +181,7 @@
                     <p style="padding-bottom:5px;">Can include the purpose and your name 
                         <br>(e.g. Tuition payment - JANE SMITH).</p>
                     <!-- Description input field to be filled with dynamic value -->
-                    <input type="text" id="description" placeholder="Description" readonly oninput="giveVoiceFeedback('description')">
+                    <input type="text" id="description" placeholder="Description" oninput="giveVoiceFeedback('description')">
                     <!-- Checkbox for saving as a favorite transaction -->
                     <label>
                         <input type="checkbox" id="status-checkbox" onchange="giveVoiceFeedback('status-checkbox')"> Enable 24-Hour Delay Transfer (Optional)
@@ -209,7 +209,7 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
-        function typeInInputField(inputElement, text, speed) {
+        /*function typeInInputField(inputElement, text, speed) {
                     let index = 0;
                     inputElement.value = ""; // Clear the field before starting the animation
 
@@ -276,7 +276,7 @@
 
                     // Repeat the typing animation every 5 seconds
                     setInterval(startTypingCycle, 10000);
-                });
+                });*/
 
         window.watsonAssistantChatOptions = {
           integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
