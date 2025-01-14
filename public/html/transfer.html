@@ -155,7 +155,7 @@
                     
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" readonly style="display: none;" oninput="giveVoiceFeedback('mobile')">
                         <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" oninput="giveVoiceFeedback('nric')">
                         <button type="button" id="enterBtn" class="enter-btn">Verify</button>
                     </div>
@@ -234,8 +234,15 @@
                 document.addEventListener("DOMContentLoaded", () => {
                     const amountInput = document.getElementById("amount");
                     const descriptionInput = document.getElementById("description");
+                    const phoneInput = document.getElementById("mobile");
 
                     // Array of values to type in sequence
+                    const phoneValues = [
+                        "91234567 (Example of Singapore Phone Number with no prefixes)",
+                        "87654321 (Example of Singapore Phone Number with no prefixes)",
+                        "96672812 (Example of Singapore Phone Number with no prefixes)"
+                    ];
+
                     const amountValues = [
                         "100.00 (Example if you want to transfer SGD 100.00)",
                         "200.50 (Example if you want to transfer SGD 200.50)",
@@ -250,15 +257,18 @@
 
                     let amountIndex = 0;
                     let descriptionIndex = 0;
+                    let phoneIndex = 0;
 
                     // Function to cycle through values every 5 seconds
                     function startTypingCycle() {
                         typeInInputField(amountInput, amountValues[amountIndex], 100);
                         typeInInputField(descriptionInput, descriptionValues[descriptionIndex], 100);
+                        typeInInputField(phoneInput, phoneValues[phoneIndex], 100);
 
                         // Move to the next value, loop back to the start if needed
                         amountIndex = (amountIndex + 1) % amountValues.length;
                         descriptionIndex = (descriptionIndex + 1) % descriptionValues.length;
+                        phoneIndex = (phoneIndex + 1) % phoneValues.length;
                     }
 
                     // Start the first typing animation immediately
