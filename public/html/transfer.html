@@ -226,29 +226,56 @@
         const toggleWebcamButton = document.getElementById('toggle-webcam');
         let isWebcamActive = false;
 
+        let camera; // Declare the camera variable globally
+
         function toggleWebcam() {
             if (isWebcamActive) {
+                // Stop the webcam
                 const stream = videoElement.srcObject;
-                const tracks = stream.getTracks();
-
-                tracks.forEach((track) => track.stop());
+                if (stream) {
+                    const tracks = stream.getTracks();
+                    tracks.forEach((track) => track.stop());
+                }
                 videoElement.srcObject = null;
                 videoElement.style.display = 'none';
                 toggleWebcamButton.textContent = 'Turn On Webcam';
                 isWebcamActive = false;
             } else {
+                // Start the webcam
                 navigator.mediaDevices.getUserMedia({ video: true })
                     .then((stream) => {
                         videoElement.srcObject = stream;
                         videoElement.style.display = 'block';
-                        console.log('Webcam is working');
+                        toggleWebcamButton.textContent = 'Turn Off Webcam';
+                        isWebcamActive = true;
+
+                        // Initialize the Camera instance if not already initialized
+                        if (!camera) {
+                            camera = new Camera(videoElement, {
+                                onFrame: async () => {
+                                    // Do nothing here to prevent continuous detection
+                                },
+                                width: 640,
+                                height: 480,
+                            });
+                        }
+                        camera.start();
                     })
                     .catch((err) => {
                         console.error('Webcam error:', err);
+                        alert('Failed to access webcam. Please ensure it is properly connected and permissions are granted.');
                     });
             }
         }
 
+        // Ensure the webcam is off when the page loads
+        window.onload = () => {
+            videoElement.style.display = 'none';
+            toggleWebcamButton.textContent = 'Turn On Webcam';
+            isWebcamActive = false;
+        };
+
+        // Gesture detection and MediaPipe Hands logic
         const formFields = [
             document.querySelector('#transfer-from'),
             document.querySelector('#mobile'),
@@ -269,15 +296,6 @@
         });
 
         hands.onResults(onResults);
-
-        const camera = new Camera(videoElement, {
-            onFrame: async () => {
-                // Do nothing here to prevent continuous detection
-            },
-            width: 640,
-            height: 480,
-        });
-        camera.start();
 
         let activeFieldIndex = 0;
 
