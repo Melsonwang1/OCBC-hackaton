@@ -272,7 +272,7 @@
 
         const camera = new Camera(videoElement, {
             onFrame: async () => {
-                await hands.send({ image: videoElement });
+                // Do nothing here to prevent continuous detection
             },
             width: 640,
             height: 480,
@@ -349,6 +349,15 @@
                 landmarks[20].y > landmarks[19].y // Pinky curled
             );
         }
+
+        // Run hand detection every 10 seconds
+        setInterval(async () => {
+            if (videoElement.srcObject) {
+                await hands.send({ image: videoElement }); // Process one frame every 10 seconds
+                console.log('Running hand detection...');
+            }
+        }, 10000); // 10000ms = 10 seconds
+
 
 
 
