@@ -300,10 +300,7 @@
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
                 const landmarks = results.multiHandLandmarks[0];
 
-                if (isPointing(landmarks)) {
-                    console.log('Hand Sign Detected: Pointing');
-                    highlightField();
-                } else if (isOpenHand(landmarks)) {
+                if (isOpenHand(landmarks)) {
                     console.log('Hand Sign Detected: Open Hand');
                     clearField();
                 } else if (isThumbsUp(landmarks)) {
@@ -311,8 +308,8 @@
                     if (activeField === 'submit') {
                         formFields.submit.click();
                     }
-                } else if (isClosedFist(landmarks)) {
-                    console.log('Hand Sign Detected: Closed Fist');
+                } else if (isPeaceSign(landmarks)) {
+                    console.log('Hand Sign Detected: Peace Sign');
                     confirmInput();
                 } else {
                     console.log('Hand Sign Detected: Unknown Gesture');
@@ -349,32 +346,58 @@
             }
         }
 
-        function isPointing(landmarks) {
-            return landmarks[8].y < landmarks[7].y && landmarks[12].y > landmarks[9].y;
-        }
+        
 
         function isOpenHand(landmarks) {
-            return landmarks[4].y < landmarks[3].y &&
-                landmarks[8].y < landmarks[7].y &&
-                landmarks[12].y < landmarks[11].y &&
-                landmarks[16].y < landmarks[15].y &&
-                landmarks[20].y < landmarks[19].y;
+            return (
+                landmarks[8].y < landmarks[7].y && // Index finger extended
+                landmarks[12].y < landmarks[11].y && // Middle finger extended
+                landmarks[16].y < landmarks[15].y && // Ring finger extended
+                landmarks[20].y < landmarks[19].y && // Pinky finger extended
+                landmarks[4].x > landmarks[3].x // Thumb pointing outward
+            );
         }
+
 
         function isThumbsUp(landmarks) {
-            return landmarks[4].y < landmarks[3].y &&
-                landmarks[8].y > landmarks[7].y &&
-                landmarks[12].y > landmarks[11].y &&
-                landmarks[16].y > landmarks[15].y &&
-                landmarks[20].y > landmarks[19].y;
+            const thumbExtended = landmarks[4].y < landmarks[3].y + 0.05; // Allow some tolerance for thumb extension
+            const indexCurled = landmarks[8].y > landmarks[7].y - 0.05; // Allow slight range for index finger curling
+            const middleCurled = landmarks[12].y > landmarks[11].y - 0.05; // Allow slight range for middle finger curling
+            const ringCurled = landmarks[16].y > landmarks[15].y - 0.05; // Allow slight range for ring finger curling
+            const pinkyCurled = landmarks[20].y > landmarks[19].y - 0.05; // Allow slight range for pinky finger curling
+
+            const isThumbs = thumbExtended && indexCurled && middleCurled && ringCurled && pinkyCurled;
+
+            console.log('isThumbsUp:', {
+                thumbExtended,
+                indexCurled,
+                middleCurled,
+                ringCurled,
+                pinkyCurled,
+                result: isThumbs,
+            });
+
+            return isThumbs;
         }
 
-        function isClosedFist(landmarks) {
-            return landmarks[8].y > landmarks[7].y &&
-                landmarks[12].y > landmarks[11].y &&
-                landmarks[16].y > landmarks[15].y &&
-                landmarks[20].y > landmarks[19].y;
-        }
+
+
+
+            function isPeaceSign(landmarks) {
+                const indexFinger = landmarks[8].y < landmarks[7].y; // Index finger extended
+                const middleFinger = landmarks[12].y < landmarks[11].y; // Middle finger extended
+                const ringFinger = landmarks[16].y > landmarks[15].y; // Ring finger curled
+                const pinkyFinger = landmarks[20].y > landmarks[19].y; // Pinky curled
+
+                return indexFinger && middleFinger && ringFinger && pinkyFinger;
+            }
+
+
+
+
+
+
+
         /*function typeInInputField(inputElement, text, speed) {
             let index = 0;
 

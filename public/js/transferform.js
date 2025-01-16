@@ -733,11 +733,7 @@ async function announceAccountsAndListen(userId) {
             }
         };
 
-        recognition.onerror = (event) => {
-            recognition.stop();
-            isRecognitionActive = false;
-            recognition.start();
-        };
+        
 
         recognition.onend = () => {
             if (!isRecognitionActive) {
