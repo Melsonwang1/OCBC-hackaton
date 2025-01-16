@@ -155,8 +155,8 @@
                     
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')">
-                        <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" oninput="giveVoiceFeedback('nric')">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" readonly oninput="giveVoiceFeedback('mobile')">
+                        <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" readonly oninput="giveVoiceFeedback('nric')">
                         <button type="button" id="enterBtn" class="enter-btn">Verify</button>
                     </div>
 
@@ -169,7 +169,7 @@
                 <div class="form-group">
                     <label for="amount" onmouseover="speakText('Enter the amount that you want to transfer, in Singapore dollars.')">3. Amount to Transfer:</label>
                     <div class="amount-transfer">
-                        <input type="text" id="amount" placeholder="Amount(SGD)" oninput="giveVoiceFeedback('amount')">
+                        <input type="text" id="amount" placeholder="Amount(SGD)" readonly oninput="giveVoiceFeedback('amount')">
                     </div>
                     <div id="balance" class="balance-display" style="display: none;">
                         Current Balance: <b><span id="balance-amount"></span> SGD</b>
@@ -178,10 +178,9 @@
 
                 <div class="form-group">
                     <label for="description" onmouseover="speakText('Enter a description for this transfer, like the purpose and your name')">4. Description of Transfer:</label>
-                    <p style="padding-bottom:5px;">Can include the purpose and your name 
-                        <br>(e.g. Tuition payment - JANE SMITH).</p>
+                    <p style="padding-bottom:5px;">Include the purpose of transfer and your name </p>
                     <!-- Description input field to be filled with dynamic value -->
-                    <input type="text" id="description" placeholder="Description" oninput="giveVoiceFeedback('description')">
+                    <input type="text" id="description" placeholder="Description" readonly oninput="giveVoiceFeedback('description')">
                     <!-- Checkbox for saving as a favorite transaction -->
                     <label>
                         <input type="checkbox" id="status-checkbox" onchange="giveVoiceFeedback('status-checkbox')"> Enable 24-Hour Delay Transfer (Optional)
@@ -209,74 +208,100 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
-        /*function typeInInputField(inputElement, text, speed) {
-                    let index = 0;
-                    inputElement.value = ""; // Clear the field before starting the animation
+        function typeInInputField(inputElement, text, speed) {
+            let index = 0;
 
-                    const typingInterval = setInterval(() => {
-                        if (index < text.length) {
-                            inputElement.value += text[index];
-                            index++;
-                        } else {
-                            clearInterval(typingInterval);
-                            inputElement.removeAttribute("readonly");
-                        }
-                    }, speed);
+            // Clear the field before starting the animation, only if it's empty
+            if (inputElement.value === "") {
+                inputElement.value = "";
+                inputElement.setAttribute("readonly", "true");
 
-                    // Clear the input when the user clicks on it
-                    inputElement.addEventListener("focus", () => {
-                        clearInterval(typingInterval); // Stop the animation if typing is still happening
-                        inputElement.value = ""; // Clear the field
-                        inputElement.removeAttribute("readonly"); // Allow user input
-                    });
+                const typingInterval = setInterval(() => {
+                    if (index < text.length) {
+                        inputElement.value += text[index];
+                        index++;
+                    } else {
+                        clearInterval(typingInterval);
+                        inputElement.removeAttribute("readonly");
+                    }
+                }, speed);
+
+                // Clear the input when the user clicks on it
+                inputElement.addEventListener("focus", () => {
+                    clearInterval(typingInterval); // Stop the animation if typing is still happening
+                    inputElement.value = ""; // Clear the field
+                    inputElement.removeAttribute("readonly"); // Allow user input
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const amountInput = document.getElementById("amount");
+            const descriptionInput = document.getElementById("description");
+            const nricInput = document.getElementById("nric");
+            const phoneInput = document.getElementById("mobile");
+
+            // Array of values to type in sequence
+            const phoneValues = [
+                "91234567 (Example of Singapore Phone Number with no prefixes)",
+                "87654321 (Example of Singapore Phone Number with no prefixes)",
+                "96672812 (Example of Singapore Phone Number with no prefixes)"
+            ];
+
+            const nricValues = [
+                "T1234567F (Example of Singapore NRIC)",
+                "S7654321J (Example of Singapore NRIC",
+                "S1283948H (Example of Singapore NRIC)"
+            ];
+
+            const amountValues = [
+                "100.00 (Example if you want to transfer SGD 100.00)",
+                "200.50 (Example if you want to transfer SGD 200.50)",
+                "50.23 (Example if you want to transfer SGD 50.23)"
+            ];
+
+            const descriptionValues = [
+                "Tuition payment - JANE SMITH (Example)",
+                "Payment for groceries - JOHN DOE (Example)",
+                "Online course fee - ALEX LEE (Example)"
+            ];
+
+            let amountIndex = 0;
+            let descriptionIndex = 0;
+            let phoneIndex = 0;
+            let nricIndex = 0;
+
+            // Function to cycle through values every 5 seconds
+            function startTypingCycle() {
+                if (amountInput.value === "") {
+                    typeInInputField(amountInput, amountValues[amountIndex], 100);
                 }
 
-                document.addEventListener("DOMContentLoaded", () => {
-                    const amountInput = document.getElementById("amount");
-                    const descriptionInput = document.getElementById("description");
-                    const phoneInput = document.getElementById("mobile");
+                if (nricInput.value === "") {
+                    typeInInputField(nricInput, nricValues[nricIndex], 100);
+                }
 
-                    // Array of values to type in sequence
-                    const phoneValues = [
-                        "91234567 (Example of Singapore Phone Number with no prefixes)",
-                        "87654321 (Example of Singapore Phone Number with no prefixes)",
-                        "96672812 (Example of Singapore Phone Number with no prefixes)"
-                    ];
+                if (descriptionInput.value === "") {
+                    typeInInputField(descriptionInput, descriptionValues[descriptionIndex], 100);
+                }
 
-                    const amountValues = [
-                        "100.00 (Example if you want to transfer SGD 100.00)",
-                        "200.50 (Example if you want to transfer SGD 200.50)",
-                        "50.23 (Example if you want to transfer SGD 50.23)"
-                    ];
+                if (phoneInput.value === "") {
+                    typeInInputField(phoneInput, phoneValues[phoneIndex], 100);
+                }
 
-                    const descriptionValues = [
-                        "Tuition payment - JANE SMITH (Example)",
-                        "Payment for groceries - JOHN DOE (Example)",
-                        "Online course fee - ALEX LEE (Example)"
-                    ];
+                // Move to the next value, loop back to the start if needed
+                amountIndex = (amountIndex + 1) % amountValues.length;
+                descriptionIndex = (descriptionIndex + 1) % descriptionValues.length;
+                nricIndex = (nricIndex + 1) % nricValues.length;
+                phoneIndex = (phoneIndex + 1) % phoneValues.length;
+            }
 
-                    let amountIndex = 0;
-                    let descriptionIndex = 0;
-                    let phoneIndex = 0;
+            // Start the first typing animation immediately
+            startTypingCycle();
 
-                    // Function to cycle through values every 5 seconds
-                    function startTypingCycle() {
-                        typeInInputField(amountInput, amountValues[amountIndex], 100);
-                        typeInInputField(descriptionInput, descriptionValues[descriptionIndex], 100);
-                        typeInInputField(phoneInput, phoneValues[phoneIndex], 100);
-
-                        // Move to the next value, loop back to the start if needed
-                        amountIndex = (amountIndex + 1) % amountValues.length;
-                        descriptionIndex = (descriptionIndex + 1) % descriptionValues.length;
-                        phoneIndex = (phoneIndex + 1) % phoneValues.length;
-                    }
-
-                    // Start the first typing animation immediately
-                    startTypingCycle();
-
-                    // Repeat the typing animation every 5 seconds
-                    setInterval(startTypingCycle, 10000);
-                });*/
+            // Repeat the typing animation every 10 seconds
+            setInterval(startTypingCycle, 7000);
+        });
 
         window.watsonAssistantChatOptions = {
           integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
