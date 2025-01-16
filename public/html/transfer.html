@@ -12,6 +12,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+
 
     <style>
         @keyframes typing {
@@ -126,6 +131,15 @@
                     Find ATMs
                 </a>
             </div>
+            <div class="webcam-container">
+                <button id="toggle-webcam" onclick="toggleWebcam()">Turn On Webcam</button>
+                <video id="webcam" autoplay playsinline style="display: none; width: 640px; height: 480px;"></video>
+            </div>
+            
+            <div id="webcam-container" style="display: none;">
+                <video id="webcam" autoplay></video>
+            </div>
+            
 
         </div>
         <div class="transfer-container">
@@ -208,6 +222,159 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
+        const videoElement = document.getElementById('webcam');
+        const toggleWebcamButton = document.getElementById('toggle-webcam');
+        let isWebcamActive = false;
+
+        function toggleWebcam() {
+            if (isWebcamActive) {
+                // Stop webcam
+                const stream = videoElement.srcObject;
+                const tracks = stream.getTracks();
+
+                tracks.forEach((track) => track.stop());
+                videoElement.srcObject = null;
+                videoElement.style.display = 'none';
+                toggleWebcamButton.textContent = 'Turn On Webcam';
+                isWebcamActive = false;
+            } else {
+                // Start webcam
+                navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    videoElement.srcObject = stream;
+                    videoElement.style.display = 'block';
+                    console.log('Webcam is working');
+                })
+                .catch((err) => {
+                    console.error('Webcam error:', err);
+                });
+
+            }
+        }
+
+        // Your existing script
+        const formFields = {
+            account: document.querySelector('select[name="account"]'),
+            method: document.querySelectorAll('input[name="method"]'),
+            amount: document.querySelector('input[name="amount"]'),
+            description: document.querySelector('textarea[name="description"]'),
+            delay: document.querySelector('input[name="delay"]'),
+            submit: document.querySelector('.transfer-btn'),
+        };
+
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+        });
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7,
+        });
+
+        hands.onResults(onResults);
+
+        const camera = new Camera(videoElement, {
+        onFrame: async () => {
+            await hands.send({ image: videoElement });
+        },
+        width: 640,
+        height: 480,
+    });
+    camera.start();
+
+
+        let activeField = null;
+
+        let lastDetectionTime = 0;
+        const detectionInterval = 10000; // 10 seconds
+
+        function onResults(results) {
+            const currentTime = Date.now();
+
+            // Check if enough time has passed since the last detection
+            if (currentTime - lastDetectionTime < detectionInterval) {
+                return; // Skip processing
+            }
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+
+                if (isPointing(landmarks)) {
+                    console.log('Hand Sign Detected: Pointing');
+                    highlightField();
+                } else if (isOpenHand(landmarks)) {
+                    console.log('Hand Sign Detected: Open Hand');
+                    clearField();
+                } else if (isThumbsUp(landmarks)) {
+                    console.log('Hand Sign Detected: Thumbs Up');
+                    if (activeField === 'submit') {
+                        formFields.submit.click();
+                    }
+                } else if (isClosedFist(landmarks)) {
+                    console.log('Hand Sign Detected: Closed Fist');
+                    confirmInput();
+                } else {
+                    console.log('Hand Sign Detected: Unknown Gesture');
+                }
+
+                // Update the last detection time
+                lastDetectionTime = currentTime;
+            } else {
+                console.log('No hand detected');
+            }
+        }
+
+
+
+        function highlightField() {
+            if (!activeField || activeField === 'description') {
+                activeField = 'account';
+                formFields.account.focus();
+            } else if (activeField === 'account') {
+                activeField = 'amount';
+                formFields.amount.focus();
+            }
+        }
+
+        function clearField() {
+            if (activeField) {
+                formFields[activeField].value = '';
+            }
+        }
+
+        function confirmInput() {
+            if (activeField) {
+                console.log(`Confirmed: ${activeField}`);
+            }
+        }
+
+        function isPointing(landmarks) {
+            return landmarks[8].y < landmarks[7].y && landmarks[12].y > landmarks[9].y;
+        }
+
+        function isOpenHand(landmarks) {
+            return landmarks[4].y < landmarks[3].y &&
+                landmarks[8].y < landmarks[7].y &&
+                landmarks[12].y < landmarks[11].y &&
+                landmarks[16].y < landmarks[15].y &&
+                landmarks[20].y < landmarks[19].y;
+        }
+
+        function isThumbsUp(landmarks) {
+            return landmarks[4].y < landmarks[3].y &&
+                landmarks[8].y > landmarks[7].y &&
+                landmarks[12].y > landmarks[11].y &&
+                landmarks[16].y > landmarks[15].y &&
+                landmarks[20].y > landmarks[19].y;
+        }
+
+        function isClosedFist(landmarks) {
+            return landmarks[8].y > landmarks[7].y &&
+                landmarks[12].y > landmarks[11].y &&
+                landmarks[16].y > landmarks[15].y &&
+                landmarks[20].y > landmarks[19].y;
+        }
         /*function typeInInputField(inputElement, text, speed) {
             let index = 0;
 
