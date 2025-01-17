@@ -58,19 +58,42 @@
             margin-right: 10px;
         }
 
+       /* Webcam container */
+        .webcam-container {
+            position: fixed;
+            bottom: 20px; /* Position at the bottom */
+            right: 20px; /* Align to the right */
+            z-index: 1000; /* Ensure it stays above other elements */
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Webcam video styling */
+        #webcam-video {
+            width: 320px; /* Adjust width */
+            height: 240px; /* Adjust height */
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: none; /* Hidden by default */
+        }
+
+        /* Button styling */
         #toggle-webcam {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 5px 10px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s, transform 0.2s;
         }
 
@@ -82,6 +105,8 @@
         #toggle-webcam:active {
             transform: scale(0.95);
         }
+
+
         @keyframes typing {
             from { width: 0; }
             to { width: 100%; }
@@ -200,17 +225,22 @@
                     Investments</a>
                 <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
                     <img src="../pics/atm.png" alt="Location Icon">
-                    Find ATMs
+                    Find Branches
                 </a>
             </div>
             <div class="webcam-container">
                 <button id="toggle-webcam" onclick="toggleWebcam()">Turn On Webcam</button>
-                <video id="webcam" autoplay playsinline style="display: none; width: 640px; height: 480px;"></video>
+                <video id="webcam-video" autoplay playsinline style="display: none;"></video>
             </div>
             
-            <div id="webcam-container" style="display: none; text-align: center; margin-top: 20px;">
-                <video id="webcam" autoplay playsinline style="width: 640px; height: 480px; border: 2px solid #ddd; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"></video>
+            
+            <div id="webcam-overlay" style="display: none;">
+                <div id="webcam-container">
+                    <video id="webcam-video" autoplay playsinline></video>
+                    <button id="toggle-webcam" onclick="toggleWebcam()">Turn Off Webcam</button>
+                </div>
             </div>
+            
             
 
         </div>
@@ -294,51 +324,55 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
-        const videoElement = document.getElementById('webcam');
+        const videoElement = document.getElementById("webcam-video");
         const toggleWebcamButton = document.getElementById('toggle-webcam');
         let isWebcamActive = false;
 
         let camera; // Declare the camera variable globally
 
         function toggleWebcam() {
-            if (isWebcamActive) {
-                // Stop the webcam
-                const stream = videoElement.srcObject;
-                if (stream) {
-                    const tracks = stream.getTracks();
-                    tracks.forEach((track) => track.stop());
-                }
-                videoElement.srcObject = null;
-                videoElement.style.display = 'none';
-                toggleWebcamButton.textContent = 'Turn On Webcam';
-                isWebcamActive = false;
-            } else {
-                // Start the webcam
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then((stream) => {
-                        videoElement.srcObject = stream;
-                        videoElement.style.display = 'block';
-                        toggleWebcamButton.textContent = 'Turn Off Webcam';
-                        isWebcamActive = true;
+            const video = document.getElementById("webcam-video");
+            const button = document.getElementById("toggle-webcam");
 
-                        // Initialize the Camera instance if not already initialized
-                        if (!camera) {
-                            camera = new Camera(videoElement, {
-                                onFrame: async () => {
-                                    // Do nothing here to prevent continuous detection
-                                },
-                                width: 640,
-                                height: 480,
-                            });
-                        }
-                        camera.start();
-                    })
-                    .catch((err) => {
-                        console.error('Webcam error:', err);
-                        alert('Failed to access webcam. Please ensure it is properly connected and permissions are granted.');
-                    });
+            if (!video || !button) {
+                console.error("Webcam video or button element not found!");
+                return;
+            }
+
+            if (video.style.display === "none") {
+                // Show video and start webcam
+                video.style.display = "block";
+                button.textContent = "Turn Off Webcam";
+                startWebcam(video);
+            } else {
+                // Hide video and stop webcam
+                video.style.display = "none";
+                button.textContent = "Turn On Webcam";
+                stopWebcam(video);
             }
         }
+
+        function startWebcam(video) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    video.srcObject = stream;
+                })
+                .catch((err) => {
+                    console.error("Error accessing webcam: ", err);
+                });
+        }
+
+        function stopWebcam(video) {
+            if (video.srcObject) {
+                const stream = video.srcObject;
+                stream.getTracks().forEach((track) => track.stop());
+                video.srcObject = null;
+            } else {
+                console.warn("No active webcam stream to stop.");
+            }
+        }
+
+
 
         // Ensure the webcam is off when the page loads
         window.onload = () => {
@@ -440,13 +474,22 @@
             );
         }
 
-        // Run hand detection every 10 seconds
+        // Ensure videoElement is defined
+
         setInterval(async () => {
-            if (videoElement.srcObject) {
-                await hands.send({ image: videoElement }); // Process one frame every 10 seconds
-                console.log('Running hand detection...');
+            if (videoElement && videoElement.srcObject) {
+                try {
+                    // Process one frame every interval
+                    await hands.send({ image: videoElement });
+                    console.log("Running hand detection...");
+                } catch (error) {
+                    console.error("Error during hand detection:", error);
+                }
+            } else {
+                console.warn("No active webcam stream detected for hand detection.");
             }
-        }, 4000); // 10000ms = 10 seconds
+        }, 4000); // 4000ms = 4 seconds
+
 
 
 
@@ -550,17 +593,6 @@
             setInterval(startTypingCycle, 7000);
         });*/
 
-        window.watsonAssistantChatOptions = {
-          integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
-          region: "us-south", // The region your integration is hosted in.
-          serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
-          onLoad: async (instance) => { await instance.render(); }
-        };
-        setTimeout(function(){
-          const t=document.createElement('script');
-          t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
-          document.head.appendChild(t);
-        });
       </script>
     <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 </body>
