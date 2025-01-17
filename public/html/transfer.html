@@ -19,6 +19,69 @@
 
 
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .legend {
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend h3 {
+            margin-bottom: 10px;
+        }
+
+        .legend ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .legend ul li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .legend ul li span {
+            font-weight: bold;
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        #toggle-webcam {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        #toggle-webcam:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #toggle-webcam:active {
+            transform: scale(0.95);
+        }
         @keyframes typing {
             from { width: 0; }
             to { width: 100%; }
@@ -94,6 +157,15 @@
         <div class="container">
             <!-- Welcome message -->
             <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+            <!-- Gesture Legend -->
+            <div class="legend">
+                <h3>Gesture Controls Legend</h3>
+                <ul>
+                    <li><span>✋ Open Hand:</span> Clear the current field</li>
+                    <li><span>👍 Thumbs Up:</span> Submit the form</li>
+                    <li><span>✌️ Peace Sign:</span> Move to the next field</li>
+                </ul>
+            </div>
 
             <!-- Keyboard Shortcuts Note--> 
             <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -136,8 +208,8 @@
                 <video id="webcam" autoplay playsinline style="display: none; width: 640px; height: 480px;"></video>
             </div>
             
-            <div id="webcam-container" style="display: none;">
-                <video id="webcam" autoplay></video>
+            <div id="webcam-container" style="display: none; text-align: center; margin-top: 20px;">
+                <video id="webcam" autoplay playsinline style="width: 640px; height: 480px; border: 2px solid #ddd; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"></video>
             </div>
             
 
