@@ -102,6 +102,18 @@ VALUES
 (15, +16.66, '2024-06-30', 'Completed', 'Interest', DEFAULT, DEFAULT),
 (15, +17.98, '2024-12-31', 'Completed', 'Interest', DEFAULT, DEFAULT);
 
+/*Add more data for graph*/
+INSERT INTO Transactions (account_id, amount, date_of_transaction, status, description, created_at, updated_at)
+VALUES
+(1, -120.00, '2024-10-05', 'Completed', 'Dinner and shopping', DEFAULT, DEFAULT),
+(1, -85.00, '2024-10-12', 'Completed', 'Utility bill payment', DEFAULT, DEFAULT),
+(1, -50.00, '2024-10-15', 'Completed', 'Transportation expenses', DEFAULT, DEFAULT),
+(1, -200.00, '2024-10-20', 'Completed', 'Loan repayment', DEFAULT, DEFAULT),
+(1, -30.00, '2024-10-25', 'Completed', 'Subscription service', DEFAULT, DEFAULT),
+(1, -150.00, '2024-08-10', 'Completed', 'Grocery shopping', DEFAULT, DEFAULT),
+(1, -100.00, '2024-08-14', 'Completed', 'Electricity bill payment', DEFAULT, DEFAULT),
+(1, -75.00, '2024-08-20', 'Completed', 'Dining out', DEFAULT, DEFAULT),
+(1, -120.00, '2024-08-25', 'Completed', 'Loan repayment', DEFAULT, DEFAULT);
 
 /* Investment Table */
 CREATE TABLE Investment (
