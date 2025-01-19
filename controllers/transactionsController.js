@@ -146,6 +146,24 @@ async function sendLargeTransactionEmail({ nric, phoneNumber, amount, descriptio
     }
 }
 
+// Controller to handle getting spending over time for a specific user
+const getSpendingOverTime = async (req, res) => {
+    const userId = req.params.user_id; // Get the user ID from the URL parameter
+  
+    if (!userId) {
+      return res.status(400).send('User ID is required');
+    }
+  
+    try {
+      // Call the static method directly on the class
+      const spendingData = await Transaction.getSpendingOverTime(userId);
+      res.json(spendingData); // Send the data as JSON
+    } catch (err) {
+      console.error('Error in controller:', err);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
 
 
 
@@ -154,5 +172,6 @@ async function sendLargeTransactionEmail({ nric, phoneNumber, amount, descriptio
 module.exports = {
     getTransactionsbyaccountid,
     createTransaction,
-    deleteTransactionByTransactionId
+    deleteTransactionByTransactionId,
+    getSpendingOverTime
 };

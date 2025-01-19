@@ -154,7 +154,37 @@ class Transaction {
             console.error("Database query error:", error);
             throw error;
         }
+
+        
     }
+
+    // Static method to get spending data for a specific user
+  static async getSpendingOverTime(userId) {
+    try {
+      const pool = await sql.connect(dbConfig);
+      const query = `
+        SELECT 
+            FORMAT(date_of_transaction, 'yyyy-MM') AS transaction_month,
+            SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS total_spending
+        FROM 
+            Transactions
+        WHERE 
+            account_id = @userId
+        GROUP BY 
+            FORMAT(date_of_transaction, 'yyyy-MM')
+        ORDER BY 
+            transaction_month;
+      `;
+      const result = await pool.request()
+        .input('userId', sql.Int, userId) // Ensure correct SQL data type
+        .query(query);
+      
+      return result.recordset;
+    } catch (err) {
+      console.error('Error in getSpendingOverTime model:', err);
+      throw err; // Throw the error to be caught in the controller
+    }
+  }
     
     
     

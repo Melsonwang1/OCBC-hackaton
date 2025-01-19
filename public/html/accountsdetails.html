@@ -12,6 +12,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Container styling */
+        #chart-container {
+            width: 1100px;      /* Increase width of the container */
+            height: 600px;     /* Increase height of the container */
+            margin: 0 auto;    /* Horizontally center the container */
+            display: flex;     /* Use flexbox to center the content */
+            justify-content: center; /* Horizontally center */
+            align-items: center;     /* Vertically center */
+            background-color: #f9f9f9;  /* Optional background color */
+            border: 1px solid #ddd;    /* Optional border */
+            padding: 10px;     /* Optional padding */
+        }
+
+        /* Optional styling for the canvas */
+        #spendingChart {
+            width: 100%;   /* Make the canvas fill the container */
+            height: 100%;  /* Make the canvas fill the container */
+        }
+    </style>
+
 </head> 
 
 <body>
@@ -86,6 +109,19 @@
             <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view and manage your investments')">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments</a> 
+        </div>
+
+        <!-- Title for the chart, centered above the graph -->
+        <h2 style="margin-top: 55px; margin-bottom: 30px;font-size:25px;">How Much You’ve Spent Over The Past Few Months</h2>
+        <p style="margin-bottom:20px; font-size:21px;">
+            <span style="font-weight:bold;">Hover</span> the mouse to each bar to see the exact value.
+        </p>
+
+        <!-- Container div for the chart -->
+        <div id="chart-container" style="text-align: center;">
+
+            <!-- Canvas element where the chart will be rendered -->
+            <canvas id="spendingChart"></canvas>
         </div>
 
         <!-- Account Details Section -->
@@ -164,6 +200,7 @@
           document.head.appendChild(t);
         });
       </script>
+   
 </body>
 
 </html>

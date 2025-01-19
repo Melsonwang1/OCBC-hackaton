@@ -46,6 +46,7 @@ app.get("/user", userController.getUserByPhoneorNric);
 app.get("/investments/:user_id", investmentController.getInvestmentsByUserId);
 app.get("/investments/growth/:user_id", investmentController.getInvestmentGrowthByUserId);
 
+app.get('/api/spending-over-time/:user_id', transactionsController.getSpendingOverTime);
 
 app.listen(port, async () => {
   try {

@@ -77,7 +77,112 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Get the user data
     await getUserData(); 
     await fetchUserAccount(); 
+    await renderChart();
 });
+
+// Fetch data from the API
+async function fetchSpendingData(token) {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accountId = urlParams.get('accountId');
+
+        const accountResponse = await fetch(`/api/spending-over-time/${accountId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await accountResponse.json();  // Use the correct variable name here
+
+        // Handle case where no data is returned
+        if (!data || data.length === 0) {
+            console.warn('No spending data available');
+            return { labels: [], values: [] };
+        }
+
+        // Transform data for Chart.js
+        const labels = data.map(item => item.transaction_month); // X-axis labels
+        const values = data.map(item => Math.abs(item.total_spending)); // Y-axis values (absolute)
+
+        return { labels, values };
+    } catch (error) {
+        console.error('Error fetching spending data:', error);
+        return { labels: [], values: [] };
+    }
+}
+
+async function renderChart() {
+    const { labels, values } = await fetchSpendingData();
+
+    if (labels.length === 0 || values.length === 0) {
+        document.getElementById('spendingChart').style.display = 'none'; // Hide chart if no data
+        return; // Stop execution if no data to show
+    }
+
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Your Spending (in SGD)',
+                data: values,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)', // Bar color
+                borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, // Allow the chart to resize based on container size
+            plugins: {
+                tooltip: {
+                    enabled: true, // Enable tooltips
+                    bodyFont: {
+                        size: 18, // Increase the font size of the tooltip text
+                        family: 'Arial, sans-serif', // Font family for tooltip text
+                        weight: 'bold' // Optional: bold text for better visibility
+                    },
+                    titleFont: {
+                        size: 20, // Title font size
+                        family: 'Arial, sans-serif',
+                        weight: 'bold'
+                    },
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const value = tooltipItem.raw; // The value for the specific bar
+                            return 'Amount: SGD ' + value.toFixed(2); // Show the amount with SGD
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true, // Start Y-axis at 0
+                    title: {
+                        display: true,
+                        text: 'Total Spending (SGD)',
+                        font: {
+                            size: 16,  // Increase Y-axis title size
+                        },
+                        padding: { top: 20, bottom: 30 }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Months',
+                        font: {
+                            size: 16,  // Increase Y-axis title size
+                        },
+                        padding: { top: 30, bottom: 10 }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
 
 async function fetchUserAccount(token) { 
     try {
