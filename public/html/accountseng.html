@@ -15,6 +15,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
 <script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
 <style>
+    /* Custom styling for the tooltip */
+    .customTooltip {
+        max-width: 1000px; /* Set a maximum width for the tooltip */
+        width: auto; /* Allow the tooltip to expand horizontally based on content */
+        line-height: 1.6; /* Increase line height for better readability */
+    }
+
     .customTooltip .introjs-tooltipbuttons {
         text-align: center;
     }
@@ -169,8 +176,8 @@
         <div class="walkthrough-container">
             <span class="walkthrough-title">First time here? Let Us Show You Around!</span>
             <button id="help-button" class="tooltip" tabindex="0" aria-label="Start Website Walkthrough">
-                Start Walkthrough
-                <img src="../pics/guidance.png" alt="icon" class="button-icon">
+                Start Website Walkthrough
+                <img src="../pics/footprints.png" alt="icon" class="button-icon">
             </button>
         </div>
     
