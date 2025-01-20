@@ -12,6 +12,119 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
+<script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
+<style>
+    .customTooltip .introjs-tooltipbuttons {
+        text-align: center;
+    }
+    .customTooltip .introjs-tooltip {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+        position: relative;
+        padding: 32px; /* Increased padding for a larger background */
+        border-radius: 8px; /* Rounded corners */
+        font-size: 18px; /* Larger text for readability */
+        line-height: 1.8; /* More spacing between lines */
+        max-width: 1000px; /* Increase maximum width */
+        min-height: 500px; /* Ensure enough height for content */
+    }
+
+    .customTooltip .introjs-skipbutton {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ff6b6b;
+        color: #fff;
+        font-size: 14px; /* Slightly larger button text */
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        padding: 2px 8px; /* Slightly larger button */
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin-bottom:10px;
+    }
+
+    .customTooltip .introjs-skipbutton:hover {
+        background-color: #ff5252;
+        transform: scale(1.05);
+    }
+
+    .customTooltip .customIntroText {
+        font-size: 20px;      /* Larger text */
+        color: #000000;       /* Blue color */
+        text-align: center;   /* Centered text */
+        display: block;       /* Make it a block element */
+        margin-bottom: 10px;  /* Space below the text */
+        margin-top: 30px;
+    }
+
+    /* Title style */
+    .walkthrough-title {
+        font-size: 30px;
+        font-weight: bold;
+        color: #333; /* Dark gray for the title */
+        margin-bottom: 20px; /* Margin to create space between title and button */
+        text-align: center; /* Center the title above the button */
+        display: block; /* Ensures the title is treated as a block element for better alignment */
+    }
+
+    /* Button container style */
+    .walkthrough-container {
+        text-align: center; /* Center both the title and button horizontally */
+        display: flex; /* Use flexbox for easy vertical alignment */
+        flex-direction: column; /* Stack the title and button vertically */
+        align-items: center; /* Align them in the center horizontally */
+        justify-content: center; /* Vertically center if the container is large */
+        margin-bottom: 50px;
+    }
+
+    /* Button style */
+    #help-button {
+        background-color: #007bff; /* Blue background */
+        color: white; /* White text */
+        border: none;
+        padding: 8px 35px; /* Increased padding for a larger button */
+        font-size: 18px; /* Larger font size for better readability */
+        border-radius: 8px; /* Slightly larger border-radius for rounded corners */
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: inline-flex; /* Use flexbox to align icon and text horizontally */
+        align-items: center; /* Vertically center the icon and text */
+        justify-content: center; /* Center content horizontally inside the button */
+        gap: 10px; /* Add space between the text and the icon */
+        min-width: 600px; /* Ensure the button has a minimum width */
+        text-align: center; /* Center the text inside the button */
+    }
+
+    /* Button icon style */
+    .button-icon {
+        width: 70px; /* Set the icon size to 70px */
+        height: 70px; /* Set the icon size to 70px */
+    }
+
+    /* Button hover effect */
+    #help-button:hover {
+        background-color: #0056b3; /* Darker blue */
+        transform: scale(1.05); /* Slightly enlarge the button on hover */
+    }
+
+    /* Focus outline for accessibility */
+    #help-button:focus {
+        outline: 2px solid #ffcc00; /* Yellow outline when focused */
+        outline-offset: 2px;
+    }
+
+    /* Button when disabled */
+    #help-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+</style>
 </head> 
 
 <body>
@@ -21,7 +134,7 @@
         </div>
         
         <!-- Text-to-Speech Toggle Slider with Status -->
-        <div class="tts-toggle-container">
+        <div class="tts-toggle-container"data-intro="This toggle enables text-to-speech functionality." data-step="1">
             <label class="switch">
                 <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
                 <span class="slider"></span>
@@ -30,18 +143,18 @@
         </div>
     
         <div class="header-right">
-            <div class="font-size-controls">
+            <div class="font-size-controls" data-intro="This toggle enables adjusting font size of words." data-step="2">
                 <button onclick="changeFontSize(-2)" onmouseover="speakText('Click here to reduce font size')">A-</button>
                 <button onclick="resetFontSize()" onmouseover="speakText('Click here to reset font size to normal')">A</button>
                 <button onclick="changeFontSize(2)" onmouseover="speakText('Click here to increase font size')">A+</button>
             </div>
             
-            <div class="language-switch">
+            <div class="language-switch" data-intro="This toggle enables translate to chinese." data-step="3">
                 <a href="accountschi.html" class="language-btn">中文</a>
             </div>
     
             <div class="logout">
-                <button class="tooltip" id="logout-btn" tabindex="0" aria-label="Logout">
+                <button class="tooltip" id="logout-btn" tabindex="0" aria-label="Logout"data-intro="This toggle enables logout" data-step="4">
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -49,61 +162,18 @@
         </div>
     </header>
     
-
-    <!-- Banner Section -->
-    <div class="banner">
-        <!-- Tooltip for the first sentence -->
-        <p>
-            <span class="tooltip" tabindex="0" aria-label="🚀 We’ve revamped our website for greater accessibility for everyone!">
-                🚀 We’ve revamped our website for greater accessibility for everyone!
-            </span>
-        </p>
-    
-        <!-- Tooltip for the second sentence -->
-        <p>
-            <span class="tooltip" tabindex="0" aria-label="Explore new features designed to make digital banking easier and more inclusive.">
-                Explore new features designed to make digital banking easier and more inclusive.
-            </span>
-        </p>
-    
-        <!-- Tooltip for the button -->
-        <button class="tooltip" tabindex="0" aria-label="Try the Accessibility Menu" onclick="openAccessibilityMenu()">
-            Try the Accessibility Menu
-        </button>
-    </div>
-    
     <div class="container">
         <!-- Welcome message -->
         <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
 
-        <!-- Accessibility Menu -->
-        <div class="accessibility-menu" id="accessibilityMenu">
-            <div class="accessibility-header">
-                <h2>Accessibility Options</h2>
-                <button class="close-button" onclick="closeAccessibilityMenu()">&#10005;</button> <!-- Small cross sign -->
-            </div>
-
-            <!-- Accessibility Options Layout -->
-            <div class="accessibility-options">
-                <div class="accessibility-option" onclick="changeFontSize('increase')">
-                    <div class="icon">A+</div>
-                    <p>Increase Font Size</p>
-                </div>
-                <div class="accessibility-option" onclick="changeFontSize('decrease')">
-                    <div class="icon">A-</div>
-                    <p>Decrease Font Size</p>
-                </div>
-                <div class="accessibility-option" onclick="toggleDarkMode()">
-                    <div class="icon">🌙</div>
-                    <p>Toggle Dark Mode</p>
-                </div>
-                <div class="accessibility-option" onclick="closeAccessibilityMenu()">
-                    <div class="icon">❌</div>
-                    <p>Close Menu</p>
-                </div>
-            </div>
+        <div class="walkthrough-container">
+            <span class="walkthrough-title">First time here? Let Us Show You Around!</span>
+            <button id="help-button" class="tooltip" tabindex="0" aria-label="Start Website Walkthrough">
+                Start Walkthrough
+                <img src="../pics/guidance.png" alt="icon" class="button-icon">
+            </button>
         </div>
-
+    
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
             <p id="keyboard-shortcut-header">
@@ -126,7 +196,7 @@
         <!-- What would you like to do today? -->
         <h2 class="welcome-message tooltip" tabindex="0" aria-label="What would you like to do today?" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <!-- Navigation bar -->
-        <div class="navbar">
+        <div class="navbar" data-intro="Use the navigation bar to explore features like viewing accounts, transferring money, and finding ATMs." data-step="5">
             <a href="../html/accountseng.html" class="active tooltip" tabindex="0" aria-label="View Accounts">
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts
@@ -150,7 +220,7 @@
     <section id="account-selection" class="account-selection">
         <div class="account-selection-note">
             <p class="tooltip" data-position="top" onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')" tabindex="0" aria-label="Use the Tab key to navigate and press Enter to view"> 
-                <strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to view.
+                <strong>Tip:</strong> Use the <strong>Tab</strong>  key to navigate and press <strong>Enter</strong>  to view.
             </p>
         </div>      
         <h2 class="tooltip" tabindex="0" aria-label="Your bank accounts">Your Bank Accounts:</h2>
@@ -210,6 +280,54 @@
     textElements.forEach((element) => wrapWordsWithSpan(element));
 });
 
+// Initialize the walkthrough functionality
+document.getElementById("help-button").addEventListener("click", () => {
+        introJs().setOptions({
+            steps: [
+                {
+                    intro: "<span class='customIntroText'><b>Welcome!</b> <br> Let me guide you through the website.<br>Click <b>'Next'</b> to continue.</span>",
+                },
+                {
+                    element: document.querySelector(".tts-toggle-container"),
+                    intro: "<span class='customIntroText'>By enabling this button, the text will be <b>read aloud</b> when you hover your mouse over it.</span>",
+                },
+                {
+                    element: document.querySelector(".font-size-controls"),
+                    intro: "<span class='customIntroText'>Use this to make the text <b>bigger</b> or <b>smaller</b>.</span>",
+                },
+                {
+                    element: document.querySelector(".language-switch"),
+                    intro: "<span class='customIntroText'>Click here to switch the language to <b>Chinese</b>.</span>",
+                },
+                {
+                    element: document.querySelector(".logout .tooltip"),
+                    intro: "<span class='customIntroText'>Click this button to <b>log out</b> of your account when you're <b>done</b> using the website.</span>",
+                },
+                {
+                    element: document.querySelector(".navbar"),
+                    intro: "<span class='customIntroText'>Use the navigation bar to explore features like <b>viewing accounts</b>, <b>transferring money</b>, and <b>finding ATMs</b>.</span>",
+                },
+                {
+                    element: document.querySelector("#keyboard-shortcut-note"),
+                    intro: "<span class='customIntroText'>Here are the <b>keyboard shortcuts</b> you can use for <b>quick navigation</b>!</span>",
+                },
+                {
+                    element: document.querySelector(".account-selection"),
+                    intro: "<span class='customIntroText'>This is where you can view the <b>details</b> of your different <b>bank accounts</b>. Click on each <b>account</b> to see more, including <b>transaction history</b>.</span>",
+                }
+            ],
+            showButtons: true,
+            tooltipClass: 'customTooltip', // Custom tooltip styling
+            showStepNumbers: true, // Display step numbers
+            showBullets: true, // Enable progress bullets
+            nextLabel: 'Next →',
+            prevLabel: '← Back',
+            doneLabel: 'Finish',
+            skipLabel: 'Skip',
+            exitOnOverlayClick: true, // Allow exiting by clicking outside,
+        }).start();
+    });
+
 
         // Function to open the accessibility menu
         function openAccessibilityMenu() {
@@ -249,6 +367,7 @@
           t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
           document.head.appendChild(t);
         });
+
     </script>
     <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 </body>
