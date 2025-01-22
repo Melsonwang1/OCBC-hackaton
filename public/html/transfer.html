@@ -387,6 +387,7 @@
         <div class="transfer-container">
             <h2>Transfer and Payments</h2>
             <form>
+                <!--<p>Not to worry! If you didnt finish the form and left the page, progress will be saved.</p>-->
                 <!-- Make a transfer from -->
                 <div class="form-group">
                     <label for="transfer-from" onmouseover="speakText('Over here, you can choose which bank accounts do you want to make transfer from.')">1. Make a transfer from</label>
@@ -437,8 +438,8 @@
 
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')"oninput="updateProgress()">
-                        <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" oninput="giveVoiceFeedback('nric')">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')"oninput="updateProgress()"oninput="saveFormData()">
+                        <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" oninput="giveVoiceFeedback('nric')"oninput="saveFormData()">
                         <button type="button" id="enterBtn" class="enter-btn">Verify</button>
                     </div>
 
@@ -461,7 +462,7 @@
                         <button type="button" class="amount-btn" onclick="fillAmount('1000.00')">1000 SGD</button>
                     </div>
                     <div class="amount-transfer">
-                        <input type="text" id="amount" placeholder="Amount(SGD)" oninput="giveVoiceFeedback('amount')">
+                        <input type="text" id="amount" placeholder="Amount(SGD)" oninput="giveVoiceFeedback('amount')"oninput="saveFormData()">
                     </div>
                     <div id="balance" class="balance-display" style="display: none;">
                         Current Balance: <b><span id="balance-amount"></span> SGD</b>
@@ -477,7 +478,7 @@
                         <button type="button" class="desc-btn" onclick="fillDescription('Loan Repayment - [YOUR NAME]')">Loan Repayment</button>
                     </div>
                     <!-- Description input field to be filled with dynamic value -->
-                    <input type="text" id="description" placeholder="Description" oninput="giveVoiceFeedback('description')">
+                    <input type="text" id="description" placeholder="Description" oninput="giveVoiceFeedback('description')"oninput="saveFormData()">
                     <!-- Add Description Modal -->
                     <div id="add-description-modal" class="modal" style="display: none;">
                         <div class="modal-content">
@@ -890,6 +891,51 @@ function toggleAddContactForm() {
 
     // Initialize the progress tracker on page load
     updateProgress();
+
+    /*Save form data and progress bar value to sessionStorage
+function saveFormData() {
+    const formData = {
+        transferFrom: document.getElementById('transfer-from').value,
+        transferTo: document.querySelector('input[name="transfer-to"]:checked')?.value,
+        mobile: document.getElementById('mobile').value,
+        nric: document.getElementById('nric').value,
+        amount: document.getElementById('amount').value,
+        description: document.getElementById('description').value,
+        progress: document.getElementById('progress-bar').value // Save progress bar value
+    };
+    sessionStorage.setItem('transferFormDraft', JSON.stringify(formData));
+}
+
+// Load form data and progress bar value from sessionStorage
+function loadFormData() {
+    const draft = JSON.parse(sessionStorage.getItem('transferFormDraft'));
+    if (draft) {
+        document.getElementById('transfer-from').value = draft.transferFrom || '';
+        if (draft.transferTo) {
+            document.querySelector(`input[name="transfer-to"][value="${draft.transferTo}"]`).checked = true;
+        }
+        document.getElementById('mobile').value = draft.mobile || '';
+        document.getElementById('nric').value = draft.nric || '';
+        document.getElementById('amount').value = draft.amount || '';
+        document.getElementById('description').value = draft.description || '';
+
+        // Restore progress bar value
+        document.getElementById('progress-bar').value = draft.progress || 0;
+    }
+}
+
+// Detect when the user is leaving the page to save form data
+window.addEventListener('beforeunload', saveFormData);
+
+// Check if there’s a draft on page load
+window.addEventListener('DOMContentLoaded', function () {
+    loadFormData();
+    // If there is a saved draft, show the 'Retrieve Saved Draft' button
+    const draft = JSON.parse(sessionStorage.getItem('transferFormDraft'));
+    if (draft) {
+        document.getElementById('retrieve-draft-btn').style.display = 'inline-block';
+    }
+});*/
 
       </script>
     <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
