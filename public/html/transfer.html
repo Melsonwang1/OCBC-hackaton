@@ -195,7 +195,7 @@
     margin-top: 20px;
     display: block; /* Make label take up the full width */
     color: #333; /* Dark color for the label text */
-}
+    }
 
     /* Styling the "Add Contact" button */
     .add-contact-btn {
@@ -209,6 +209,76 @@
         cursor: pointer; /* Show pointer cursor on hover */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
         transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
+    }
+
+    /* Progress Container */
+    .progress-container {
+    width: 100%;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black; /* Black outline around the container */
+    padding: 20px; /* Optional: Add some padding inside the container */
+    border-radius: 10px; /* Optional: Rounded corners */
+    background-color: #f9f9f9; /* Optional: Light background color for contrast */
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        width: 100%;
+        max-width: 600px; /* Optional: Limit the max width of the progress bar */
+        height: 20px;
+        background-color: #e0e0e0; /* Light gray background */
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Individual Steps */
+    .progress-step {
+        height: 100%;
+        background-color: #e0e0e0; /* Default step color (red) */
+        transition: background-color 0.3s, width 0.3s;
+    }
+
+    /* Active Steps */
+    .progress-step.active {
+        background-color: #4caf50; /* Green for completed steps */
+    }
+
+    /* Optional: Add spacing between steps */
+    .progress-step:not(:last-child) {
+        border-right: 1px solid white; /* Divider between steps */
+    }
+
+    /* Progress Percentage */
+    .progress-percentage {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 10px; /* Add space above the percentage */
+        color: #333;
+    }
+
+    #incomplete-fields {
+        margin-top: 20px;
+        text-align: center; /* Aligns the text to the center */
+        width: 100%;
+        max-width: 400px;
+        margin-left: auto; /* Center the box horizontally */
+        margin-right: auto; /* Center the box horizontally */
+        display: flex; /* Enables flexbox layout */
+        flex-direction: column; /* Aligns content vertically */
+        align-items: center; /* Centers content horizontally */
+    }
+
+
+    #incomplete-list {
+        padding-left: 20px;
     }
 
     </style>
@@ -367,7 +437,7 @@
 
                     <!-- Transfer input group with text box below the options -->
                     <div class="transfer-input-group" style="display: none;">
-                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')">
+                        <input type="text" id="mobile" class="input-box" placeholder="Enter mobile number" style="display: none;" oninput="giveVoiceFeedback('mobile')"oninput="updateProgress()">
                         <input type="text" id="nric" class="input-box" placeholder="Enter NRIC" style="display: none;" oninput="giveVoiceFeedback('nric')">
                         <button type="button" id="enterBtn" class="enter-btn">Verify</button>
                     </div>
@@ -428,6 +498,27 @@
                     </label> 
                 </div>
 
+                <div class="progress-container">
+                    <h2>Step-by-Step Progress Tracker</h2>
+                    <p style="margin-bottom: 20px; margin-top:-20px;">Track your completion progress in transferring money</p>
+                    <div class="progress-bar">
+                        <div id="step1" class="progress-step"></div>
+                        <div id="step2" class="progress-step"></div>
+                        <div id="step3" class="progress-step"></div>
+                        <div id="step4" class="progress-step"></div>
+                    </div>
+                    <div class="progress-percentage">0% Completed</div>
+                    <div id="incomplete-fields">
+                        <p style="margin-bottom:10px; margin-top: 20px;"><b>Incomplete</b> Input Fields:</p>
+                        <ul id="incomplete-list">
+                            <li>Choose bank account</li>
+                            <li>Enter mobile number</li>
+                            <li>Specify transfer amount</li>
+                            <li>Add description of transfer</li>
+                        </ul>
+                    </div>
+                </div>
+                
                 <!-- Transfer button -->
                 <div class="form-group">
                     <button type="submit" class="transfer-btn" onmouseover="speakText('Click here to complete the transfer. Please double-check that all details are correct before proceeding.')">Transfer</button>
@@ -707,6 +798,98 @@ function toggleAddContactForm() {
         // Fill in the phone number and name based on the selected recipient
         document.getElementById('mobile').value = phone;  // Assuming there's an input with id="mobile"
     }
+
+    const fields = [
+    { id: "transfer-from", label: "Choose bank account" },
+    { id: "mobile", label: "Enter mobile number", validator: (value) => /^[89]\d{7}$/.test(value) },
+    { id: "amount", label: "Specify transfer amount" },
+    { id: "description", label: "Add description of transfer" },
+    ];
+
+    const progressSteps = document.querySelectorAll(".progress-step");
+    const progressPercentage = document.querySelector(".progress-percentage");
+    const incompleteContainer = document.getElementById("incomplete-fields");
+    const incompleteList = document.getElementById("incomplete-list");
+
+    // Function to update progress and incomplete steps
+    function updateProgress() {
+        let completedSteps = 0;
+        const incompleteSteps = [];
+
+        fields.forEach(({ id, label, validator }) => {
+            const field = document.getElementById(id);
+            if (!field) return; // Skip if field is not found
+            const value = field.value.trim();
+            const isValid = validator ? validator(value) : value !== "";
+
+            if (isValid) {
+                completedSteps++;
+            } else {
+                incompleteSteps.push(label);
+            }
+        });
+
+        // Update progress bar
+        progressSteps.forEach((step, index) => {
+            if (index < completedSteps) {
+                step.classList.add("active");
+            } else {
+                step.classList.remove("active");
+            }
+        });
+
+        // Update percentage
+        const percentage = Math.round((completedSteps / fields.length) * 100);
+        progressPercentage.textContent = `${percentage}% Completed`;
+
+        // Update incomplete fields visibility in real-time
+        if (incompleteSteps.length > 0) {
+            incompleteContainer.style.display = "block";
+            incompleteList.innerHTML = incompleteSteps
+                .map((step) => `<li><span class="cross-icon">❌</span> ${step}</li>`)
+                .join("");
+        } else {
+            incompleteContainer.style.display = "none";
+        }
+    }
+
+    // Pre-fill function for amount buttons
+    function fillAmount(amount) {
+        const amountInput = document.getElementById("amount");
+        amountInput.value = amount; // Pre-fill the amount input field
+        updateProgress(); // Update the progress bar and incomplete steps
+    }
+
+    // Pre-fill function for description input field
+    function fillDescription(description) {
+        const descriptionInput = document.getElementById("description");
+        descriptionInput.value = description; // Pre-fill the description input field
+        updateProgress(); // Update the progress bar and incomplete steps
+    }
+
+    // Attach event listeners to all fields for real-time updates
+    fields.forEach(({ id }) => {
+        const field = document.getElementById(id);
+        if (field) {
+            field.addEventListener("input", updateProgress); // Trigger update on input
+        }
+    });
+
+    function selectRecipient(name, phoneNumber) {
+        // Prefill the phone number input field
+        const mobileInput = document.getElementById("mobile");
+        mobileInput.value = phoneNumber;
+
+        // Prefill the recipient name in the verifiedName paragraph
+        const userName = document.getElementById("user-namee");
+        userName.textContent = name;
+
+        // Update the progress bar
+        updateProgress();
+    }
+
+    // Initialize the progress tracker on page load
+    updateProgress();
 
       </script>
     <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
