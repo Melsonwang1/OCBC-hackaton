@@ -164,3 +164,32 @@ VALUES
 ('Bob', 'The new investment page is great! Are there any tutorials available?'),
 ('Charlie', 'I faced some issues accessing my account. Any tips?'),
 ('Diana', 'Does OCBC provide a tool to calculate fixed deposit interest?');
+
+CREATE TABLE Replies (
+    reply_id INT PRIMARY KEY IDENTITY(1,1),
+    post_id INT NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id)
+);
+
+INSERT INTO Replies (post_id, username, content)
+VALUES
+-- Replies to Alice's post
+(1, 'Eve', 'You can apply for a loan by visiting the "Loans" section on the OCBC website. Let me know if you need more details.'),
+(1, 'Frank', 'There’s a guide under the FAQ section that explains the loan application process.'),
+
+-- Replies to Bob's post
+(2, 'Grace', 'Yes, there are tutorials available on the OCBC YouTube channel. They’re really helpful!'),
+(2, 'Henry', 'You can also check the Help section on the investment page itself.'),
+
+-- Replies to Charlie's post
+(3, 'Alice', 'I had a similar issue last week. Clearing my browser cache helped.'),
+(3, 'Bob', 'You might want to try resetting your password. It worked for me.'),
+
+-- Replies to Diana's post
+(4, 'Charlie', 'Yes, OCBC has a fixed deposit calculator. You can find it on the Fixed Deposit page.'),
+(4, 'Diana', 'Thank you, Charlie! I’ll check it out.'),
+(4, 'Grace', 'If you still have questions, their customer service team is very responsive.');
+

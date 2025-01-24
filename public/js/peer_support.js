@@ -90,7 +90,8 @@ document.getElementById('postForm').addEventListener('submit', async function(ev
 
         if (response.ok) {
             alert('Post submitted successfully!');
-            fetchPosts(); // Refresh the posts list
+            fetchPostsAndReplies(); // Refresh the posts list
+            document.getElementById('postForm').reset();
         } else {
             alert('Failed to submit the post.');
         }
@@ -99,41 +100,157 @@ document.getElementById('postForm').addEventListener('submit', async function(ev
     }
 });
 
-async function fetchPosts() {
+async function fetchPostsAndReplies() {
     try {
-        // Make the fetch request to the server (replace with your backend URL)
-        const response = await fetch('http://localhost:3000/posts');
+        // Fetch all posts from the backend
+        const response = await fetch("http://localhost:3000/posts");
         const posts = await response.json();
 
-        // Get the container where posts will be added
-        const postsContainer = document.getElementById('postsContainer');
-        postsContainer.innerHTML = ''; // Clear any previous content
+        const postsContainer = document.getElementById("postsContainer");
+        postsContainer.innerHTML = ""; // Clear existing content
 
-        // Loop through the posts and create HTML for each one
-        posts.forEach(post => {
-            // Create a new div for each post
-            const postElement = document.createElement('div');
-            postElement.classList.add('post');
+        const style = document.createElement("style");
+        style.innerHTML = `
+            .replyForm input, .replyForm textarea {
+                width: 100%;
+                padding: 10px;
+                margin: 8px 0 16px 0;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
 
-            // Format the created_at timestamp
+            .replyForm button {
+                padding: 10px 15px;
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .replyForm button:hover {
+                background-color: #0056b3;
+            }
+        `;
+        document.head.appendChild(style);
+
+        for (const post of posts) {
+            // Create a post container
+            const postElement = document.createElement("div");
+            postElement.classList.add("post");
             const createdAt = new Date(post.created_at);
-            const formattedDate = createdAt.toLocaleString();
+            const formattedDate = createdAt.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+                timeZone: 'UTC' // Ensure the time stays in UTC
+            });
 
-            // Set the HTML content for the post
+            // Add post details
             postElement.innerHTML = `
                 <h3>${post.username}</h3>
                 <p><strong>Posted on:</strong> ${formattedDate}</p>
-                <h4>${post.content}</h4>
+                <p>${post.content}</p>
+                <br>
+                <div class="replies" id="repliesForPost${post.post_id}">
+                    <h4>Replies:</h4>
+                </div>
+
+                <form class="replyForm" data-post-id="${post.post_id}">
+                    <input type="text" name="username" placeholder="Your Name" required />
+                    <br>
+                    <textarea name="content" rows="5" placeholder="Write a reply..." required></textarea>
+                    <button type="submit">Reply</button>
+                </form>
             `;
 
-            // Append the new post to the posts container
             postsContainer.appendChild(postElement);
+
+            // Fetch and display replies for this post
+            fetchReplies(post.post_id);
+        }
+
+        // Add event listeners to all reply forms
+        document.querySelectorAll(".replyForm").forEach((form) => {
+            form.addEventListener("submit", submitReply);
         });
     } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error("Error fetching posts and replies:", error);
     }
 }
 
-// Call fetchPosts when the page loads
-window.onload = fetchPosts;
+async function fetchReplies(post_id) {
+    try {
+        // Fetch replies for a specific post from the backend
+        const response = await fetch(`http://localhost:3000/posts/${post_id}/replies`);
+        const replies = await response.json();
+
+        const repliesContainer = document.getElementById(`repliesForPost${post_id}`);
+        repliesContainer.innerHTML = "<h4>Replies:</h4>"; // Clear existing replies
+
+        if (replies.length > 0) {
+            replies.forEach((reply) => {
+                const replyElement = document.createElement("div");
+                const createdAt = new Date(reply.created_at);
+                const formattedDate = createdAt.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                    timeZone: 'UTC' // Ensure the time stays in UTC
+                });
+                replyElement.classList.add("reply");
+                replyElement.innerHTML = `
+                    <p><strong>${reply.username}:</strong> ${reply.content}</p>
+                    <small>Posted on: ${formattedDate}</small>
+                `;
+                repliesContainer.appendChild(replyElement);
+            });
+        } else {
+            repliesContainer.innerHTML += "<p>No replies yet.</p>";
+        }
+    } catch (error) {
+        console.error(`Error fetching replies for post ${post_id}:`, error);
+    }
+}
+
+async function submitReply(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const post_id = form.getAttribute("data-post-id");
+    const username = form.username.value;
+    const content = form.content.value;
+
+    try {
+        // Send reply to the backend
+        const response = await fetch("http://localhost:3000/replies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ post_id, username, content }),
+        });
+
+        if (response.ok) {
+            // Refresh replies for the post
+            fetchReplies(post_id);
+            form.reset(); // Clear the form
+        } else {
+            console.error("Failed to submit reply:", await response.text());
+        }
+    } catch (error) {
+        console.error("Error submitting reply:", error);
+    }
+}
+
+// Load posts and replies on page load
+window.onload = fetchPostsAndReplies;
   
