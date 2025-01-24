@@ -11,6 +11,47 @@ body {
     background-color: #f4f4f4;
     display: flex;
     flex-direction: column;
+    background-color: white;
+    color: black;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+body.dark-mode .header {
+    background-color: #333;  /* Change the header background color to dark */
+    color: white;  /* Change text color to white */
+}
+
+body.dark-mode .walkthrough-title,
+body.dark-mode .tts-toggle-container #tts-status {
+    color: white;  /* Set text color to white in dark mode */
+}
+
+
+#account-selection.dark-mode {
+    color: black;  /* Set text color to black in dark mode */
+}
+
+#account-selection.dark-mode h2,
+#account-selection.dark-mode p {
+    color: black; /* Ensure the h2 and p texts are also black */
+}
+
+button#mode-toggle {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button#mode-toggle:hover {
+    background-color: #0056b3;
 }
 
 /* Header styling */
@@ -88,6 +129,7 @@ header .logout button {
     font-size: 22px; /* Adjusted font size */
     border-radius: 10px;
     transition: background-color 0.3s; /* Added transition */
+    margin-top: 10px;
 }
 
 header .logout button:hover {
@@ -555,7 +597,7 @@ section {
     display: flex;
     align-items: center;
     gap: 10px; /* Space between slider and status text */
-    margin-left: 350px;
+    margin-left: 190px;
 }
 
 /* Slider container */
