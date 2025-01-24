@@ -48,8 +48,8 @@ app.get("/investments/:user_id", investmentController.getInvestmentsByUserId);
 app.get("/investments/growth/:user_id", investmentController.getInvestmentGrowthByUserId);
 
 // Forum Page (Zhe Kai)
-app.get("/forum", forumController.getAllPosts);
-app.post("/forum", forumController.createPost);
+app.get("/posts", forumController.getAllPosts);
+app.post("/posts", forumController.createPost);
 
 app.get('/api/spending-over-time/:user_id', transactionsController.getSpendingOverTime);
 
