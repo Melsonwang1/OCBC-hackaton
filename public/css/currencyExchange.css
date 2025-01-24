@@ -13,6 +13,65 @@ body {
     flex-direction: column;
 }
 
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+body.dark-mode .header {
+    background-color: #333;  /* Change the header background color to dark */
+    color: white;  /* Change text color to white */
+}
+
+body.dark-mode .walkthrough-title,
+body.dark-mode .tts-toggle-container #tts-status {
+    color: white;  /* Set text color to white in dark mode */
+}
+
+body.dark-mode .exchange-container {
+    color: black; /* Change font color to black in dark mode */
+}
+
+body.dark-mode .center-wrapper {
+    background-color: #121212;
+}
+
+button#mode-toggle {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button#mode-toggle:hover {
+    background-color: #0056b3;
+}
+
+.peer-support-btn {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none;
+    padding: 15px 15px; /* Adjust padding for better appearance */
+    font-size: 16px; /* Adjust font size */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 10px;
+}
+
+.peer-support-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: scale(1.05); /* Slight hover effect */
+}
+
+.peer-support-btn:focus {
+    outline: 2px solid #ffc107; /* Yellow outline for focus */
+    outline-offset: 2px;
+}
+
 /* Header styling */
 header {
     background-color: #ffffff;
@@ -344,7 +403,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 10px; /* Space between slider and status text */
-    margin-left: 500px;
+    margin-left: 190px;
 }
 
 /* Slider container */

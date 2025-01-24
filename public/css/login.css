@@ -15,6 +15,34 @@ body {
     background-repeat: no-repeat; /* Prevent the image from repeating */
 }
 
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+body.dark-mode .header {
+    background-color: #333;  /* Change the header background color to dark */
+    color: white;  /* Change text color to white */
+}
+
+body.dark-mode .login-container {
+    color: black; /* Change font color to black in dark mode */
+}
+
+button#mode-toggle {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button#mode-toggle:hover {
+    background-color: #0056b3;
+}
+
 /* Header styling */
 header {
     background-color: #ffffff;

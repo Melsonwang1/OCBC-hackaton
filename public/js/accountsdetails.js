@@ -557,3 +557,29 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
         keyboardNote.style.maxHeight = "50px"; // Collapse back
     }
 });
+
+function toggleMode() {
+    const body = document.body;
+    const button = document.getElementById('mode-toggle');
+
+    // Toggle the 'dark-mode' class
+    body.classList.toggle('dark-mode');
+    
+    // Update the button text
+    if (body.classList.contains('dark-mode')) {
+        button.textContent = 'Switch to Light Mode';
+        localStorage.setItem('mode', 'dark');
+    } else {
+        button.textContent = 'Switch to Dark Mode';
+        localStorage.setItem('mode', 'light');
+    }
+}
+
+// Check the saved mode preference on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('mode') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('mode-toggle').textContent = 'Switch to Light Mode';
+        document.getElementById('account-selection').classList.add('dark-mode');  // Apply dark mode to account selection
+    }
+});
