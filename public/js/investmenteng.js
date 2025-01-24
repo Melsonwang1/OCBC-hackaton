@@ -112,7 +112,7 @@ const investmentChart = new Chart(ctx, {
                 borderWidth: 1
             },
             {
-                label: "Profit/Loss",
+                label: "Profit",
                 data: [],
                 backgroundColor: "rgba(75, 192, 192, 0.2)", // Color for profit/loss
                 borderColor: "rgba(75, 192, 192, 1)",

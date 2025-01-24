@@ -555,7 +555,7 @@ section {
     display: flex;
     align-items: center;
     gap: 10px; /* Space between slider and status text */
-    margin-left: 500px;
+    margin-left: 350px;
 }
 
 /* Slider container */
@@ -612,4 +612,27 @@ input:checked + .slider:before {
 #tts-status {
     font-size: 18px;
     color: #333;
+}
+
+.peer-support-btn {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none;
+    padding: 15px 15px; /* Adjust padding for better appearance */
+    font-size: 16px; /* Adjust font size */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.peer-support-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: scale(1.05); /* Slight hover effect */
+}
+
+.peer-support-btn:focus {
+    outline: 2px solid #ffc107; /* Yellow outline for focus */
+    outline-offset: 2px;
 }

@@ -150,3 +150,17 @@ VALUES
 (5, '127-654321-015', 1100, '2023-07-01', '2023-12-31', ROUND(1100 * POWER(1 + 0.002292, 6) - 1100, 2)),
 (5, '127-654321-015', 1200, '2024-01-01', '2024-06-30', ROUND(1200 * POWER(1 + 0.002292, 6) - 1200, 2)),
 (5, '127-654321-015', 1300, '2024-07-01', '2024-12-31', ROUND(1300 * POWER(1 + 0.002292, 6) - 1300, 2));
+
+CREATE TABLE Posts (
+    post_id INT PRIMARY KEY IDENTITY(1,1),
+    username VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO Posts (username, content)
+VALUES
+('Alice', 'How do I apply for a loan on the OCBC website?'),
+('Bob', 'The new investment page is great! Are there any tutorials available?'),
+('Charlie', 'I faced some issues accessing my account. Any tips?'),
+('Diana', 'Does OCBC provide a tool to calculate fixed deposit interest?');
