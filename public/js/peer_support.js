@@ -65,6 +65,40 @@ document.addEventListener('DOMContentLoaded', async function() {
     await getUserData();
 });
 
+document.getElementById('postForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    // Get the form data
+    const username = document.getElementById('username').value;
+    const postContent = document.getElementById('postContent').value;
+
+    // Prepare the data to send to the server
+    const postData = {
+        username: username,
+        content: postContent
+    };
+
+    try {
+        // Send a POST request to the server to insert the data into the database
+        const response = await fetch('http://localhost:3000/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
+
+        if (response.ok) {
+            alert('Post submitted successfully!');
+            fetchPosts(); // Refresh the posts list
+        } else {
+            alert('Failed to submit the post.');
+        }
+    } catch (error) {
+        console.error('Error submitting post:', error);
+    }
+});
+
 async function fetchPosts() {
     try {
         // Make the fetch request to the server (replace with your backend URL)
