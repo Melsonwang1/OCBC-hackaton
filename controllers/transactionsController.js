@@ -79,16 +79,19 @@ const createTransaction = async (req, res) => {
         return res.status(400).json({ message: "Request body is missing or invalid." });
     }
 
-    const { account_id, phoneNumber, nric, amount, description, status } = req.body;
+    const { account_id, phoneNumber, nric, amount, description } = req.body;
 
-    if (!account_id || !amount || !description || !status || (!phoneNumber && !nric)) {
+    if (!account_id || !amount || !description || (!phoneNumber && !nric)) {
         return res.status(400).json({
-            message: "Missing required fields: account_id, amount, description, status, and either phoneNumber or nric.",
+            message: "Missing required fields: account_id, amount, description, and either phoneNumber or nric.",
         });
     }
 
     try {
-        console.log("Transaction details before creation:", { account_id, amount, description, status, phoneNumber, nric });
+        console.log("Transaction details before creation:", { account_id, amount, description, phoneNumber, nric });
+
+        // Automatically set the status based on the amount
+        const status = amount >= 500 ? "pending" : "completed";
 
         const transactionCreated = await Transaction.createTransaction(
             account_id,
@@ -108,11 +111,11 @@ const createTransaction = async (req, res) => {
         // Respond with success immediately
         res.status(201).json({ message: "Transaction created successfully.", transaction: transactionCreated });
 
-        // Trigger email sending in a separate process
+        // Trigger email sending in a separate process if the transaction amount is large
         if (amount >= 500) {
             console.log("Sending large transaction email...");
-            console.log("Transaction details:", { account_id, amount, description, phoneNumber, nric, });
-            sendLargeTransactionEmail({ nric, phoneNumber, amount, description,status }).catch((error) => {
+            console.log("Transaction details:", { account_id, amount, description, phoneNumber, nric });
+            sendLargeTransactionEmail({ nric, phoneNumber, amount, description, status }).catch((error) => {
                 console.warn("Failed to send email:", error.message);
             });
         }
@@ -121,6 +124,7 @@ const createTransaction = async (req, res) => {
         return res.status(500).json({ message: "Server error while creating transaction." });
     }
 };
+
 async function sendLargeTransactionEmail({ nric, phoneNumber, amount, description }) {
     try {
         // Pass nric and phoneNumber as an object
@@ -129,7 +133,7 @@ async function sendLargeTransactionEmail({ nric, phoneNumber, amount, descriptio
 
         if (user && user.email) {
             const subject = "Large Transaction Alert";
-            const message = `Dear ${user.name},\n\nA transaction of ${amount.toFixed(2)} was made from your account.\n\nDescription: ${description}\n\nIf this was not you, please contact our support team immediately.`;
+            const message = `Dear ${user.name},\n\nA transaction of ${amount.toFixed(2)} was made from your account.\n\nDescription: ${description}\n\nYour transaction has been set to pending for safety purposes , please contact our support team to continue transacting.`;
 
             const emailResult = await sendEmail(user.email, subject, message);
             if (!emailResult.success) {
