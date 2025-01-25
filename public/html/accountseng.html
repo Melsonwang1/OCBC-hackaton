@@ -226,7 +226,7 @@
             </a> 
             <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
                 <img src="../pics/atm.png" alt="Location Icon">
-                Find Branches
+                Find ATMs
             </a>
             <a href="../html/currencyExchange.html" class="tooltip" tabindex="0" aria-label="Currency Exchange">
                 <img src="../pics/exchange.png" alt="Location Icon">
@@ -238,7 +238,7 @@
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <div class="account-selection-note">
-            <p class="tooltip" data-position="top" onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')" tabindex="0" aria-label="Use the Tab key to navigate and press Enter to view" > 
+            <p class="tooltip" data-position="top" onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')" tabindex="0" aria-label="Use the Tab key to navigate and press Enter to view"> 
                 <strong>Tip:</strong> Use the <strong>Tab</strong>  key to navigate and press <strong>Enter</strong>  to view.
             </p>
         </div>      
@@ -316,11 +316,7 @@ document.getElementById("help-button").addEventListener("click", () => {
                 },
                 {
                     element: document.querySelector(".language-switch"),
-                    intro: `<span class='customIntroText'>Click here to switch the language to <b>Chinese</b>.</span>
-                    <br>
-                    <video autoplay loop muted playsinline style="width: 400px; height: 300px; margin-top: 10px; border: 2px solid #ccc; border-radius: 10px;">
-                        <source src="../pics/chinese.mp4" type="video/mp4">
-                    </video>`
+                    intro: "<span class='customIntroText'>Click here to switch the language to <b>Chinese</b>.</span>",
                 },
                 {
                     element: document.querySelector(".logout .tooltip"),
@@ -336,18 +332,7 @@ document.getElementById("help-button").addEventListener("click", () => {
                 },
                 {
                     element: document.querySelector(".account-selection"),
-                    intro: `
-                        <span class='customIntroText'>
-                            This is where you can view the <b>details</b> of your different <b>bank accounts</b>. 
-                            Click on each <b>account</b> to see more, including <b>transaction history</b>.
-                        </span>
-                        <br>
-                        <div style="text-align: center; margin-top: 10px;">
-                            <video autoplay loop muted playsinline style="width: 400px; height: 300px; border: 2px solid #ccc; border-radius: 10px;">
-                                <source src="../pics/accounts.mp4" type="video/mp4">
-                            </video>
-                        </div>
-                    `
+                    intro: "<span class='customIntroText'>This is where you can view the <b>details</b> of your different <b>bank accounts</b>. Click on each <b>account</b> to see more, including <b>transaction history</b>.</span>",
                 }
             ],
             showButtons: true,
