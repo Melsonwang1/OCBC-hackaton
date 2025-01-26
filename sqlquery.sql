@@ -1,4 +1,4 @@
-USE master;
+ USE master;
 IF EXISTS(select * from sys.databases where name='FSDP')
 DROP DATABASE FSDP;
 GO
