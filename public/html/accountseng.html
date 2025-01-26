@@ -159,6 +159,14 @@
             <div class="language-switch" data-intro="This toggle enables translate to chinese." data-step="3">
                 <a href="accountschi.html" class="language-btn">中文</a>
             </div>
+
+            <button id="mode-toggle" onclick="toggleMode()">Switch to Dark Mode</button>
+
+            <div class="peer-support">
+                <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum" onclick="window.location.href='peer_support.html';">
+                    Peer Support Forum
+                </button>
+            </div>
     
             <div class="logout">
                 <button class="tooltip" id="logout-btn" tabindex="0" aria-label="Logout"data-intro="This toggle enables logout" data-step="4">
@@ -308,7 +316,11 @@ document.getElementById("help-button").addEventListener("click", () => {
                 },
                 {
                     element: document.querySelector(".language-switch"),
-                    intro: "<span class='customIntroText'>Click here to switch the language to <b>Chinese</b>.</span>",
+                    intro: `<span class='customIntroText'>Click here to switch the language to <b>Chinese</b>.</span>
+                    <br>
+                    <video autoplay loop muted playsinline style="width: 400px; height: 300px; margin-top: 10px; border: 2px solid #ccc; border-radius: 10px;">
+                        <source src="../pics/chinese..mp4" type="video/mp4">
+                    </video>`
                 },
                 {
                     element: document.querySelector(".logout .tooltip"),

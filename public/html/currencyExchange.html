@@ -22,7 +22,7 @@
             align-items: center;    /* Aligns vertically */
             height: 100vh;          /* Full viewport height */
             background-color: #f5f5f5; /* Optional background for the parent */
-            margin-top: 210px;
+            margin-top: 0px;
             margin-bottom:200px;
         }
 
@@ -145,6 +145,14 @@
             <div class="language-switch">
                 <a href="investmentchi.html" class="language-btn">中文</a>
             </div>
+
+            <button id="mode-toggle" onclick="toggleMode()">Switch to Dark Mode</button>
+
+            <div class="peer-support">
+                <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum" onclick="window.location.href='peer_support.html';">
+                    Peer Support Forum
+                </button>
+            </div>
     
             <div class="logout">
                 <button id="logout-btn" onmouseover="speakText('Click here to Logout')">
@@ -200,10 +208,10 @@
 
     <div class="center-wrapper">
         <div class="exchange-container">
-            <h1 style="margin-bottom:30px;">Currency Exchange</h1>
+            <h1 style="margin-bottom:60px;">Currency Exchange</h1>
 
             <!-- Graph Container -->
-            <canvas id="exchangeRateGraph" style="margin-bottom: 30px;" height="200"></canvas>
+            <!--<canvas id="exchangeRateGraph" style="margin-bottom: 30px;" height="200"></canvas>-->
         
             <label for="currency">Step 1 - Choose Currency:</label>
             <div class="custom-dropdown" style="margin-bottom: 30px;">

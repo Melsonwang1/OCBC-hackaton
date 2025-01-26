@@ -43,6 +43,14 @@
             <div class="language-switch">
                 <a href="investmentchi.html" class="language-btn">中文</a>
             </div>
+
+            <button id="mode-toggle" onclick="toggleMode()">Switch to Dark Mode</button>
+
+            <div class="peer-support">
+                <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum" onclick="window.location.href='peer_support.html';">
+                    Peer Support Forum
+                </button>
+            </div>
     
             <div class="logout">
                 <button id="logout-btn" onmouseover="speakText('Click here to Logout')">
@@ -90,6 +98,9 @@
                 Find Branches
             </a>
         </div>
+        <div class="navigate-btn-container">
+            <button onclick="window.location.href='360view.html'">Go to 360° View</button>
+        </div>
     </div>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -98,6 +109,10 @@
         margin: 0;
         padding: 0;
         font-family: Arial, sans-serif;
+    }
+
+    .navigate-btn-container button {
+        margin-bottom: 10px;
     }
 
     #map {
@@ -176,6 +191,10 @@
     button:active {
         background-color: #003d80;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode #locations {
+        color: black; /* Change font color to black in dark mode */
     }
 
     </style>
@@ -443,6 +462,104 @@
 
 
         initMap();
+
+        function toggleMode() {
+            const body = document.body;
+            const button = document.getElementById('mode-toggle');
+
+            // Toggle the 'dark-mode' class
+            body.classList.toggle('dark-mode');
+            
+            // Update the button text
+            if (body.classList.contains('dark-mode')) {
+                button.textContent = 'Switch to Light Mode';
+                localStorage.setItem('mode', 'dark');
+            } else {
+                button.textContent = 'Switch to Dark Mode';
+                localStorage.setItem('mode', 'light');
+            }
+        }
+
+        // Check the saved mode preference on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('mode') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('mode-toggle').textContent = 'Switch to Light Mode';
+                document.getElementById('account-selection').classList.add('dark-mode');  // Apply dark mode to account selection
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            var user = {}; // The current user
+            let token = localStorage.getItem("token") || sessionStorage.getItem("token"); // Check both storages for token
+
+            // Step 1: Check if token is present on page load
+            if (!token) {
+                alert("Your session has expired or you are not logged in. Please log in again.");
+                window.location.href = "logineng.html"; // Redirect to login page
+                return; // Stop execution
+            }
+
+            // Fetch and verify user data
+            async function getUserData() {
+                console.log('Token:', token);  // Log the token to ensure it's valid
+                try {
+                    const response = await fetch(`/users`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.log('Error response:', errorData);  // Log error details
+                        throw new Error(errorData.message);
+                    }
+
+                    const userData = await response.json();
+                    console.log('User Data:', userData);  // Log the user data
+
+                    // Populate user object
+                    user = userData;
+                    // Display the user's name
+                    document.getElementById("user-name").innerText = user.name.toUpperCase();
+                } catch (error) {
+                    console.log('Error in getUserData:', error.message);
+                    // Step 2: Handle invalid or expired token
+                    if (error.message === 'Forbidden: Invalid or expired token') {
+                        alert("Session timed out. Please login again!");
+                        localStorage.removeItem("token"); // Properly remove token from local storage
+                        sessionStorage.removeItem("token"); // Remove token from session storage
+                        window.location.href = "logineng.html"; // Redirect to login
+                    } else if (error.message === 'Unauthorized') {
+                        alert("Please login first!");
+                        window.location.href = "logineng.html"; // Redirect to login
+                    } else {
+                        console.error('Unexpected error:', error);
+                    }
+                }
+            }
+
+            // Log Out Button functionality
+            document.getElementById("logout-btn").addEventListener("click", function() {
+                // Step 3: Clear token on logout
+                localStorage.removeItem("token");
+                sessionStorage.removeItem("token");
+                window.location.href = "logineng.html";
+                history.replaceState(null, null, "logineng.html");
+            });
+
+            // Wait for user data to load before fetching bank accounts
+            await getUserData();
+
+            // Only call fetchBankAccounts after user data is available
+            if (user && user.user_id) {
+                await fetchBankAccounts(user.user_id);
+            } else {
+                console.log('User ID is not available.');
+            }
+        });
     </script>
 </body>
 </html>

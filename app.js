@@ -13,6 +13,8 @@ const transactionsController = require("./controllers/transactionsController"); 
 const accountController = require("./controllers/accountController"); // Account Page (Zheng Bin)
 const userController = require("./controllers/userController"); // User Page (Zheng Bin)
 const investmentController = require("./controllers/investmentController"); // Investment Page (Zhe Kai)
+const forumController = require("./controllers/forumController"); // Forum page (Zhe Kai)
+const replyController = require("./controllers/replyController") // Forum page (Zhe Kai)
 
 const { profile } = require("console");
 
@@ -45,6 +47,12 @@ app.get("/user", userController.getUserByPhoneorNric);
 // Investment Page (Zhe Kai)
 app.get("/investments/:user_id", investmentController.getInvestmentsByUserId);
 app.get("/investments/growth/:user_id", investmentController.getInvestmentGrowthByUserId);
+
+// Forum Page (Zhe Kai)
+app.get("/posts", forumController.getAllPosts);
+app.post("/posts", forumController.createPost);
+app.get("/posts/:post_id/replies", replyController.getRepliesByPostId);
+app.post("/replies", replyController.createReply);
 
 app.get('/api/spending-over-time/:user_id', transactionsController.getSpendingOverTime);
 

@@ -86,6 +86,22 @@ async function fetchAndPlotData(user_id) {
         investmentChart.data.labels = labels;
         investmentChart.data.datasets[0].data = amounts;
         investmentChart.data.datasets[1].data = profits;
+
+        const isDarkMode = document.body.classList.contains('dark-mode');
+
+        investmentChart.options.scales.x.ticks.color = isDarkMode ? "white" : "black";
+        investmentChart.options.scales.y.ticks.color = isDarkMode ? "white" : "black";
+        investmentChart.options.scales.x.grid.color = isDarkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)";
+        investmentChart.options.scales.y.grid.color = isDarkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)";
+        investmentChart.options.plugins.tooltip.callbacks.label = function (context) {
+            const label = context.dataset.label || '';
+            const value = context.raw || 0;
+            const total = context.chart.data.datasets.reduce((sum, dataset, index) => {
+                return sum + (context.datasetIndex === index ? 0 : dataset.data[context.dataIndex]);
+            }, value);
+            return `${label}: $${value} (Total: $${total})`;
+        };
+
         investmentChart.update();
 
         if (!ttsEnabled) {
@@ -112,7 +128,7 @@ const investmentChart = new Chart(ctx, {
                 borderWidth: 1
             },
             {
-                label: "Profit/Loss",
+                label: "Profit",
                 data: [],
                 backgroundColor: "rgba(75, 192, 192, 0.2)", // Color for profit/loss
                 borderColor: "rgba(75, 192, 192, 1)",
@@ -450,6 +466,32 @@ document.getElementById("keyboard-shortcut-header").addEventListener("click", fu
         shortcutList.classList.add("collapsed");
         icon.classList.remove("up");
         keyboardNote.style.maxHeight = "50px"; // Collapse back
+    }
+});
+
+function toggleMode() {
+    const body = document.body;
+    const button = document.getElementById('mode-toggle');
+
+    // Toggle the 'dark-mode' class
+    body.classList.toggle('dark-mode');
+    
+    // Update the button text
+    if (body.classList.contains('dark-mode')) {
+        button.textContent = 'Switch to Light Mode';
+        localStorage.setItem('mode', 'dark');
+    } else {
+        button.textContent = 'Switch to Dark Mode';
+        localStorage.setItem('mode', 'light');
+    }
+}
+
+// Check the saved mode preference on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('mode') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('mode-toggle').textContent = 'Switch to Light Mode';
+        document.getElementById('account-selection').classList.add('dark-mode');  // Apply dark mode to account selection
     }
 });
 
