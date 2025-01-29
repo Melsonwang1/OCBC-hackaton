@@ -5,70 +5,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="shortcut icon" href="../pics/ocbc-title-logo.png" type="image/x-icon">
+    <!-- Import Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <style>
-        /* Floating Chat Ball */
-        .chat-ball {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+        /* Resetting basic styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .chat-ball:hover {
-            background-color: #0056b3;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            z-index: 100;
         }
 
         /* Chat Container */
         .chat-container {
             position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 350px;
-            height: 450px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            display: none;
-            /* Hidden by default */
             z-index: 999;
         }
 
+        /* Chat Header */
         .chat-header {
             background-color: #007bff;
             color: white;
             padding: 15px;
-            border-radius: 10px 10px 0 0;
-            text-align: center;
             font-size: 1.2rem;
             font-weight: bold;
+            text-align: center;
         }
 
+        /* Chat Body */
         .chat-body {
+            flex: 1;
             padding: 10px;
             overflow-y: auto;
-            height: calc(100% - 100px);
             background-color: #f9f9f9;
         }
 
+        .chat-body div {
+            margin-bottom: 20px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .chat-body .user-message {
+            background-color: #e0e0e0;
+            text-align: right;
+        }
+
+        .chat-body .assistant-message {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Chat Input Section */
+        .chat-input-container {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+
         .chat-input {
-            width: 100%;
+            width: calc(100% - 70px);
             padding: 10px;
             border: none;
-            border-radius: 0 0 10px 10px;
             font-size: 1rem;
-            border-top: 1px solid #ddd;
             outline: none;
+            border-radius: 5px;
         }
 
         .chat-input:focus {
@@ -83,62 +116,70 @@
             font-size: 1rem;
             border-radius: 5px;
             cursor: pointer;
+            width: 60px;
+            margin-left: 10px;
         }
 
         .chat-btn:hover {
             background-color: #0056b3;
         }
-    </style>
 
+    </style>
 </head>
 
 <body>
-    <!-- Floating Chat Ball -->
-    <div class="chat-ball" onclick="toggleChat()">💬</div>
+
+    <header>
+        Chat Assistant
+    </header>
 
     <!-- Chat Container -->
     <div class="chat-container" id="chat-container">
         <div class="chat-header">
-            Chat Assistant
+            AI Assistant
         </div>
         <div class="chat-body" id="chat-body">
             <!-- Messages will appear here -->
         </div>
-        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." />
-        <button class="chat-btn" onclick="sendMessage()">Send</button>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." />
+            <button class="chat-btn" onclick="sendMessage()">Send</button>
+        </div>
     </div>
 
     <script>
-        function toggleChat() {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.style.display = chatContainer.style.display === 'none' || chatContainer.style.display === '' ? 'block' : 'none';
-        }
-    
         function sendMessage() {
             const chatBody = document.getElementById('chat-body');
             const chatInput = document.getElementById('chat-input');
             const message = chatInput.value.trim();
     
             if (message) {
+                // Add user message to chat body
                 const userMessage = document.createElement('div');
                 userMessage.textContent = message;
-                userMessage.style.marginBottom = '10px';
+                userMessage.classList.add('user-message');
                 chatBody.appendChild(userMessage);
     
-                chatInput.value = '';
+                chatInput.value = ''; // Clear input field
     
                 // Simulate assistant response (you can replace this with actual logic)
                 const assistantMessage = document.createElement('div');
                 assistantMessage.textContent = 'I am your assistant. How can I help you?';
-                assistantMessage.style.marginBottom = '10px';
-                assistantMessage.style.color = '#007bff';
+                assistantMessage.classList.add('assistant-message');
                 chatBody.appendChild(assistantMessage);
     
                 chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
             }
         }
+
+        // Listen for "Enter" key press to send message
+        document.getElementById('chat-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
-    
+
 </body>
 
 </html>
