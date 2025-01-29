@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <style>
+        /* Floating Chat Ball */
+        .chat-ball {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .chat-ball:hover {
+            background-color: #0056b3;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            display: none;
+            /* Hidden by default */
+            z-index: 999;
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .chat-body {
+            padding: 10px;
+            overflow-y: auto;
+            height: calc(100% - 100px);
+            background-color: #f9f9f9;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 0 0 10px 10px;
+            font-size: 1rem;
+            border-top: 1px solid #ddd;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Floating Chat Ball -->
+    <div class="chat-ball" onclick="toggleChat()">💬</div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            Chat Assistant
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Messages will appear here -->
+        </div>
+        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." />
+        <button class="chat-btn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.style.display = chatContainer.style.display === 'none' || chatContainer.style.display === '' ? 'block' : 'none';
+        }
+    
+        function sendMessage() {
+            const chatBody = document.getElementById('chat-body');
+            const chatInput = document.getElementById('chat-input');
+            const message = chatInput.value.trim();
+    
+            if (message) {
+                const userMessage = document.createElement('div');
+                userMessage.textContent = message;
+                userMessage.style.marginBottom = '10px';
+                chatBody.appendChild(userMessage);
+    
+                chatInput.value = '';
+    
+                // Simulate assistant response (you can replace this with actual logic)
+                const assistantMessage = document.createElement('div');
+                assistantMessage.textContent = 'I am your assistant. How can I help you?';
+                assistantMessage.style.marginBottom = '10px';
+                assistantMessage.style.color = '#007bff';
+                chatBody.appendChild(assistantMessage);
+    
+                chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+            }
+        }
+    </script>
+    
+</body>
+
+</html>
