@@ -193,3 +193,14 @@ VALUES
 (4, 'Diana', 'Thank you, Charlie! I’ll check it out.'),
 (4, 'Grace', 'If you still have questions, their customer service team is very responsive.');
 
+CREATE TABLE chatbot_responses (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    question TEXT NOT NULL,
+    response TEXT NOT NULL
+);
+
+INSERT INTO chatbot_responses (question, response)
+VALUES 
+('how do i reset my password?', 'Go to settings and click "Forgot Password" to reset it.'),
+('where can i check my balance?', 'You can check your balance on the dashboard.'),
+('how do i contact support?', 'You can contact support at support@example.com.');
