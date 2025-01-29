@@ -212,6 +212,47 @@
                 console.error('Error:', error);
             }
         }
+
+        async function sendMessage() {
+            try {
+                const userNric = "T0673139I";
+
+                // Fetch phone number from backend
+                const response = await fetch('/reminder/get-phone-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nric: userNric })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    console.log("Phone number retrieved:", result.phoneNumber);
+
+                    // Send SMS reminder
+                    const twilioResponse = await fetch('/reminder/send-bill-reminder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber: result.phoneNumber })
+                    });
+
+                    if (twilioResponse.ok) {
+                        console.log('Message sent successfully!');
+                        alert("短信已发送.");
+                    } else {
+                        console.error('Failed to send message.');
+                        alert("无法发送短信.");
+                    }
+                } else {
+                    console.error('Failed to retrieve phone number:', result.message);
+                    alert("无法获取电话号码.");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("出现错误.");
+            }
+        }
+
     </script>
 </body>
 

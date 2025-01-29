@@ -58,7 +58,7 @@ app.post("/posts", forumController.createPost);
 app.get("/posts/:post_id/replies", replyController.getRepliesByPostId);
 app.post("/replies", replyController.createReply);
 
-app.use('/', reminderRoutes);
+app.use('/reminder', reminderRoutes);
 
 app.get('/api/spending-over-time/:user_id', transactionsController.getSpendingOverTime);
 
