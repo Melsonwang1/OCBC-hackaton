@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.1",
     "node-fetch": "^3.3.2",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^6.9.16",
+    "twilio": "^5.4.3"
   }
 }
