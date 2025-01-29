@@ -1,0 +1,124 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Work+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Auto-Fund Deduction Page</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
+      style='--radio-dot-svg: url(&apos;data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(23,17,17)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3ccircle cx=%278%27 cy=%278%27 r=%273%27/%3e%3c/svg%3e&apos;); font-family: "Work Sans", "Noto Sans", sans-serif;'
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f4f0f0] px-10 py-3">
+          <div class="flex items-center gap-4 text-[#171111]">
+            <div class="size-4">
+                <g clip-path="url(#clip0_6_535)">
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z"
+                    fill="currentColor"
+                  ></path>
+                </g>
+                <defs>
+                  <clipPath id="clip0_6_535"><rect width="48" height="48" fill="white"></rect></clipPath>
+                </defs>
+              </svg>
+            <div class="flex gap-2">
+
+        </header>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <div class="flex min-w-72 flex-col gap-3">
+                <p class="text-[#171111] tracking-light text-[32px] font-bold leading-tight">Set up automatic fund deductions</p>
+                <p class="text-[#876464] text-sm font-normal leading-normal">You can set up deductions to occur daily, weekly, monthly or yearly</p>
+              </div>
+            </div>
+            <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+              <label class="flex flex-col min-w-40 flex-1">
+                <p class="text-[#171111] text-base font-medium leading-normal pb-2">Amount</p>
+                <input
+                  placeholder="$0.00"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                  value=""
+                />
+              </label>
+            </div>
+            <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+              <label class="flex flex-col min-w-40 flex-1">
+                <p class="text-[#171111] text-base font-medium leading-normal pb-2">Start date</p>
+                <input
+                  placeholder="MM/DD/YYYY"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                  value=""
+                />
+              </label>
+              <label class="flex flex-col min-w-40 flex-1">
+                <p class="text-[#171111] text-base font-medium leading-normal pb-2">End date</p>
+                <input
+                  placeholder="MM/DD/YYYY"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                  value=""
+                />
+              </label>
+            </div>
+            <h3 class="text-[#171111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Frequency</h3>
+            <div class="flex flex-col gap-3 p-4">
+              <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                <input
+                  type="radio"
+                  class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                  name="cbc12612-5329-4a80-ba72-a21889d1830f"
+                  checked=""
+                />
+                <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Daily</p></div>
+              </label>
+              <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                <input
+                  type="radio"
+                  class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                  name="cbc12612-5329-4a80-ba72-a21889d1830f"
+                />
+                <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Weekly</p></div>
+              </label>
+              <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                <input
+                  type="radio"
+                  class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                  name="cbc12612-5329-4a80-ba72-a21889d1830f"
+                />
+                <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Monthly</p></div>
+              </label>
+              <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                <input
+                  type="radio"
+                  class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                  name="cbc12612-5329-4a80-ba72-a21889d1830f"
+                />
+                <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Yearly</p></div>
+              </label>
+            </div>
+            <div class="flex px-4 py-3">
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#df2020] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+              >
+                <span class="truncate">Set up automatic deductions</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
