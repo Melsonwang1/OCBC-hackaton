@@ -5,6 +5,9 @@ const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
 const authorize = require("./middlewares/authorize"); // Middleware Authorization for JWT (Zheng Bin)
 
+//Routes
+const reminderRoutes = require('./routes/reminderRoutes'); // Reminder (Zhizhong)
+
 // Middlewares
 const validateTransactions = require("./middlewares/validateTransactions"); // Transaction Page (Melson)
 
@@ -22,6 +25,7 @@ const app = express();
 const port = 3000;
 const staticMiddleware = express.static(path.join(__dirname, 'public'));
 
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 app.use(staticMiddleware);
@@ -53,6 +57,8 @@ app.get("/posts", forumController.getAllPosts);
 app.post("/posts", forumController.createPost);
 app.get("/posts/:post_id/replies", replyController.getRepliesByPostId);
 app.post("/replies", replyController.createReply);
+
+app.use('/', reminderRoutes);
 
 app.get('/api/spending-over-time/:user_id', transactionsController.getSpendingOverTime);
 

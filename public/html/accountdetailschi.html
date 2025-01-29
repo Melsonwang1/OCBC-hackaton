@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-</head> 
+</head>
 
 <body>
     <!-- Header Section -->
@@ -29,20 +29,20 @@
             </label>
             <span id="tts-status">语音助读: <b>关闭</b></span>
         </div>
-    
+
         <div class="header-right">
             <div class="font-size-controls">
                 <button onclick="changeFontSize(-2)">A-</button>
                 <button onclick="resetFontSize()">A</button>
                 <button onclick="changeFontSize(2)">A+</button>
             </div>
-            
+
             <div class="language-switch">
                 <a href="accountseng.html" class="language-btn">English</a>
             </div>
-    
+
             <div class="logout">
-                <button id="logout-btn" onmouseover="speakText('登出请点击这里')"> 
+                <button id="logout-btn" onmouseover="speakText('登出请点击这里')">
                     登出
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -52,7 +52,9 @@
 
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome" id="welcome-message" onmouseover="speakText('欢迎使用华侨银行, ' + document.getElementById('user-name').innerText)">您好！欢迎, <span id="user-name"></span></div>
+        <div class="welcome" id="welcome-message"
+            onmouseover="speakText('欢迎使用华侨银行, ' + document.getElementById('user-name').innerText)">您好！欢迎, <span
+                id="user-name"></span></div>
 
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -85,40 +87,48 @@
                 转账与支付</a>
             <a href="../html/investmentchi.html" onmouseover="speakText('查看投资页面请点击这里')">
                 <img src="../pics/investment.png" alt="Investments Icon">
-                投资</a> 
+                投资</a>
         </div>
 
         <!-- Account Details Section -->
         <div class="account-details">
             <h2 onmouseover="speakText('这是' + document.querySelector('.account-details h2').textContent)"></h2>
-            <p onmouseover="speakText('您的账号是' + document.querySelector('.account-number').textContent)">账号: <span class="account-number"></span></p>
+            <p onmouseover="speakText('您的账号是' + document.querySelector('.account-number').textContent)">账号: <span
+                    class="account-number"></span></p>
+
+            <div class="reminder-container">
+                <button id="sendMessage" onclick="sendMessage()">发送提醒</button>
+            </div>
 
             <div class="balance-summary">
-                <div class="balance-item positive" onmouseover="speakText('目前您有 ' + document.querySelector('.balance-item.positive .value').textContent)"> 
+                <div class="balance-item positive"
+                    onmouseover="speakText('目前您有 ' + document.querySelector('.balance-item.positive .value').textContent)">
                     <div class="balance-icon positive">
                         <img src="../pics/what_you_have.png" alt="What You Have Icon" class="what-you-have-icon">
                     </div>
-                    <p >您的余额:</p>
+                    <p>您的余额:</p>
                     <p class="amount positive">
-                        <span class="currency">SGD</span> 
-                        <span class="value">0.00</span> 
+                        <span class="currency">SGD</span>
+                        <span class="value">0.00</span>
                     </p>
                 </div>
-                <div class="balance-item negative" onmouseover="speakText('目前您所欠' + document.querySelector('.balance-item.negative .value').textContent)"> 
+                <div class="balance-item negative"
+                    onmouseover="speakText('目前您所欠' + document.querySelector('.balance-item.negative .value').textContent)">
                     <div class="balance-icon negative">
                         <img src="../pics/what_you_owe.png" alt="What You Owe Icon" class="what-you-owe-icon">
                     </div>
                     <p>您的欠款:</p>
                     <p class="amount negative">
-                        <span class="currency">SGD</span> 
-                        <span class="value">0.00</span> 
+                        <span class="currency">SGD</span>
+                        <span class="value">0.00</span>
                     </p>
                 </div>
             </div>
- 
+
             <div class="transaction-records" style="padding-top: 50px;">
                 <h3 style="text-align: center;">近期转账信息</h3>
-                <p style="font-size: 20px; margin-bottom:50px; line-height: 25px;">选择一行进行删除。仅限状态为<b>待处理</b>且金额为负数（转账出账）的交易可以删除。<br>
+                <p style="font-size: 20px; margin-bottom:50px; line-height: 25px;">
+                    选择一行进行删除。仅限状态为<b>待处理</b>且金额为负数（转账出账）的交易可以删除。<br>
                 </p>
                 <table id="transaction-records-table">
                     <thead>
@@ -146,24 +156,63 @@
                 </div>
 
             </div>
-            
-        </div>        
+
+        </div>
     </div>
 
     <script src="../js/accountsdetailschi.js"></script>
     <script>
         window.watsonAssistantChatOptions = {
-          integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
-          region: "us-south", // The region your integration is hosted in.
-          serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
-          onLoad: async (instance) => { await instance.render(); }
+            integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
+            region: "us-south", // The region your integration is hosted in.
+            serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
+            onLoad: async (instance) => { await instance.render(); }
         };
-        setTimeout(function(){
-          const t=document.createElement('script');
-          t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
-          document.head.appendChild(t);
+        setTimeout(function () {
+            const t = document.createElement('script');
+            t.src = "https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+            document.head.appendChild(t);
         });
-      </script>
+
+        async function sendMessage() {
+            try {
+                // Backend request to get the user's phone number
+                const response = await fetch('/get-phone-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 5 // Replace with the actual user_id or other unique identifier
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    console.log("Phone number retrieved:", result.phoneNumber);
+
+                    // Make an API call to your backend to send a message via Twilio
+                    const twilioResponse = await fetch('/send-twilio-message', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            phoneNumber: result.phoneNumber, // Pass the retrieved phone number
+                            message: 'Your message from our app!' // Customize your message
+                        })
+                    });
+
+                    if (twilioResponse.ok) {
+                        console.log('Message sent successfully!');
+                    } else {
+                        console.error('Failed to send message.');
+                    }
+                } else {
+                    console.error('Failed to retrieve phone number:', result.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
 </body>
 
 </html>
