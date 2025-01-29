@@ -1,11 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const sql = require('mssql'); // Import mssql
+const sql = require('mssql');
 const Twilio = require('twilio');
 require('dotenv').config();
-
-const app = express();
-app.use(bodyParser.json());
+const config = require("../dbConfig");
 
 // Twilio setup
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -13,62 +9,42 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const phone = process.env.TWILIO_PHONE_NUMBER;
 const client = new Twilio(accountSid, authToken);
 
-// MSSQL Database configuration
-const config = {
-    user: process.env.DB_USER,      // Replace with your DB username
-    password: process.env.DB_PASS,  // Replace with your DB password
-    server: process.env.DB_SERVER,  // Replace with your DB server
-    database: process.env.DB_NAME,  // Replace with your DB name
-    options: {
-        encrypt: true,
-        trustServerCertificate: true // For self-signed certificates
-    }
-};
-
-// Endpoint to get the phone number
-app.post('/get-phone-number', async (req, res) => {
-    const { nric } = req.body;
-
+// Function to get phone number by NRIC
+async function getPhoneNumber(nric) {
     try {
-        // Connect to the database
         const pool = await sql.connect(config);
-
-        // Execute the query
         const result = await pool.request()
-            .input('nric', sql.VarChar, nric) // Use parameterized query
+            .input('nric', sql.VarChar, nric)
             .query('SELECT phoneNumber FROM Users WHERE nric = @nric');
 
-        // Check if a result was returned
         if (result.recordset.length > 0) {
-            const phoneNumber = result.recordset[0].phoneNumber;
-            res.json({ phoneNumber });
+            console.log("Phone Number Retrieved:", result.recordset[0].phoneNumber);
+            return result.recordset[0].phoneNumber;
         } else {
-            res.status(404).json({ error: 'User not found' });
+            console.error("User not found for NRIC:", nric);
+            return null;
         }
     } catch (error) {
         console.error('Database Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    } finally {
-        sql.close(); // Close the database connection
+        throw new Error("Database error");
     }
-});
+}
 
-// Endpoint to send a message via Twilio
-app.post('/send-twilio-message', (req, res) => {
-    const { phoneNumber, message } = req.body;
-
-    client.messages
-        .create({
-            body: message,
-            from: phone, // Your Twilio phone number
-            to: phoneNumber
-        })
-        .then((message) => {
-            console.log('Message sent:', message.sid);
-            res.json({ success: true, sid: message.sid });
-        })
-        .catch((error) => {
-            console.error('Twilio Error:', error);
-            res.status(500).json({ error: 'Failed to send message' });
+// Function to send SMS via Twilio
+async function sendBillReminder(phoneNumber) {
+    try {
+        const message = await client.messages.create({
+            body: "Dear Customer, \n\nYou have payments due. Kindly log in to your OCBC Bank account to review the outstanding amount. \n\nIf the bills have already been settled, please disregard this message. \n\nThank you.",
+            from: phone, 
+            to: "+65" + phoneNumber
         });
-});
+
+        console.log('Message Sent:', message.sid);
+        return { success: true, sid: message.sid };
+    } catch (error) {
+        console.error('Twilio Error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+module.exports = { getPhoneNumber, sendBillReminder };

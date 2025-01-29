@@ -260,42 +260,44 @@
 
         async function sendMessage() {
             try {
-                // Backend request to get the user's phone number
-                const response = await fetch('/get-phone-number', {
+                const userNric = "T0673139I";
+
+                // Fetch phone number from backend
+                const response = await fetch('/reminder/get-phone-number', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: 5 // Replace with the actual user_id or other unique identifier
-                    })
+                    body: JSON.stringify({ nric: userNric })
                 });
 
                 const result = await response.json();
 
-                if (response.ok) {
+                if (response.ok && result.success) {
                     console.log("Phone number retrieved:", result.phoneNumber);
 
-                    // Make an API call to your backend to send a message via Twilio
-                    const twilioResponse = await fetch('/send-twilio-message', {
+                    // Send SMS reminder
+                    const twilioResponse = await fetch('/reminder/send-bill-reminder', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            phoneNumber: result.phoneNumber, // Pass the retrieved phone number
-                            message: 'Your message from our app!' // Customize your message
-                        })
+                        body: JSON.stringify({ phoneNumber: result.phoneNumber })
                     });
 
                     if (twilioResponse.ok) {
                         console.log('Message sent successfully!');
+                        alert("Reminder sent successfully!");
                     } else {
                         console.error('Failed to send message.');
+                        alert("Failed to send message.");
                     }
                 } else {
-                    console.error('Failed to retrieve phone number:', result.error);
+                    console.error('Failed to retrieve phone number:', result.message);
+                    alert("Failed to retrieve phone number.");
                 }
             } catch (error) {
                 console.error('Error:', error);
+                alert("An error occurred.");
             }
         }
+
 
     </script>
 
