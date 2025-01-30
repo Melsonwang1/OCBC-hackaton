@@ -1,185 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant</title>
-    <link rel="stylesheet" href="../css/login.css">
-    <link rel="shortcut icon" href="../pics/ocbc-title-logo.png" type="image/x-icon">
-    <!-- Import Google Fonts-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <style>
-        /* Resetting basic styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header */
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            z-index: 100;
-        }
-
-        /* Chat Container */
         .chat-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 999;
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
         }
 
-        /* Chat Header */
-        .chat-header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* Chat Body */
-        .chat-body {
-            flex: 1;
-            padding: 10px;
+        #chat-box {
+            height: 300px;
             overflow-y: auto;
-            background-color: #f9f9f9;
-        }
-
-        .chat-body div {
-            margin-bottom: 20px;
-            padding: 8px;
-            border-radius: 5px;
-        }
-
-        .chat-body .user-message {
-            background-color: #e0e0e0;
-            text-align: right;
-        }
-
-        .chat-body .assistant-message {
-            background-color: #007bff;
-            color: white;
-        }
-
-        /* Chat Input Section */
-        .chat-input-container {
             padding: 10px;
-            border-top: 1px solid #ddd;
-            display: flex;
-            align-items: center;
+            border: 1px solid #ddd;
+            background: white;
+            margin-bottom: 10px;
         }
 
-        .chat-input {
-            width: calc(100% - 70px);
+        input {
+            width: 70%;
             padding: 10px;
-            border: none;
-            font-size: 1rem;
-            outline: none;
-            border-radius: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
         }
 
-        .chat-input:focus {
-            border-color: #007bff;
-        }
-
-        .chat-btn {
-            background-color: #007bff;
+        button {
+            padding: 10px;
+            background: #2d6a4f;
             color: white;
             border: none;
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 5px;
             cursor: pointer;
-            width: 60px;
-            margin-left: 10px;
         }
-
-        .chat-btn:hover {
-            background-color: #0056b3;
-        }
-
     </style>
 </head>
-
 <body>
-
-    <header>
-        Chat Assistant
-    </header>
-
-    <!-- Chat Container -->
-    <div class="chat-container" id="chat-container">
-        <div class="chat-header">
-            AI Assistant
-        </div>
-        <div class="chat-body" id="chat-body">
-            <!-- Messages will appear here -->
-        </div>
-        <div class="chat-input-container">
-            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." />
-            <button class="chat-btn" onclick="sendMessage()">Send</button>
-        </div>
+    <div class="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Ask me anything...">
+        <button onclick="sendMessage()">Send</button>
     </div>
 
     <script>
-        function sendMessage() {
-            const chatBody = document.getElementById('chat-body');
-            const chatInput = document.getElementById('chat-input');
-            const message = chatInput.value.trim();
-    
-            if (message) {
-                // Add user message to chat body
-                const userMessage = document.createElement('div');
-                userMessage.textContent = message;
-                userMessage.classList.add('user-message');
-                chatBody.appendChild(userMessage);
-    
-                chatInput.value = ''; // Clear input field
-    
-                // Simulate assistant response (you can replace this with actual logic)
-                const assistantMessage = document.createElement('div');
-                assistantMessage.textContent = 'I am your assistant. How can I help you?';
-                assistantMessage.classList.add('assistant-message');
-                chatBody.appendChild(assistantMessage);
-    
-                chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            if (!userInput.trim()) return;
+
+            appendMessage("You", userInput);
+
+            try {
+                const response = await fetch("http://localhost:5000/assistant", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userInput })
+                });
+
+                const data = await response.json();
+                appendMessage("Assistant", data.response);
+            } catch (error) {
+                console.error("Error:", error);
+                appendMessage("Assistant", "Sorry, something went wrong.");
             }
+
+            document.getElementById("user-input").value = "";
         }
 
-        // Listen for "Enter" key press to send message
-        document.getElementById('chat-input').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        });
+        function appendMessage(sender, message) {
+            const chatBox = document.getElementById("chat-box");
+            const messageElement = document.createElement("div");
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
     </script>
-
 </body>
-
 </html>

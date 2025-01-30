@@ -4,8 +4,8 @@ const path = require("path");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const Fuse = require("fuse.js");
 const authorize = require("./middlewares/authorize"); // Middleware Authorization for JWT (Zheng Bin)
+const { OpenAI } = require("openai");
 
 // Routes
 const reminderRoutes = require("./routes/reminderRoutes"); // Reminder (Zhizhong)
@@ -61,46 +61,30 @@ app.post("/replies", replyController.createReply);
 
 app.use("/reminder", reminderRoutes); // Send Reminder (Zhizhong)
 
-// AI Virtual Assistant (Zhizhong)
-let responses = [];
-let fuse;
-
-app.post("/assistant", (req, res) => {
-  const userMessage = req.body.message;
-  if (!fuse) {
-    return res.json({ response: "AI assistant is not ready yet. Please try again later." });
-  }
-  const result = fuse.search(userMessage);
-  res.json({
-    response: result.length > 0 ? result[0].item.response : "I'm sorry, I don't understand that question.",
-  });
-});
-
 // Spending over time API
 app.get("/api/spending-over-time/:user_id", transactionsController.getSpendingOverTime);
 
-app.listen(port, async () => {
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // Store your API key in an environment variable
+});
+app.post("/assistant", async (req, res) => {
   try {
-    // Connect to the database
-    await sql.connect(dbConfig);
-    console.log("Database connection established successfully");
+    const userMessage = req.body.message;
 
-    // Fetch chatbot responses after DB connection is established
-    const result = await sql.query("SELECT * FROM chatbot_responses");
-    responses = result.recordset;
-    fuse = new Fuse(responses, {
-      keys: ["question"], // Search based on questions
-      threshold: 0.4, // Lower = stricter matching
+    const response = await openai.chat.completions.create({
+      model: "gpt-4", // Use "gpt-3.5-turbo" if you want to save tokens
+      messages: [{ role: "user", content: userMessage }],
     });
 
-    console.log("AI Assistant responses loaded successfully");
-
-  } catch (err) {
-    console.error("Database connection error:", err);
-    process.exit(1); // Exit with code 1 indicating an error
+    res.json({ response: response.choices[0].message.content });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ response: "Sorry, something went wrong." });
   }
+});
 
-  console.log(`Server listening on port ${port}`);
+app.listen(port, () => {
+  console.log(`Server running on ${port}`);
 });
 
 // Graceful shutdown on SIGINT signal
