@@ -195,12 +195,24 @@ VALUES
 
 CREATE TABLE chatbot_responses (
     id INT PRIMARY KEY IDENTITY(1,1),
-    question TEXT NOT NULL,
-    response TEXT NOT NULL
+    question NVARCHAR(MAX) NOT NULL,
+    response NVARCHAR(MAX) NOT NULL
 );
 
 INSERT INTO chatbot_responses (question, response)
 VALUES 
-('how do i reset my password?', 'Go to settings and click "Forgot Password" to reset it.'),
-('where can i check my balance?', 'You can check your balance on the dashboard.'),
-('how do i contact support?', 'You can contact support at support@example.com.');
+('hi', 'Hello, how may i help you today?'),
+('hello', 'Hello, how may i help you today?'),
+('how do i change my email address?', 'Go to settings and click "Update Email" to change your email address.'),
+('how can i update my profile?', 'You can update your profile by going to your account settings and clicking "Edit Profile."'),
+('where can i view my transaction history?', 'Your transaction history can be found under the "Transactions" tab in the dashboard.'),
+('how do i enable two-factor authentication?', 'Go to settings, click on "Security," and follow the steps to enable two-factor authentication.'),
+('what is the minimum password length?', 'The minimum password length is 8 characters.'),
+('how do i add a new payment method?', 'Go to your account settings, click on "Payment Methods," and add a new card or bank account.'),
+('can i delete my account?', 'Yes, you can delete your account by going to "Account Settings" and selecting "Delete Account."'),
+('how do i reset my PIN?', 'You can reset your PIN by going to settings, clicking "Security," and selecting "Reset PIN."'),
+('how can i upgrade my subscription?', 'To upgrade your subscription, go to the "Subscription" section under settings and choose an upgrade plan.'),
+('what should I do if I forgot my PIN?', 'If you forgot your PIN, you can reset it by clicking the "Forgot PIN" option in settings.'),
+('how do I delete my transaction history?', 'Currently, transaction history cannot be deleted, but you can filter it for easy access.'),
+('how do I disable notifications?', 'Go to settings and turn off "Push Notifications" in the "Notifications" tab.'),
+('how do I contact customer service?', 'You can reach customer service by emailing support@example.com or calling the support number provided in your account settings.');

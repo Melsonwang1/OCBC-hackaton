@@ -5,7 +5,6 @@ const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authorize = require("./middlewares/authorize"); // Middleware Authorization for JWT (Zheng Bin)
-const { OpenAI } = require("openai");
 
 // Routes
 const reminderRoutes = require("./routes/reminderRoutes"); // Reminder (Zhizhong)
@@ -64,23 +63,37 @@ app.use("/reminder", reminderRoutes); // Send Reminder (Zhizhong)
 // Spending over time API
 app.get("/api/spending-over-time/:user_id", transactionsController.getSpendingOverTime);
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Store your API key in an environment variable
-});
-app.post("/assistant", async (req, res) => {
+// Function to get the response from the database
+async function getResponseFromDatabase(userMessage) {
   try {
-    const userMessage = req.body.message;
+    // Connect to the database
+    await sql.connect(dbConfig);
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4", // Use "gpt-3.5-turbo" if you want to save tokens
-      messages: [{ role: "user", content: userMessage }],
-    });
+    // Query the database for the response based on the user's message
+    const result = await sql.query`SELECT response FROM chatbot_responses WHERE LOWER(question) = ${userMessage.toLowerCase()}`;
 
-    res.json({ response: response.choices[0].message.content });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ response: "Sorry, something went wrong." });
+    // Check if result.recordset is not empty and contains the expected data
+    if (result.recordset && result.recordset.length > 0) {
+      return result.recordset[0].response; // Return the response from the first record
+    } else {
+      console.log("No matching response found in the database.");
+      return "Sorry, I didn't understand that. Can you please rephrase?";
+    }
+  } catch (err) {
+    console.error("Error querying the database:", err);
+    return "Sorry, there was an error. Please try again later.";
   }
+}
+
+// Endpoint to handle user input
+app.post("/api/chat", async (req, res) => {
+  const userMessage = req.body.message;
+
+  // Get the response from the database
+  const response = await getResponseFromDatabase(userMessage);
+
+  // Send the response back to the frontend
+  res.json({ reply: response });
 });
 
 app.listen(port, () => {

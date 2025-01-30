@@ -93,10 +93,11 @@
             border-top: 1px solid #ddd;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
         .chat-input {
-            width: calc(100% - 70px);
+            width: calc(100% - 140px); /* Adjusted width to make room for buttons */
             padding: 10px;
             border: none;
             font-size: 1rem;
@@ -108,22 +109,24 @@
             border-color: #007bff;
         }
 
-        .chat-btn {
+        .chat-btn, .back-btn {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 10px 15px;
             font-size: 1rem;
             border-radius: 5px;
             cursor: pointer;
-            width: 60px;
-            margin-left: 10px;
         }
 
-        .chat-btn:hover {
+        .chat-btn:hover, .back-btn:hover {
             background-color: #0056b3;
         }
 
+        /* Back Button */
+        .back-btn {
+            margin-right: 10px;
+        }
     </style>
 </head>
 
@@ -142,44 +145,60 @@
             <!-- Messages will appear here -->
         </div>
         <div class="chat-input-container">
-            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." />
+            <!-- Back Button -->
+            <button class="back-btn" onclick="window.history.back()">Back</button>
+
+            <!-- Chat Input & Send Button -->
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeypress="checkEnter(event)" />
             <button class="chat-btn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
         function sendMessage() {
-            const chatBody = document.getElementById('chat-body');
-            const chatInput = document.getElementById('chat-input');
-            const message = chatInput.value.trim();
-    
-            if (message) {
-                // Add user message to chat body
-                const userMessage = document.createElement('div');
-                userMessage.textContent = message;
-                userMessage.classList.add('user-message');
-                chatBody.appendChild(userMessage);
-    
-                chatInput.value = ''; // Clear input field
-    
-                // Simulate assistant response (you can replace this with actual logic)
-                const assistantMessage = document.createElement('div');
-                assistantMessage.textContent = 'I am your assistant. How can I help you?';
-                assistantMessage.classList.add('assistant-message');
-                chatBody.appendChild(assistantMessage);
-    
-                chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
-            }
+            const userMessage = document.getElementById("chat-input").value;
+
+            if (userMessage.trim() === "") return;
+
+            // Append user message to chat body
+            appendMessage("user-message", userMessage);
+
+            // Clear the input field
+            document.getElementById("chat-input").value = "";
+
+            // Send the message to the server
+            fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ message: userMessage }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Append the assistant's reply to the chat body
+                    appendMessage("assistant-message", data.reply);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         }
 
-        // Listen for "Enter" key press to send message
-        document.getElementById('chat-input').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
+        function appendMessage(className, message) {
+            const chatBody = document.getElementById("chat-body");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = className;
+            messageDiv.textContent = message;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+        }
+
+        function checkEnter(event) {
+            if (event.key === "Enter") {
                 sendMessage();
             }
-        });
+        }
     </script>
-
 </body>
 
 </html>
