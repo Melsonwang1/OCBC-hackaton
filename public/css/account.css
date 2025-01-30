@@ -710,3 +710,28 @@ input:checked + .slider:before {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
+#ai-assistant-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #28a745; /* Green color for contrast */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px; /* Smooth rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#ai-assistant-button:hover {
+    background-color: #218838;
+    transform: scale(1.05); /* Slight enlargement on hover */
+}
+
+#ai-assistant-button:active {
+    background-color: #1e7e34;
+    transform: scale(0.95); /* Slight shrink when clicked */
+}

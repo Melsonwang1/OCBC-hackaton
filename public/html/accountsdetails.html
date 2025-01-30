@@ -44,6 +44,58 @@
             height: 100%;
             /* Make the canvas fill the container */
         }
+
+                /* Title style */
+                .walkthrough-title {
+            font-size: 27px;
+            font-weight: bold;
+            color: #333;
+            /* Dark gray for the title */
+            margin-bottom: 20px;
+            /* Margin to create space between title and button */
+            text-align: center;
+            /* Center the title above the button */
+            display: block;
+            /* Ensures the title is treated as a block element for better alignment */
+        }
+
+        .AI-container {
+            text-align: center;
+            /* Center aligns all elements inside */
+            display: flex;
+            flex-direction: column;
+            /* Stacks elements vertically */
+            align-items: center;
+            /* Aligns buttons properly */
+            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* AI Assistant Button Styling */
+        #ai-assistant-button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #ai-assistant-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #ai-assistant-button:focus,
+        #help-button:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+        }
     </style>
 
 </head>
@@ -154,6 +206,14 @@
                 <img src="../pics/exchange.png" alt="Location Icon">
                 Currency Exchange
             </a>
+        </div>
+
+        <div class="AI-container">
+            <!-- AI Assistant Button (Now placed right below the Walkthrough button) -->
+            <button id="ai-assistant-button" class="tooltip ai-btn" tabindex="0" aria-label="AI Assistant"
+                onclick="window.location.href='assistant.html';">
+                AI Assistant
+            </button>
         </div>
 
         <!-- Title for the chart, centered above the graph -->
