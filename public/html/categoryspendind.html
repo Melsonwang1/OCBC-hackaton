@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta tags for character encoding and responsive design -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Favicon for the website -->
+  <link rel="shortcut icon" href="../pics/ocbc-title-logo.png" type="image/x-icon">
+  
+  <!-- Link to external stylesheet -->
+  <link rel="stylesheet" href="../css/accountdetails.css">
+  
+  <title>Set your spending limits</title>
+
+  <!-- Import Google Fonts for better typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  
+  <!-- Import external libraries: Chart.js and Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+
+<body>
+
+  <!-- Header Section with logo -->
+  <header class="header">
+    <div class="logo">
+      <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+    </div>
+  </header>
+  
+  <!-- Main content area -->
+  <main>
+    <!-- Welcome message -->
+    <h2 class="welcome-message">What would you like to do today?</h2>
+    
+    <!-- Navigation bar with links to other sections -->
+    <div class="navbar">
+      <a href="../html/accountseng.html">
+        <img src="../pics/view-account.png" alt="View Icon">
+        View Accounts
+      </a>
+      <a href="../html/transfer.html">
+        <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+        Transfer Money
+      </a>
+      <a href="../html/investmenteng.html">
+        <img src="../pics/investment.png" alt="Investments Icon">
+        Investments
+      </a>
+      <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
+        <img src="../pics/atm.png" alt="Location Icon">
+        Find Branches
+      </a>
+      <a href="../html/currencyExchange.html" class="tooltip" tabindex="0" aria-label="Currency Exchange">
+        <img src="../pics/exchange.png" alt="Location Icon">
+        Currency Exchange
+      </a>
+      <a href="../html/categoryspendind.html" class="tooltip" tabindex="0" aria-label="Spending Limiter">
+        <img src="../pics/money.png" alt="Money Icon">
+        Currency Exchange
+      </a>
+    </div>
+  </main>
+
+  <!-- Content for setting spending limits -->
+  <div class="px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+      
+      <!-- Breadcrumb navigation -->
+      <div class="flex flex-wrap gap-2 p-4">
+        <a class="text-[#896161] text-base font-medium leading-normal" href="#">Home</a>
+        <span class="text-[#896161] text-base font-medium leading-normal">/</span>
+        <span class="text-[#181111] text-base font-medium leading-normal">Spend Limit</span>
+      </div>
+      
+      <!-- Page Title -->
+      <div class="flex flex-wrap justify-between gap-3 p-4">
+        <p class="text-[#181111] tracking-light text-[32px] font-bold leading-tight min-w-72">Set your monthly spending limit</p>
+      </div>
+
+      <!-- Spending limit sections for each category -->
+      
+      <!-- Food & Beverage section -->
+      <h3 class="text-[#181111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Food & Beverage</h3>
+      <div class="relative flex w-full flex-col items-start justify-between gap-3 p-4">
+        <div class="flex w-full shrink-[3] items-center justify-between">
+          <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
+          <p id="food-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
+        </div>
+        <input type="range" id="food-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('food-slider', 'food-limit')">
+      </div>
+
+      <!-- Fashion & Accessories section -->
+      <h3 class="text-[#181111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Fashion & Accessories</h3>
+      <div class="relative flex w-full flex-col items-start justify-between gap-3 p-4">
+        <div class="flex w-full shrink-[3] items-center justify-between">
+          <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
+          <p id="fashion-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
+        </div>
+        <input type="range" id="fashion-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('fashion-slider', 'fashion-limit')">
+      </div>
+
+      <!-- Groceries section -->
+      <h3 class="text-[#181111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Groceries</h3>
+      <div class="relative flex w-full flex-col items-start justify-between gap-3 p-4">
+        <div class="flex w-full shrink-[3] items-center justify-between">
+          <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
+          <p id="groceries-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
+        </div>
+        <input type="range" id="groceries-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('groceries-slider', 'groceries-limit')">
+      </div>
+
+      <!-- Entertainment section -->
+      <h3 class="text-[#181111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Entertainment</h3>
+      <div class="relative flex w-full flex-col items-start justify-between gap-3 p-4">
+        <div class="flex w-full shrink-[3] items-center justify-between">
+          <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
+          <p id="entertainment-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
+        </div>
+        <input type="range" id="entertainment-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('entertainment-slider', 'entertainment-limit')">
+      </div>
+
+      <!-- Transport section -->
+      <h3 class="text-[#181111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Transport</h3>
+      <div class="relative flex w-full flex-col items-start justify-between gap-3 p-4">
+        <div class="flex w-full shrink-[3] items-center justify-between">
+          <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
+          <p id="transport-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
+        </div>
+        <input type="range" id="transport-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('transport-slider', 'transport-limit')">
+      </div>
+
+      <!-- Save Button Section -->
+      <div class="flex px-4 py-3 justify-end">
+        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#ec1313] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+          <span class="truncate">Save</span>
+        </button>
+      </div>
+      <!-- Spending display for 3 months -->
+      <div id="spending-overview">
+        <h3>Spending Overview (Last 3 Months)</h3>
+        <div id="spending-categories">
+            <div class="category" id="food-category">
+                <h4>Food & Beverage</h4>
+                <p>January: $<span id="food-jan"></span></p>
+                <p>February: $<span id="food-feb"></span></p>
+                <p>March: $<span id="food-mar"></span></p>
+            </div>
+            <div class="category" id="fashion-accessories-category">
+                <h4>Fashion & Accessories</h4>
+                <p>January: $<span id="fashion-jan"></span></p>
+                <p>February: $<span id="fashion-feb"></span></p>
+                <p>March: $<span id="fashion-mar"></span></p>
+          </div>
+          <div class="category" id="groceries-category">
+                <h4>Groceries</h4>
+                <p>January: $<span id="groceries-jan"></span></p>
+                <p>February: $<span id="groceries-feb"></span></p>
+                <p>March: $<span id="groceries-mar"></span></p>
+          </div>
+          <div class="category" id="entertainment-category">
+                <h4>Entertainment</h4>
+                <p>January: $<span id="entertainment-jan"></span></p>
+                <p>February: $<span id="entertainment-feb"></span></p>
+                <p>March: $<span id="entertainment-mar"></span></p>
+          </div>
+          <div class="category" id="transport-category">
+                <h4>Transport</h4>
+                <p>January: $<span id="transport-jan"></span></p>
+                <p>February: $<span id="transport-feb"></span></p>
+                <p>March: $<span id="transport-mar"></span></p>
+          </div>
+        </div>
+        <div id="transaction-history">
+          <h3>Transaction History</h3>
+          <!-- Transactions will be added here -->
+      </div>      
+    </div>
+  </div>
+
+  <!-- JavaScript to handle slider updates -->
+  <script>
+    // Populating the spending data dynamically
+    document.getElementById('food-jan').innerText = spendingData["January"].food;
+    document.getElementById('food-feb').innerText = spendingData["February"].food;
+    document.getElementById('food-mar').innerText = spendingData["March"].food;
+    
+    document.getElementById('fashion-jan').innerText = spendingData["January"].fashion;
+    document.getElementById('fashion-feb').innerText = spendingData["February"].fashion;
+    document.getElementById('fashion-mar').innerText = spendingData["March"].fashion;
+
+    document.getElementById('groceries-jan').innerText = spendingData["January"].groceries;
+    document.getElementById('groceries-feb').innerText = spendingData["February"].groceries;
+    document.getElementById('groceries-mar').innerText = spendingData["March"].groceries;
+
+    document.getElementById('entertainment-jan').innerText = spendingData["January"].entertainment;
+    document.getElementById('entertainment-feb').innerText = spendingData["February"].entertainment;
+    document.getElementById('entertainment-mar').innerText = spendingData["March"].entertainment;
+
+    document.getElementById('transport-jan').innerText = spendingData["January"].transport;
+    document.getElementById('transport-feb').innerText = spendingData["February"].transport;
+    document.getElementById('transport-mar').innerText = spendingData["March"].transport;
+
+    // Function to update the displayed limit value when the slider is moved
+    function updateSliderValue(sliderId, limitId) {
+      var slider = document.getElementById(sliderId);
+      var limit = document.getElementById(limitId);
+      limit.innerText = '$' + slider.value;
+    }
+  </script>
+
+</body>
+
+</html>
