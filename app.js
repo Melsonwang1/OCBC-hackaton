@@ -19,6 +19,7 @@ const userController = require("./controllers/userController"); // User Page (Zh
 const investmentController = require("./controllers/investmentController"); // Investment Page (Zhe Kai)
 const forumController = require("./controllers/forumController"); // Forum page (Zhe Kai)
 const replyController = require("./controllers/replyController"); // Forum page (Zhe Kai)
+const spendingController = require("./controllers/spendingController"); // Spending over Limit (Vaish)
 
 const app = express();
 const port = 3000;
