@@ -269,7 +269,7 @@
 
       <!-- Save Button Section -->
       <div class="flex px-4 py-3 justify-end">
-        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#ec1313] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+        <button id="save-button" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#ec1313] text-white text-sm font-bold leading-normal tracking-[0.015em]">
           <span class="truncate">Save</span>
         </button>
       </div>
@@ -314,6 +314,28 @@
                 <p>March: $<span id="transport-mar"></span></p>
           </div>
         </div>
+        <!-- Demo Section -->
+        <div class="demo-section">
+          <h3>Demo: Simulate Spending</h3>
+          <label for="demo-category">Category:</label>
+          <select id="demo-category">
+            <option value="food">Food & Beverage</option>
+            <option value="fashion">Fashion & Accessories</option>
+            <option value="groceries">Groceries</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="transport">Transport</option>
+          </select>
+
+          <label for="demo-amount">Amount:</label>
+          <input type="number" id="demo-amount" placeholder="Enter amount" />
+
+          <button id="demo-button">Simulate Transaction</button>
+
+          <div id="sms-section">
+            <!-- SMS messages will appear here -->
+          </div>
+        </div>
+
         <!-- Transaction History Section -->
         <div id="transaction-history">
           <h3>Transaction History</h3>
@@ -321,9 +343,10 @@
       </div>      
     </div>
   </div>
-  <script src=".../js/spendinglimiter.js"></script>
+
   <!-- JavaScript to handle slider updates -->
-  <script>
+  <script src="../js/spendinglimiter.js"></script>
+  <!-- <script>
     // Populating the spending data dynamically
     document.getElementById('food-jan').innerText = spendingData["January"].food;
     document.getElementById('food-feb').innerText = spendingData["February"].food;
@@ -427,7 +450,7 @@
     // Example: Simulate a transaction for the user
     handleTransaction('Groceries', 120, 100);  // User exceeds the $100 limit for groceries
     
-  </script> 
+  </script> -->
 
 </body>
 </html>

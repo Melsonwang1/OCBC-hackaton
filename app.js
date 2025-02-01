@@ -5,6 +5,9 @@ const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authorize = require("./middlewares/authorize"); // Middleware Authorization for JWT (Zheng Bin)
+const spendingRoutes = require('./routes/spendingRoutes');
+app.use(express.json()); // Allows parsing JSON requests
+app.use('/api', spendingRoutes); // Prefix all spending routes with "/api"
 
 // Routes
 const reminderRoutes = require("./routes/reminderRoutes"); // Reminder (Zhizhong)

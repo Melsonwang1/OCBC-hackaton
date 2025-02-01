@@ -1,90 +1,82 @@
-const User = require('../models/User');
 const twilio = require('twilio');
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const Users = require('../models/Users'); // Adjust the path as needed
+const express = require('express');
+const app = express();
+app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.static('public'));
+const port = 5500;
 
 // Save spending limits
-exports.saveLimit = async (req, res) => {
-  const { phone, category, newLimit } = req.body;
+app.post('/api/save-limits', async (req, res) => {
+  const { phone, limits } = req.body;
 
   try {
-    const user = await User.findOneAndUpdate(
-      { phone },
-      { $set: { [`limits.${category}`]: newLimit } },
-      { new: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Send SMS confirmation
-    await client.messages.create({
-      body: `Your ${category} limit has been updated to $${newLimit}.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: phone,
-    });
-
-    res.status(200).json({ message: 'Limit updated successfully', user });
+    await Users.setSpendingLimits(phone, limits);
+    res.status(200).json({ message: 'Limits saved successfully.' });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating limit', error });
+    res.status(500).json({ message: 'Error saving limits.', error });
   }
-};
+});
 
 // Handle transactions
-exports.handleTransaction = async (req, res) => {
+app.post('/api/handle-transaction', async (req, res) => {
   const { phone, category, amountSpent } = req.body;
 
   try {
-    const user = await User.findOne({ phone });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const limits = await Users.getSpendingLimits(phone);
+    const limit = limits[category];
 
-    const limit = user.limits[category];
     if (amountSpent > limit) {
       const excessAmount = amountSpent - limit;
-
-      // Send SMS to user
-      await client.messages.create({
-        body: `Exceeded Monthly Limit for ${category} by $${excessAmount}. Do you want to extend the limit and make the transaction now? Reply 'YES' or 'NO'`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: phone,
-      });
-
-      res.status(200).json({ message: 'SMS sent to user', excessAmount });
+      res.status(200).json({ exceeded: true, excessAmount });
     } else {
-      // Proceed with the transaction
-      user.transactions.push({ category, amount: amountSpent });
-      await user.save();
-      res.status(200).json({ message: 'Transaction successful', user });
+      await Users.addTransaction(phone, category, amountSpent);
+      res.status(200).json({ exceeded: false });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Error handling transaction', error });
+    res.status(500).json({ message: 'Error handling transaction.', error });
   }
-};
+});
 
-// Handle user response to SMS
-exports.handleUserResponse = async (req, res) => {
-  const { phone, category, userResponse, excessAmount } = req.body;
+// Extend spending limits
+app.post('/api/extend-limit', async (req, res) => {
+  const { phone, category, excessAmount } = req.body;
 
   try {
-    const user = await User.findOne({ phone });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (userResponse.toUpperCase() === 'YES') {
-      // Extend the limit and complete the transaction
-      user.limits[category] += excessAmount;
-      user.transactions.push({ category, amount: user.limits[category] });
-      await user.save();
-
-      res.status(200).json({ message: 'Limit extended and transaction completed', user });
-    } else {
-      // Do not extend the limit, transaction remains declined
-      res.status(200).json({ message: 'Transaction declined', user });
-    }
+    await Users.extendLimit(phone, category, excessAmount);
+    res.status(200).json({ message: 'Limit extended successfully.' });
   } catch (error) {
-    res.status(500).json({ message: 'Error handling user response', error });
+    res.status(500).json({ message: 'Error extending limit.', error });
   }
+});
+
+// Send SMS notifications
+app.post('/api/send-sms', async (req, res) => {
+  const { userId, message } = req.body;
+
+  try {
+    const user = await Users.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: user.phoneNumber,
+    });
+
+    res.status(200).json({ message: 'SMS sent successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error sending SMS.', error });
+  }
+});
+
+// Export all functions
+module.exports = {
+  saveLimits,
+  handleTransaction,
+  extendLimit,
+  sendSMS,
 };

@@ -179,6 +179,32 @@ class Users {
         return null;
     }
 
+    // Spending Limiter: Add this method to save spending limits
+    static async setSpendingLimits(phone, limits) {
+        const connection = await sql.connect(dbConfig);
+        const query = `
+            UPDATE Users 
+            SET 
+                food_limit = @food_limit,
+                fashion_limit = @fashion_limit,
+                groceries_limit = @groceries_limit,
+                entertainment_limit = @entertainment_limit,
+                transport_limit = @transport_limit
+            WHERE phoneNumber = @phone
+        `;
+        const request = connection.request();
+        request.input('phone', phone);
+        request.input('food_limit', limits.food);
+        request.input('fashion_limit', limits.fashion);
+        request.input('groceries_limit', limits.groceries);
+        request.input('entertainment_limit', limits.entertainment);
+        request.input('transport_limit', limits.transport);
+
+        await request.query(query);
+        connection.close();
+    }
+
+
 }    
 
 module.exports = Users;
