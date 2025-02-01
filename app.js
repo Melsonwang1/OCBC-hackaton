@@ -130,11 +130,3 @@ process.on("SIGINT", async () => {
   console.log("Database connection closed");
   process.exit(0);
 });
-
-
- 
-app.use(express.json()); // Middleware to parse JSON
-app.use(spendingRoutes); // Use spending routes
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,68 +1,90 @@
-const db = require('../models'); // Assuming you use Sequelize
+const User = require('../models/User');
 const twilio = require('twilio');
-const dotenv = require('dotenv');
-
-dotenv.config(); // Load environment variables
-
-// Twilio Configuration (Use your actual Twilio credentials)
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 
-/**
- * Save spending limit for a category
- */
+// Save spending limits
 exports.saveLimit = async (req, res) => {
-    const { category, newLimit } = req.body;
+  const { phone, category, newLimit } = req.body;
 
-    try {
-        await db.SpendingLimit.upsert({ category, limit: newLimit });
-        res.json({ message: `Spending limit for ${category} updated to $${newLimit}` });
-    } catch (error) {
-        console.error('Error saving limit:', error);
-        res.status(500).json({ message: 'Failed to update spending limit' });
+  try {
+    const user = await User.findOneAndUpdate(
+      { phone },
+      { $set: { [`limits.${category}`]: newLimit } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
+
+    // Send SMS confirmation
+    await client.messages.create({
+      body: `Your ${category} limit has been updated to $${newLimit}.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: phone,
+    });
+
+    res.status(200).json({ message: 'Limit updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating limit', error });
+  }
 };
 
-/**
- * Send SMS notification when user exceeds spending limit
- */
-exports.sendSMS = async (req, res) => {
-    const { userPhone, category, excessAmount } = req.body;
+// Handle transactions
+exports.handleTransaction = async (req, res) => {
+  const { phone, category, amountSpent } = req.body;
 
-    try {
-        const message = await client.messages.create({
-            body: `Alert! You exceeded your ${category} budget by $${excessAmount}. Reply YES to increase limit, NO to keep it.`,
-            from: TWILIO_PHONE_NUMBER,
-            to: userPhone
-        });
-
-        res.json({ message: 'SMS sent successfully', sid: message.sid });
-    } catch (error) {
-        console.error('Error sending SMS:', error);
-        res.status(500).json({ message: 'Failed to send SMS' });
+  try {
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
+
+    const limit = user.limits[category];
+    if (amountSpent > limit) {
+      const excessAmount = amountSpent - limit;
+
+      // Send SMS to user
+      await client.messages.create({
+        body: `Exceeded Monthly Limit for ${category} by $${excessAmount}. Do you want to extend the limit and make the transaction now? Reply 'YES' or 'NO'`,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: phone,
+      });
+
+      res.status(200).json({ message: 'SMS sent to user', excessAmount });
+    } else {
+      // Proceed with the transaction
+      user.transactions.push({ category, amount: amountSpent });
+      await user.save();
+      res.status(200).json({ message: 'Transaction successful', user });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error handling transaction', error });
+  }
 };
 
-/**
- * Handle user SMS response
- */
-exports.handleResponse = async (req, res) => {
-    const { userResponse, category, excessAmount } = req.body;
+// Handle user response to SMS
+exports.handleUserResponse = async (req, res) => {
+  const { phone, category, userResponse, excessAmount } = req.body;
+
+  try {
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     if (userResponse.toUpperCase() === 'YES') {
-        try {
-            const limitRecord = await db.SpendingLimit.findOne({ where: { category } });
-            if (limitRecord) {
-                const newLimit = parseInt(limitRecord.limit) + parseInt(excessAmount);
-                await db.SpendingLimit.update({ limit: newLimit }, { where: { category } });
+      // Extend the limit and complete the transaction
+      user.limits[category] += excessAmount;
+      user.transactions.push({ category, amount: user.limits[category] });
+      await user.save();
 
-                return res.json({ message: `Your ${category} limit has been increased by $${excessAmount}. New limit: $${newLimit}.` });
-            }
-        } catch (error) {
-            console.error('Error updating limit:', error);
-            return res.status(500).json({ message: 'Failed to update limit' });
-        }
+      res.status(200).json({ message: 'Limit extended and transaction completed', user });
+    } else {
+      // Do not extend the limit, transaction remains declined
+      res.status(200).json({ message: 'Transaction declined', user });
     }
-
-    res.json({ message: `Limit for ${category} remains unchanged.` });
+  } catch (error) {
+    res.status(500).json({ message: 'Error handling user response', error });
+  }
 };
