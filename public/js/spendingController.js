@@ -1,4 +1,4 @@
-// Example of data structure
+/*  Example of data structure
 const spendingData = {
     "January": {
         food: 4000,
@@ -21,7 +21,7 @@ const spendingData = {
         entertainment: 900,
         transport: 1300
     }
-};
+}; */
 
 // Default limit for each category
 const spendingLimits = {
@@ -50,3 +50,66 @@ function displayTransactionHistory() {
 }
 
 displayTransactionHistory();
+
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const twilio = require('twilio');
+
+// Initialize the Express app
+const app = express();
+
+// Twilio credentials
+const accountSid = 'your_account_sid';
+const authToken = 'your_auth_token';
+const twilioPhoneNumber = 'your_twilio_phone_number';
+
+// Create a Twilio client
+const client = twilio(accountSid, authToken);
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+// API to send SMS when a user exceeds a limit
+app.post('/send-sms', (req, res) => {
+  const { userPhone, category, excessAmount } = req.body;
+
+  client.messages.create({
+    body: `You have exceeded your ${category} limit by $${excessAmount}. Do you want to extend the limit and make the transaction now?`,
+    from: twilioPhoneNumber,
+    to: userPhone
+  }).then(message => {
+    console.log('SMS sent:', message.sid);
+    res.json({ message: 'SMS sent', sid: message.sid });
+  }).catch(error => {
+    console.error('Error sending SMS:', error);
+    res.status(500).json({ error: 'Failed to send SMS' });
+  });
+});
+
+// API to handle user response (YES or NO)
+app.post('/handle-response', (req, res) => {
+  const { userResponse, category, excessAmount } = req.body;
+
+  if (userResponse.toLowerCase() === 'yes') {
+    const newLimit = excessAmount + 100;  // Example of increasing the limit
+    console.log(`User chose to extend the ${category} limit. New limit is: $${newLimit}`);
+    res.json({ message: `Your ${category} limit has been extended to $${newLimit}` });
+  } else {
+    console.log('User declined to extend the limit');
+    res.json({ message: `Transaction declined. Returning items.` });
+  }
+});
+
+// API to save adjusted limits (Scenario 3)
+app.post('/save-limit', (req, res) => {
+  const { category, newLimit } = req.body;
+
+  console.log(`New ${category} limit saved: $${newLimit}`);
+  res.json({ message: `Your ${category} limit has been updated to $${newLimit}` });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

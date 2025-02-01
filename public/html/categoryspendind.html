@@ -212,6 +212,85 @@
       var limit = document.getElementById(limitId);
       limit.innerText = '$' + slider.value;
     }
+
+    function updateSliderValue(sliderId, limitId) {
+      var slider = document.getElementById(sliderId);
+      var limit = document.getElementById(limitId);
+      limit.innerText = '$' + slider.value;
+    }
+
+    async function saveLimit(category) {
+      const newLimit = document.getElementById(`${category}-slider`).value;
+      const userPhone = '88696555'; // User's phone number for SMS
+
+      try {
+        const response = await fetch('/save-limit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category, newLimit })
+        });
+        const data = await response.json();
+        alert(data.message);  // Confirmation that the limit has been updated
+
+        // After saving the new limit, send an SMS to confirm
+        await sendSMS(category, newLimit);
+
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to save limit.');
+      }
+    }
+
+    async function sendSMS(category, newLimit) {
+      const excessAmount = 100; // Example excess amount
+      const userPhone = '88696555'; // User's phone number
+
+      try {
+        const response = await fetch('/send-sms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userPhone, category, excessAmount })
+        });
+        const data = await response.json();
+        console.log('SMS sent:', data);
+      } catch (error) {
+        console.error('Error sending SMS:', error);
+      }
+    }
+
+    // Example usage: Handle a transaction exceeding limit (Scenario 1 or 2)
+    async function handleTransaction(category, amountSpent, limit) {
+      if (amountSpent > limit) {
+        const excessAmount = amountSpent - limit;
+        const userPhone = '88696555'; // User's phone number
+
+        // Send SMS to user
+        await sendSMS(category, excessAmount);
+
+        // Simulate user's response
+        let userResponse = prompt(`Exceeded limit by $${excessAmount}. Do you want to extend the limit? Reply 'YES' or 'NO'`);
+        await handleUserResponse(userResponse, category, excessAmount);
+      }
+    }
+
+    async function handleUserResponse(userResponse, category, excessAmount) {
+      try {
+        const response = await fetch('/handle-response', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userResponse, category, excessAmount })
+        });
+        const data = await response.json();
+        alert(data.message);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to process response.');
+      }
+    }
+
+    // Example: Simulate a transaction for the user
+    handleTransaction('Groceries', 120, 100);  // User exceeds the $100 limit for groceries
+    
   </script>
 
 </body>
