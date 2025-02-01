@@ -265,66 +265,6 @@ header .logout button .login-icon {
     color: #fff; /* White text */
 }
 
-.tooltip {
-    margin-bottom: 10px;
-}
-
-/* Tooltip text */
-.tooltip::after {
-    content: attr(aria-label);
-    visibility: hidden;
-    opacity: 0;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 12px 25px; /* Adjusted padding to make the tooltip wider */
-    border-radius: 5px;
-    position: absolute;
-    z-index: 9999;
-    font-size: 40px; /* Set font size to 40px */
-    line-height: 1.4;
-    white-space: initial;
-    max-width: 1000px; /* Increased max-width for wider tooltip */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    transform: translateX(-50%);
-}
-
-
-/* Tooltip Positions */
-.tooltip[data-position="top"]::after {
-    left: 65%;
-    bottom: 5%;
-}
-
-.tooltip[data-position="bottom"]::after {   
-    left: 30%;
-    top: 10%;
-}
-
-.tooltip[data-position="left"]::after {
-    top: 50%;
-    right: 120%; /* Position to the left of the element */
-    transform: translateY(-50%) translateX(0);
-}
-
-.tooltip[data-position="right"]::after {
-    top: 50%;
-    left: 120%; /* Position to the right of the element */
-    transform: translateY(-50%) translateX(0);
-}
-
-.tooltip[data-position="center"]::after {
-    top: 50%;
-    left: 50%; /* Center the tooltip */
-    transform: translate(-50%, -50%);
-}
-
-/* Tooltip visibility on hover */
-.tooltip:hover::after {
-    visibility: visible;
-    opacity: 1;
-}
-
 /* Styling for the keyboard shortcut note */
 .keyboard-note {
     position: absolute;

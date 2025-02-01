@@ -20,6 +20,8 @@ const investmentController = require("./controllers/investmentController"); // I
 const forumController = require("./controllers/forumController"); // Forum page (Zhe Kai)
 const replyController = require("./controllers/replyController"); // Forum page (Zhe Kai)
 const spendingController = require("./controllers/spendingController"); // Spending over Limit (Vaish)
+const spendingRoutes = require('./routes/spendingRoutes'); // Spending over Limit (Vaish)
+
 
 const app = express();
 const port = 3000;
@@ -128,3 +130,11 @@ process.on("SIGINT", async () => {
   console.log("Database connection closed");
   process.exit(0);
 });
+
+
+ 
+app.use(express.json()); // Middleware to parse JSON
+app.use(spendingRoutes); // Use spending routes
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
