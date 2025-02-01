@@ -138,6 +138,37 @@
         .back-btn {
             margin-right: 10px;
         }
+
+        .input-wrapper {
+            position: relative;
+            width: calc(100% - 140px);
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .suggestions {
+            position: absolute;
+            bottom: 45px;
+            /* Position above input */
+            width: 100%;
+            background: white;
+            border: 1px solid #ddd;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            border-radius: 5px;
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestions div {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestions div:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 
@@ -156,14 +187,15 @@
             <!-- Messages will appear here -->
         </div>
         <div class="chat-input-container">
-            <!-- Back Button -->
             <button class="back-btn" onclick="window.history.back()">Back</button>
-
-            <!-- Chat Input & Send Button -->
-            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..."
-                onkeypress="checkEnter(event)" />
+            <div class="input-wrapper">
+                <div id="suggestions-dropup" class="suggestions"></div>
+                <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..."
+                    onkeyup="fetchSuggestions(event)" onkeypress="checkEnter(event)" />
+            </div>
             <button class="chat-btn" onclick="sendMessage()">Send</button>
         </div>
+
     </div>
 
     <script>
@@ -210,6 +242,40 @@
 
             // Scroll to the latest message
             chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function fetchSuggestions(event) {
+            const userInput = event.target.value.trim();
+            const dropup = document.getElementById("suggestions-dropup");
+
+            if (userInput.length < 2) {
+                dropup.style.display = "none";
+                return;
+            }
+
+            fetch("/api/suggestions?query=" + encodeURIComponent(userInput))
+                .then(response => response.json())
+                .then(data => {
+                    dropup.innerHTML = "";
+                    if (data.suggestions.length > 0) {
+                        dropup.style.display = "block";
+                        data.suggestions.forEach(question => {
+                            const div = document.createElement("div");
+                            div.textContent = question;
+                            div.onclick = () => selectSuggestion(question);
+                            dropup.appendChild(div);
+                        });
+                    } else {
+                        dropup.style.display = "none";
+                    }
+                })
+                .catch(error => console.error("Error fetching suggestions:", error));
+        }
+
+        function selectSuggestion(question) {
+            document.getElementById("chat-input").value = question;
+            document.getElementById("suggestions-dropup").style.display = "none";
+            sendMessage();
         }
 
         function checkEnter(event) {

@@ -96,6 +96,26 @@ app.post("/api/chat", async (req, res) => {
   res.json({ reply: response });
 });
 
+app.get("/api/suggestions", async (req, res) => {
+  const query = req.query.query;
+  if (!query) return res.json({ suggestions: [] });
+
+  try {
+      await sql.connect(dbConfig);
+      const result = await sql.query`
+          SELECT TOP 5 question FROM chatbot_responses
+          WHERE LOWER(question) LIKE '%' + ${query.toLowerCase()} + '%'
+          ORDER BY LEN(question) ASC`;  // Show shorter questions first
+
+      const suggestions = result.recordset.map(row => row.question);
+      res.json({ suggestions });
+  } catch (err) {
+      console.error("Error fetching suggestions:", err);
+      res.json({ suggestions: [] });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server running on ${port}`);
 });
