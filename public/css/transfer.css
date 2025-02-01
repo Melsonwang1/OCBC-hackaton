@@ -339,12 +339,13 @@ main {
 /* Navigation bar styling */
 .navbar {
     display: inline-flex;
+    justify-content: center;
     background-color: #ffffff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 20px;
-    max-width: 1200px;
+    max-width: 1300px;
     margin-top: 40px;
 }
 
