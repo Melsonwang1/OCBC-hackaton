@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <style>
         /* Resetting basic styles */
+        /* Resetting basic styles */
         * {
             margin: 0;
             padding: 0;
@@ -20,23 +21,11 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: #f4f4f4;
             height: 100vh;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Header */
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            z-index: 100;
         }
 
         /* Chat Container */
@@ -46,10 +35,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ffffff;
+            background-color: white;
             display: flex;
             flex-direction: column;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
             z-index: 999;
         }
 
@@ -66,25 +54,50 @@
         /* Chat Body */
         .chat-body {
             flex: 1;
-            padding: 10px;
+            padding: 15px;
             overflow-y: auto;
             background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .chat-body div {
-            margin-bottom: 20px;
-            padding: 8px;
-            border-radius: 5px;
+        /* Chat Message Container */
+        .message-container {
+            display: flex;
+            width: 100%;
         }
 
-        .chat-body .user-message {
+        /* Chat Message Styling */
+        .chat-message {
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 75%;
+            word-wrap: break-word;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        /* User Messages (Aligned Right) */
+        .user-container {
+            justify-content: flex-end;
+        }
+
+        .user-message {
             background-color: #e0e0e0;
-            text-align: right;
+            color: black;
+            text-align: left;
         }
 
-        .chat-body .assistant-message {
+        /* Assistant Messages (Aligned Left) */
+        .assistant-container {
+            justify-content: flex-start;
+        }
+
+        .assistant-message {
             background-color: #007bff;
             color: white;
+            text-align: left;
         }
 
         /* Chat Input Section */
@@ -97,7 +110,7 @@
         }
 
         .chat-input {
-            width: calc(100% - 140px); /* Adjusted width to make room for buttons */
+            width: calc(100% - 140px);
             padding: 10px;
             border: none;
             font-size: 1rem;
@@ -105,11 +118,8 @@
             border-radius: 5px;
         }
 
-        .chat-input:focus {
-            border-color: #007bff;
-        }
-
-        .chat-btn, .back-btn {
+        .chat-btn,
+        .back-btn {
             background-color: #007bff;
             color: white;
             border: none;
@@ -119,7 +129,8 @@
             cursor: pointer;
         }
 
-        .chat-btn:hover, .back-btn:hover {
+        .chat-btn:hover,
+        .back-btn:hover {
             background-color: #0056b3;
         }
 
@@ -149,19 +160,20 @@
             <button class="back-btn" onclick="window.history.back()">Back</button>
 
             <!-- Chat Input & Send Button -->
-            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeypress="checkEnter(event)" />
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..."
+                onkeypress="checkEnter(event)" />
             <button class="chat-btn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
         function sendMessage() {
-            const userMessage = document.getElementById("chat-input").value;
+            const userMessage = document.getElementById("chat-input").value.trim();
 
-            if (userMessage.trim() === "") return;
+            if (userMessage === "") return;
 
             // Append user message to chat body
-            appendMessage("user-message", userMessage);
+            appendMessage("user-container", "user-message", userMessage);
 
             // Clear the input field
             document.getElementById("chat-input").value = "";
@@ -177,20 +189,27 @@
                 .then((response) => response.json())
                 .then((data) => {
                     // Append the assistant's reply to the chat body
-                    appendMessage("assistant-message", data.reply);
+                    appendMessage("assistant-container", "assistant-message", data.reply);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
                 });
         }
 
-        function appendMessage(className, message) {
+        function appendMessage(containerClass, messageClass, message) {
             const chatBody = document.getElementById("chat-body");
+            const messageContainer = document.createElement("div");
             const messageDiv = document.createElement("div");
-            messageDiv.className = className;
+
+            messageContainer.className = `message-container ${containerClass}`;
+            messageDiv.className = `chat-message ${messageClass}`;
             messageDiv.textContent = message;
-            chatBody.appendChild(messageDiv);
-            chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+
+            messageContainer.appendChild(messageDiv);
+            chatBody.appendChild(messageContainer);
+
+            // Scroll to the latest message
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
 
         function checkEnter(event) {
@@ -198,6 +217,7 @@
                 sendMessage();
             }
         }
+
     </script>
 </body>
 
