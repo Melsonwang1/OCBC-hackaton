@@ -10,9 +10,8 @@
   <link rel="shortcut icon" href="../pics/ocbc-title-logo.png" type="image/x-icon">
   
   <!-- Link to external stylesheet -->
-  <link rel="stylesheet" href="../css/accountdetails.css">
-  
-  <title>Set your spending limits</title>
+  <link rel="stylesheet" href="../css/spendinglimiter.css">  
+  <title>OCBC - Set your spending limits</title>
 
   <!-- Import Google Fonts for better typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +21,78 @@
   <!-- Import external libraries: Chart.js and Tailwind CSS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Styles for header -->
+  <style>
+    .center-wrapper {
+        display: flex;
+        justify-content: center; /* Aligns horizontally */
+        align-items: center;    /* Aligns vertically */
+        height: 100vh;          /* Full viewport height */
+        background-color: #f5f5f5; /* Optional background for the parent */
+        margin-top: 0px;
+        margin-bottom:200px;
+    }
+
+    .exchange-container {
+        background-color: #ffffff;
+        padding: 100px; /* Increased padding for more internal space */
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Slightly larger shadow for emphasis */
+        width: 900px; /* Increased width to make it larger */
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+    }
+    .custom-dropdown {
+        position: relative;
+        margin: 10px 0;
+    } 
+    .AI-container {
+        text-align: center;
+        /* Center aligns all elements inside */
+        display: flex;
+        flex-direction: column;
+        /* Stacks elements vertically */
+        align-items: center;
+        /* Aligns buttons properly */
+        justify-content: center;
+        padding-top: 20px;
+    }
+
+    /* AI Assistant Button Styling */
+    #ai-assistant-button {
+        background-color: #4CAF50;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 40px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #ai-assistant-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    #ai-assistant-button:focus,
+    #help-button:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+    }
+
+  </style>
 </head>
 
 <body>
@@ -29,43 +100,99 @@
   <!-- Header Section with logo -->
   <header class="header">
     <div class="logo">
-      <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+        <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
+    </div>    
+
+    <!-- Text-to-Speech Toggle Slider with Status -->
+    <div class="tts-toggle-container">
+        <label class="switch">
+            <input type="checkbox" id="toggle-tts" onchange="toggleTTS()">
+            <span class="slider"></span>
+        </label>
+        <span id="tts-status">Hover to listen: <b>OFF</b></span>
     </div>
-  </header>
-  
-  <!-- Main content area -->
-  <main>
-    <!-- Welcome message -->
-    <h2 class="welcome-message">What would you like to do today?</h2>
-    
-    <!-- Navigation bar with links to other sections -->
+
+    <div class="header-right">
+        <div class="font-size-controls">
+            <button onclick="changeFontSize(-2)">A-</button>
+            <button onclick="resetFontSize()">A</button>
+            <button onclick="changeFontSize(2)">A+</button>
+        </div>
+        
+        <div class="language-switch">
+            <a href="investmentchi.html" class="language-btn">中文</a>
+        </div>
+
+        <button id="mode-toggle" onclick="toggleMode()">Switch to Dark Mode</button>
+
+        <div class="peer-support">
+            <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum" onclick="window.location.href='peer_support.html';">
+                Peer Support Forum
+            </button>
+        </div>
+
+        <div class="logout">
+            <button id="logout-btn" onmouseover="speakText('Click here to Logout')">
+                Logout
+                <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="container"> 
+    <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+
+    <!-- Keyboard Shortcuts Note -->
+    <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
+        <p id="keyboard-shortcut-header">
+            <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
+        </p>
+        <ul id="shortcut-list">
+            <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
+            <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
+            <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
+            <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">C</span> → Chinese Translation</li>
+            <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">L</span> → Log Out</li>
+            <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
+            <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
+            <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
+            <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
+        </ul>
+    </div>
+
+    <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
     <div class="navbar">
-      <a href="../html/accountseng.html">
-        <img src="../pics/view-account.png" alt="View Icon">
-        View Accounts
-      </a>
-      <a href="../html/transfer.html">
-        <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
-        Transfer Money
-      </a>
-      <a href="../html/investmenteng.html">
-        <img src="../pics/investment.png" alt="Investments Icon">
-        Investments
-      </a>
-      <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
-        <img src="../pics/atm.png" alt="Location Icon">
-        Find Branches
-      </a>
-      <a href="../html/currencyExchange.html" class="tooltip" tabindex="0" aria-label="Currency Exchange">
-        <img src="../pics/exchange.png" alt="Location Icon">
-        Currency Exchange
-      </a>
-      <a href="../html/spendinglimiter.html" class="tooltip" tabindex="0" aria-label="Spending Limiter">
-        <img src="../pics/money.png" alt="Money Icon">
-        Spending Limiter
-      </a>
+        <a href="../html/accountseng.html" onmouseover="speakText('Click here to View Accounts')">
+            <img src="../pics/view-account.png" alt="View Icon">
+            View Accounts</a>
+        <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
+            <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
+            Transfer Money</a>
+        <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view Investments')">
+            <img src="../pics/investment.png" alt="Investments Icon">
+            Investments</a> 
+        <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
+            <img src="../pics/atm.png" alt="Location Icon">
+            Find Branches
+        </a>
+        <a href="../html/currencyExchange.html" class="tooltip active" tabindex="0" aria-label="Currency Exchange">
+            <img src="../pics/exchange.png" alt="Location Icon">
+            Currency Exchange
+        </a>
+        <a href="../html/spendinglimiter.html" class="tooltip active1" tabindex="0" aria-label="Spending Limiter">
+            <img src="../pics/money.png" alt="Money Icon">
+            Spending Limiter
+        </a>
     </div>
-  </main>
+</div>
+
+<div class="AI-container">
+    <button id="ai-assistant-button" class="tooltip ai-btn" tabindex="0" aria-label="AI Assistant"
+        onclick="window.location.href='assistant.html';">
+        AI Assistant
+    </button>
+</div>
 
   <!-- Content for setting spending limits -->
   <div class="px-40 flex flex-1 justify-center py-5">
@@ -92,6 +219,7 @@
           <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
           <p id="food-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
         </div>
+        <!-- Slider for setting the limit -->
         <input type="range" id="food-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('food-slider', 'food-limit')">
       </div>
 
@@ -102,6 +230,7 @@
           <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
           <p id="fashion-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
         </div>
+        <!-- Slider for setting the limit -->
         <input type="range" id="fashion-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('fashion-slider', 'fashion-limit')">
       </div>
 
@@ -112,6 +241,7 @@
           <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
           <p id="groceries-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
         </div>
+        <!-- Slider for setting the limit -->
         <input type="range" id="groceries-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('groceries-slider', 'groceries-limit')">
       </div>
 
@@ -122,6 +252,7 @@
           <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
           <p id="entertainment-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
         </div>
+        <!-- Slider for setting the limit -->
         <input type="range" id="entertainment-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('entertainment-slider', 'entertainment-limit')">
       </div>
 
@@ -132,6 +263,7 @@
           <p class="text-[#181111] text-base font-medium leading-normal">Set a limit</p>
           <p id="transport-limit" class="text-[#181111] text-sm font-normal leading-normal">$5000</p>
         </div>
+        <!-- Slider for setting the limit -->
         <input type="range" id="transport-slider" min="0" max="10000" value="5000" class="w-full h-2 bg-[#e6dbdb] rounded-sm" oninput="updateSliderValue('transport-slider', 'transport-limit')">
       </div>
 
@@ -141,34 +273,40 @@
           <span class="truncate">Save</span>
         </button>
       </div>
+
       <!-- Spending display for 3 months -->
       <div id="spending-overview">
         <h3>Spending Overview (Last 3 Months)</h3>
         <div id="spending-categories">
+            <!-- Food & Beverage category -->
             <div class="category" id="food-category">
                 <h4>Food & Beverage</h4>
                 <p>January: $<span id="food-jan"></span></p>
                 <p>February: $<span id="food-feb"></span></p>
                 <p>March: $<span id="food-mar"></span></p>
             </div>
+            <!-- Fashion & Accessories category -->
             <div class="category" id="fashion-accessories-category">
                 <h4>Fashion & Accessories</h4>
                 <p>January: $<span id="fashion-jan"></span></p>
                 <p>February: $<span id="fashion-feb"></span></p>
                 <p>March: $<span id="fashion-mar"></span></p>
           </div>
+          <!-- Groceries category -->
           <div class="category" id="groceries-category">
                 <h4>Groceries</h4>
                 <p>January: $<span id="groceries-jan"></span></p>
                 <p>February: $<span id="groceries-feb"></span></p>
                 <p>March: $<span id="groceries-mar"></span></p>
           </div>
+          <!-- Entertainment category -->
           <div class="category" id="entertainment-category">
                 <h4>Entertainment</h4>
                 <p>January: $<span id="entertainment-jan"></span></p>
                 <p>February: $<span id="entertainment-feb"></span></p>
                 <p>March: $<span id="entertainment-mar"></span></p>
           </div>
+          <!-- Transport category -->
           <div class="category" id="transport-category">
                 <h4>Transport</h4>
                 <p>January: $<span id="transport-jan"></span></p>
@@ -176,6 +314,7 @@
                 <p>March: $<span id="transport-mar"></span></p>
           </div>
         </div>
+        <!-- Transaction History Section -->
         <div id="transaction-history">
           <h3>Transaction History</h3>
           <!-- Transactions will be added here -->
@@ -213,12 +352,7 @@
       limit.innerText = '$' + slider.value;
     }
 
-    function updateSliderValue(sliderId, limitId) {
-      var slider = document.getElementById(sliderId);
-      var limit = document.getElementById(limitId);
-      limit.innerText = '$' + slider.value;
-    }
-
+    // Function to save the limit for a category
     async function saveLimit(category) {
       const newLimit = document.getElementById(`${category}-slider`).value;
       const userPhone = '88696555'; // User's phone number for SMS
@@ -241,6 +375,7 @@
       }
     }
 
+    // Function to send an SMS to the user
     async function sendSMS(category, newLimit) {
       const excessAmount = 100; // Example excess amount
       const userPhone = '88696555'; // User's phone number
@@ -258,7 +393,7 @@
       }
     }
 
-    // Example usage: Handle a transaction exceeding limit (Scenario 1 or 2)
+    // Function to handle a transaction exceeding the limit
     async function handleTransaction(category, amountSpent, limit) {
       if (amountSpent > limit) {
         const excessAmount = amountSpent - limit;
@@ -273,6 +408,7 @@
       }
     }
 
+    // Function to handle the user's response to exceeding the limit
     async function handleUserResponse(userResponse, category, excessAmount) {
       try {
         const response = await fetch('/handle-response', {
