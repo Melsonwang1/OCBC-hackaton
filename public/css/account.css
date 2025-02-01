@@ -265,66 +265,6 @@ header .logout button .login-icon {
     color: #fff; /* White text */
 }
 
-.tooltip {
-    margin-bottom: 10px;
-}
-
-/* Tooltip text */
-.tooltip::after {
-    content: attr(aria-label);
-    visibility: hidden;
-    opacity: 0;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 12px 25px; /* Adjusted padding to make the tooltip wider */
-    border-radius: 5px;
-    position: absolute;
-    z-index: 9999;
-    font-size: 40px; /* Set font size to 40px */
-    line-height: 1.4;
-    white-space: initial;
-    max-width: 1000px; /* Increased max-width for wider tooltip */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    transform: translateX(-50%);
-}
-
-
-/* Tooltip Positions */
-.tooltip[data-position="top"]::after {
-    left: 65%;
-    bottom: 5%;
-}
-
-.tooltip[data-position="bottom"]::after {   
-    left: 30%;
-    top: 10%;
-}
-
-.tooltip[data-position="left"]::after {
-    top: 50%;
-    right: 120%; /* Position to the left of the element */
-    transform: translateY(-50%) translateX(0);
-}
-
-.tooltip[data-position="right"]::after {
-    top: 50%;
-    left: 120%; /* Position to the right of the element */
-    transform: translateY(-50%) translateX(0);
-}
-
-.tooltip[data-position="center"]::after {
-    top: 50%;
-    left: 50%; /* Center the tooltip */
-    transform: translate(-50%, -50%);
-}
-
-/* Tooltip visibility on hover */
-.tooltip:hover::after {
-    visibility: visible;
-    opacity: 1;
-}
-
 /* Styling for the keyboard shortcut note */
 .keyboard-note {
     position: absolute;
@@ -676,4 +616,62 @@ input:checked + .slider:before {
 .peer-support-btn:focus {
     outline: 2px solid #ffc107; /* Yellow outline for focus */
     outline-offset: 2px;
+}
+
+/* Reminder button container styling */
+.reminder-container {
+    display: flex;
+    justify-content: flex-start; /* Align to the left */
+    margin-top: 15px; /* Add spacing between the other buttons and the reminder button */
+    width: 100%; /* Ensures it spans full width */
+}
+
+.reminder-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reminder-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.reminder-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+#ai-assistant-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #28a745; /* Green color for contrast */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px; /* Smooth rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#ai-assistant-button:hover {
+    background-color: #218838;
+    transform: scale(1.05); /* Slight enlargement on hover */
+}
+
+#ai-assistant-button:active {
+    background-color: #1e7e34;
+    transform: scale(0.95); /* Slight shrink when clicked */
 }

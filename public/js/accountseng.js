@@ -240,15 +240,6 @@ function displayAccounts(accounts) {
         const accountCard = document.createElement('a');
         accountCard.href = `accountsdetails.html?accountId=${account.account_id}`;
         accountCard.className = 'account-card';
-
-        // Add tooltip to each account card
-        accountCard.setAttribute('class', 'account-card tooltip');
-        accountCard.setAttribute('data-position', 'top');
-        accountCard.setAttribute('aria-label', 
-            `Account Name: ${account.account_name} ,\n` +
-            `Account Number: ${account.account_number} ,\n` +
-            `Current Balance: SGD ${account.balance_have.toFixed(2)}`
-        );
         
         accountCard.innerHTML = 
             `<div>

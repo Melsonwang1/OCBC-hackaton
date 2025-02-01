@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,7 @@
     <header class="header">
         <div class="logo">
             <img src="../pics/ocbc-bg.png" alt="OCBC Logo">
-        </div>    
+        </div>
 
         <div class="header-right">
             <div class="font-size-controls">
@@ -27,7 +27,7 @@
                 <button onclick="resetFontSize()">A</button>
                 <button onclick="changeFontSize(2)">A+</button>
             </div>
-            
+
             <div class="language-switch">
                 <a href="loginchi.html" class="language-btn">中文</a>
             </div>
@@ -58,7 +58,7 @@
 
                 <!-- Empty message area to display login status -->
                 <h3 id="message"><b></b></h3>
-                
+
                 <button type="submit" class="login-btn" id="login-button">Login</button>
             </form>
         </div>
@@ -68,17 +68,17 @@
     <script src="../js/logineng.js"></script>
     <script>
         window.watsonAssistantChatOptions = {
-          integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
-          region: "us-south", // The region your integration is hosted in.
-          serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
-          onLoad: async (instance) => { await instance.render(); }
+            integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
+            region: "us-south", // The region your integration is hosted in.
+            serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
+            onLoad: async (instance) => { await instance.render(); }
         };
-        setTimeout(function(){
-          const t=document.createElement('script');
-          t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
-          document.head.appendChild(t);
+        setTimeout(function () {
+            const t = document.createElement('script');
+            t.src = "https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+            document.head.appendChild(t);
         });
-      </script>
+    </script>
 </body>
 
 </html>

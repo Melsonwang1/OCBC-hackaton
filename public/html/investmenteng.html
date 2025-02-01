@@ -14,6 +14,46 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+    <style>
+            .AI-container {
+            text-align: center;
+            /* Center aligns all elements inside */
+            display: flex;
+            flex-direction: column;
+            /* Stacks elements vertically */
+            align-items: center;
+            /* Aligns buttons properly */
+            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* AI Assistant Button Styling */
+        #ai-assistant-button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #ai-assistant-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #ai-assistant-button:focus,
+        #help-button:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+        }
+    </style>
 </head>
 
 <body>
@@ -93,9 +133,15 @@
                 Investments</a> 
             <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
                 <img src="../pics/atm.png" alt="Location Icon">
-                Find ATMs
-            </a>
+                Find Branches
         </div>
+    </div>
+
+    <div class="AI-container">
+        <button id="ai-assistant-button" class="tooltip ai-btn" tabindex="0" aria-label="AI Assistant"
+            onclick="window.location.href='assistant.html';">
+            AI Assistant
+        </button>
     </div>
 
     <h1 onmouseover="speakText('Here is the investment growth over time')">Investment Growth Over Time</h1>

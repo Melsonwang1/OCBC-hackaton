@@ -1,4 +1,4 @@
-USE master;
+ USE master;
 IF EXISTS(select * from sys.databases where name='FSDP')
 DROP DATABASE FSDP;
 GO
@@ -193,3 +193,30 @@ VALUES
 (4, 'Diana', 'Thank you, Charlie! I’ll check it out.'),
 (4, 'Grace', 'If you still have questions, their customer service team is very responsive.');
 
+CREATE TABLE chatbot_responses (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    question NVARCHAR(MAX) NOT NULL,
+    response NVARCHAR(MAX) NOT NULL
+);
+
+INSERT INTO chatbot_responses (question, response)
+VALUES 
+('Hi', 'Hello! How may I assist you today?'),
+('Hello', 'Hello! How may I assist you today?'),
+('Where can I view my transaction history?', 'You can view your transaction history by clicking into any one of your accounts.'),
+('Where can I find the OCBC branches?', 'You can find our branches by clicking on the "Find Branches" button under the "Services" section.'),
+('How do I change the language?', 'You can change the website language at the top of the webpage. Currently, we support English and Chinese.'),
+('If I need other assistance, where can I find you?', 'The "AI Assistant" button is located right above your bank accounts. Click on it anytime to return and ask me for help.'),
+('The words are too small/big, how can I change the font size?', 'You can adjust the font size using the "Enlarge" or "Shrink" buttons at the top of the webpage.'),
+('What should I do if I want to exchange currencies?', 'We offer a currency exchange service. Click on the "Currency Exchange" button to proceed.'),
+('Is there a function for text-to-speech?', 'Yes! You can enable "Hover to Listen," which will read text aloud when you hover your cursor over an element.'),
+('I want to view my accounts', 'You can view all your accounts in the "View Accounts" tab, including My Account, My Savings Account, and Fixed Deposit Account.'),
+('How can I do investments?', 'Go to the "Investments" tab to explore investment options. You can also check your investment graph there to track progress.'),
+('How can I log out of my account?', 'You can log out by clicking the "Logout" button located at the top right corner of the webpage.'),
+('I want to transfer money', 'To transfer money, go to the "Transfer Money" tab, fill in the details, and complete your transfer.'),
+('I am new here, how can I navigate around?', 'Our website has a walkthrough feature to guide you. After completing it, you’ll find navigation easier.'),
+('How can I switch to dark mode?', 'On the top right corner of the webpage, there is a toggle for dark mode. You can switch back to light mode anytime.'),
+('How do I delete my transaction history?', 'You can clear specific transactions by selecting them and clicking "Delete Selected Transaction." However, some records may be retained for security reasons.'),
+('How do I contact customer service?', 'You can reach customer service by emailing support@example.com or calling our support hotline at "66789999".'),
+('What is the Peer Support Forum?', 'The Peer Support Forum is a community space where you can ask financial questions, get advice, and help others by sharing your knowledge.'),
+('I do not have a mouse with me currently, can I navigate the website using just my keyboard?', 'Yes! On the right-hand side of the webpage, there is a list of keyboard shortcuts to help you navigate without a mouse.')

@@ -17,25 +17,88 @@
     <style>
         /* Container styling */
         #chart-container {
-            width: 1100px;      /* Increase width of the container */
-            height: 600px;     /* Increase height of the container */
-            margin: 0 auto;    /* Horizontally center the container */
-            display: flex;     /* Use flexbox to center the content */
-            justify-content: center; /* Horizontally center */
-            align-items: center;     /* Vertically center */
-            background-color: #f9f9f9;  /* Optional background color */
-            border: 1px solid #ddd;    /* Optional border */
-            padding: 10px;     /* Optional padding */
+            width: 1100px;
+            /* Increase width of the container */
+            height: 600px;
+            /* Increase height of the container */
+            margin: 0 auto;
+            /* Horizontally center the container */
+            display: flex;
+            /* Use flexbox to center the content */
+            justify-content: center;
+            /* Horizontally center */
+            align-items: center;
+            /* Vertically center */
+            background-color: #f9f9f9;
+            /* Optional background color */
+            border: 1px solid #ddd;
+            /* Optional border */
+            padding: 10px;
+            /* Optional padding */
         }
 
         /* Optional styling for the canvas */
         #spendingChart {
-            width: 100%;   /* Make the canvas fill the container */
-            height: 100%;  /* Make the canvas fill the container */
+            width: 100%;
+            /* Make the canvas fill the container */
+            height: 100%;
+            /* Make the canvas fill the container */
+        }
+
+                /* Title style */
+                .walkthrough-title {
+            font-size: 27px;
+            font-weight: bold;
+            color: #333;
+            /* Dark gray for the title */
+            margin-bottom: 20px;
+            /* Margin to create space between title and button */
+            text-align: center;
+            /* Center the title above the button */
+            display: block;
+            /* Ensures the title is treated as a block element for better alignment */
+        }
+
+        .AI-container {
+            text-align: center;
+            /* Center aligns all elements inside */
+            display: flex;
+            flex-direction: column;
+            /* Stacks elements vertically */
+            align-items: center;
+            /* Aligns buttons properly */
+            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* AI Assistant Button Styling */
+        #ai-assistant-button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #ai-assistant-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #ai-assistant-button:focus,
+        #help-button:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
         }
     </style>
 
-</head> 
+</head>
 
 <body>
     <!-- Header Section -->
@@ -52,14 +115,17 @@
             </label>
             <span id="tts-status">Hover to listen: <b>OFF</b></span>
         </div>
-    
+
         <div class="header-right">
             <div class="font-size-controls">
-                <button onclick="changeFontSize(-2)" onmouseover="speakText('Click here to reduce font size')">A-</button>
-                <button onclick="resetFontSize()" onmouseover="speakText('Click here to reset font size to normal')">A</button>
-                <button onclick="changeFontSize(2)" onmouseover="speakText('Click here to increase font size')">A+</button>
+                <button onclick="changeFontSize(-2)"
+                    onmouseover="speakText('Click here to reduce font size')">A-</button>
+                <button onclick="resetFontSize()"
+                    onmouseover="speakText('Click here to reset font size to normal')">A</button>
+                <button onclick="changeFontSize(2)"
+                    onmouseover="speakText('Click here to increase font size')">A+</button>
             </div>
-            
+
             <div class="language-switch">
                 <a href="accountschi.html" class="language-btn">中文</a>
             </div>
@@ -67,13 +133,14 @@
             <button id="mode-toggle" onclick="toggleMode()">Switch to Dark Mode</button>
 
             <div class="peer-support">
-                <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum" onclick="window.location.href='peer_support.html';">
+                <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum"
+                    onclick="window.location.href='peer_support.html';">
                     Peer Support Forum
                 </button>
             </div>
-    
+
             <div class="logout">
-                <button id="logout-btn" onmouseover="speakText('Click here to securely log out of your account.')"> 
+                <button id="logout-btn" onmouseover="speakText('Click here to securely log out of your account.')">
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
                 </button>
@@ -83,7 +150,9 @@
 
     <div class="container">
         <!-- Welcome message -->
-        <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+        <div class="welcome" id="welcome-message"
+            onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">
+            Welcome, <span id="user-name"></span></div>
 
         <!-- Keyboard Shortcuts Note -->
         <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -91,32 +160,44 @@
                 <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
             </p>
             <ul id="shortcut-list">
-                <li onmouseover="speakText('Press the number one key to view your accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
-                <li onmouseover="speakText('Press the number two key to transfer money')"><span class="shortcut-key">2</span> → Transfer Money</li>
-                <li onmouseover="speakText('Press the number three key to view investments')"><span class="shortcut-key">3</span> → Investments</li>
-                <li onmouseover="speakText('Press the C key to switch to Chinese language')"><span class="shortcut-key">C</span> → Chinese Translation</li>
-                <li onmouseover="speakText('Press the L key to log out of your account')"><span class="shortcut-key">L</span> → Log Out</li>
-                <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
-                <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
-                <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
-                <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
+                <li onmouseover="speakText('Press the number one key to view your accounts')"><span
+                        class="shortcut-key">1</span> → View Accounts</li>
+                <li onmouseover="speakText('Press the number two key to transfer money')"><span
+                        class="shortcut-key">2</span> → Transfer Money</li>
+                <li onmouseover="speakText('Press the number three key to view investments')"><span
+                        class="shortcut-key">3</span> → Investments</li>
+                <li onmouseover="speakText('Press the C key to switch to Chinese language')"><span
+                        class="shortcut-key">C</span> → Chinese Translation</li>
+                <li onmouseover="speakText('Press the L key to log out of your account')"><span
+                        class="shortcut-key">L</span> → Log Out</li>
+                <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> →
+                    Previous Page</li>
+                <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> →
+                    Next Page</li>
+                <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll
+                    Up</li>
+                <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> →
+                    Scroll Down</li>
             </ul>
         </div>
 
 
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
+        <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to
+            do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar">
-            <a href="../html/accountseng.html" class="active" onmouseover="speakText('Click here to view your bank accounts and details')">
+            <a href="../html/accountseng.html" class="active"
+                onmouseover="speakText('Click here to view your bank accounts and details')">
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts</a>
             <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money to other people')">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 Transfer Money</a>
-            <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view and manage your investments')">
+            <a href="../html/investmenteng.html"
+                onmouseover="speakText('Click here to view and manage your investments')">
                 <img src="../pics/investment.png" alt="Investments Icon">
-                Investments</a> 
+                Investments</a>
             <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
                 <img src="../pics/atm.png" alt="Location Icon">
                 Find Branches
@@ -127,8 +208,17 @@
             </a>
         </div>
 
+        <div class="AI-container">
+            <!-- AI Assistant Button (Now placed right below the Walkthrough button) -->
+            <button id="ai-assistant-button" class="tooltip ai-btn" tabindex="0" aria-label="AI Assistant"
+                onclick="window.location.href='assistant.html';">
+                AI Assistant
+            </button>
+        </div>
+
         <!-- Title for the chart, centered above the graph -->
-        <h2 style="margin-top: 55px; margin-bottom: 30px;font-size:25px;">How Much You’ve Spent Over The Past Few Months</h2>
+        <h2 style="margin-top: 55px; margin-bottom: 30px;font-size:25px;">How Much You've Spent Over The Past Few Months
+        </h2>
         <p style="margin-bottom:20px; font-size:21px;">
             <span style="font-weight:bold;">Hover</span> the mouse to each bar to see the exact value.
         </p>
@@ -143,35 +233,47 @@
         <!-- Account Details Section -->
         <div class="account-details">
             <h2 onmouseover="speakText('This is' + document.querySelector('.account-details h2').textContent)"></h2>
-            <p onmouseover="speakText('Your Account Number is' + document.querySelector('.account-number').textContent)">Account Number: <span class="account-number"></span></p>
+            <p
+                onmouseover="speakText('Your Account Number is' + document.querySelector('.account-number').textContent)">
+                Account Number: <span class="account-number"></span></p>
+
+            <div class="reminder-container">
+                <button id="sendMessage" onclick="sendMessage()">Send Reminder</button>
+            </div>
 
             <div class="balance-summary">
-                <div class="balance-item positive" onmouseover="speakText('Currently, you have SGD ' + document.querySelector('.balance-item.positive .value').textContent)"> 
+                <div class="balance-item positive"
+                    onmouseover="speakText('Currently, you have SGD ' + document.querySelector('.balance-item.positive .value').textContent)">
                     <div class="balance-icon positive">
                         <img src="../pics/what_you_have.png" alt="What You Have Icon" class="what-you-have-icon">
                     </div>
-                    <p >What you have:</p>
+                    <p>What you have:</p>
                     <p class="amount positive">
-                        <span class="currency">SGD</span> 
-                        <span class="value">0.00</span> 
+                        <span class="currency">SGD</span>
+                        <span class="value">0.00</span>
                     </p>
                 </div>
-                <div class="balance-item negative" onmouseover="speakText('Currently, you owe SGD ' + document.querySelector('.balance-item.negative .value').textContent)"> 
+                <div class="balance-item negative"
+                    onmouseover="speakText('Currently, you owe SGD ' + document.querySelector('.balance-item.negative .value').textContent)">
                     <div class="balance-icon negative">
                         <img src="../pics/what_you_owe.png" alt="What You Owe Icon" class="what-you-owe-icon">
                     </div>
                     <p>What you owe:</p>
                     <p class="amount negative">
-                        <span class="currency">SGD</span> 
-                        <span class="value">0.00</span> 
+                        <span class="currency">SGD</span>
+                        <span class="value">0.00</span>
                     </p>
                 </div>
             </div>
- 
+
             <div class="transaction-records" style="padding-top: 50px;">
-                <h3 style="text-align: center;" onmouseover="speakText('Here are your recent transaction records.')">Recent Transaction Records</h3>
-                <p style="font-size: 20px; margin-bottom:50px; line-height: 25px;" onmouseover="speakText('To delete a transaction, select a row that shows a pending status and a negative amount.')">Select a row to delete. Only transactions that are in <b>pending</b> status, 
-                    <br>with a negative amount (outgoing transfer) can be deleted.</p>
+                <h3 style="text-align: center;" onmouseover="speakText('Here are your recent transaction records.')">
+                    Recent Transaction Records</h3>
+                <p style="font-size: 20px; margin-bottom:50px; line-height: 25px;"
+                    onmouseover="speakText('To delete a transaction, select a row that shows a pending status and a negative amount.')">
+                    Select a row to delete. Only transactions that are in <b>pending</b> status,
+                    <br>with a negative amount (outgoing transfer) can be deleted.
+                </p>
                 <table id="transaction-records-table">
                     <thead>
                         <tr>
@@ -198,25 +300,67 @@
                 </div>
 
             </div>
-            
-        </div>        
+
+        </div>
     </div>
 
     <script src="../js/accountsdetails.js"></script>
     <script>
         window.watsonAssistantChatOptions = {
-          integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
-          region: "us-south", // The region your integration is hosted in.
-          serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
-          onLoad: async (instance) => { await instance.render(); }
+            integrationID: "777964f7-45cc-46ca-96fb-12f108412400", // The ID of this integration.
+            region: "us-south", // The region your integration is hosted in.
+            serviceInstanceID: "b3be67ca-8075-4d01-834f-e715814d95d0", // The ID of your service instance.
+            onLoad: async (instance) => { await instance.render(); }
         };
-        setTimeout(function(){
-          const t=document.createElement('script');
-          t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
-          document.head.appendChild(t);
+        setTimeout(function () {
+            const t = document.createElement('script');
+            t.src = "https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+            document.head.appendChild(t);
         });
-      </script>
-   
+
+        async function sendMessage() {
+            try {
+                const userNric = "T0673139I";
+
+                // Fetch phone number from backend
+                const response = await fetch('/reminder/get-phone-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nric: userNric })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    console.log("Phone number retrieved:", result.phoneNumber);
+
+                    // Send SMS reminder
+                    const twilioResponse = await fetch('/reminder/send-bill-reminder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber: result.phoneNumber })
+                    });
+
+                    if (twilioResponse.ok) {
+                        console.log('Message sent successfully!');
+                        alert("Reminder sent successfully!");
+                    } else {
+                        console.error('Failed to send message.');
+                        alert("Failed to send message.");
+                    }
+                } else {
+                    console.error('Failed to retrieve phone number:', result.message);
+                    alert("Failed to retrieve phone number.");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("An error occurred.");
+            }
+        }
+
+
+    </script>
+
 </body>
 
 </html>
