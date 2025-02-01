@@ -201,6 +201,7 @@ CREATE TABLE chatbot_responses (
 
 INSERT INTO chatbot_responses (question, response)
 VALUES 
+('Hi', 'Hello! How may I assist you today?'),
 ('Hello', 'Hello! How may I assist you today?'),
 ('Where can I view my transaction history?', 'You can view your transaction history by clicking into any one of your accounts.'),
 ('Where can I find the OCBC branches?', 'You can find our branches by clicking on the "Find Branches" button under the "Services" section.'),
