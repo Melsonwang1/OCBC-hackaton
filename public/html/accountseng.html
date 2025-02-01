@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
     <script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
     <style>
-        /* Custom styling for the tooltip */
-        .customTooltip {
-            max-width: 1000px;
+         /* Custom styling for the tooltip */
+         .customTooltip {
+            max-width: 700px;
             /* Set a maximum width for the tooltip */
             width: auto;
             /* Allow the tooltip to expand horizontally based on content */
@@ -44,9 +44,9 @@
             /* Larger text for readability */
             line-height: 1.8;
             /* More spacing between lines */
-            max-width: 1000px;
+            max-width: 700px;
             /* Increase maximum width */
-            min-height: 500px;
+            min-height: 400px;
             /* Ensure enough height for content */
         }
 
@@ -82,11 +82,10 @@
             /* Centered text */
             display: block;
             /* Make it a block element */
-            margin-bottom: 10px;
+            margin-bottom: 50px;
             /* Space below the text */
             margin-top: 30px;
         }
-
         /* Title style */
         .walkthrough-title {
             font-size: 27px;
@@ -238,14 +237,14 @@
             <button id="mode-toggle" onclick="toggleMode()">Switch to Dark Mode</button>
 
             <div class="peer-support">
-                <button class="tooltip peer-support-btn" tabindex="0" aria-label="Peer Support Forum"
+                <button class="peer-support-btn"
                     onclick="window.location.href='peer_support.html';">
                     Peer Support Forum
                 </button>
             </div>
 
             <div class="logout">
-                <button class="tooltip" id="logout-btn" tabindex="0" aria-label="Logout"
+                <button class="tooltip" id="logout-btn"
                     data-intro="This toggle enables logout" data-step="4">
                     Logout
                     <img src="../pics/logout.png" alt="Logout Icon" class="login-icon">
@@ -265,7 +264,7 @@
             <span class="walkthrough-title">First time here? Let Us Show You Around!</span>
 
             <!-- Walkthrough Button -->
-            <button id="help-button" class="tooltip" tabindex="0" aria-label="Start Website Walkthrough">
+            <button id="help-button">
                 Start Website Walkthrough
                 <img src="../pics/footprints.png" alt="icon" class="button-icon">
             </button>
@@ -302,29 +301,29 @@
 
 
         <!-- What would you like to do today? -->
-        <h2 class="welcome-message tooltip" tabindex="0" aria-label="What would you like to do today?"
+        <h2 class="welcome-message" 
             onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
         <!-- Navigation bar -->
         <div class="navbar"
             data-intro="Use the navigation bar to explore features like viewing accounts, transferring money, and finding ATMs."
             data-step="5">
-            <a href="../html/accountseng.html" class="active tooltip" tabindex="0" aria-label="View Accounts">
+            <a href="../html/accountseng.html" class="active" >
                 <img src="../pics/view-account.png" alt="View Icon">
                 View Accounts
             </a>
-            <a href="../html/transfer.html" class="tooltip" tabindex="0" aria-label="Transfer Money">
+            <a href="../html/transfer.html">
                 <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
                 Transfer Money
             </a>
-            <a href="../html/investmenteng.html" class="tooltip" tabindex="0" aria-label="Investments">
+            <a href="../html/investmenteng.html">
                 <img src="../pics/investment.png" alt="Investments Icon">
                 Investments
             </a>
-            <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
+            <a href="../html/location.html">
                 <img src="../pics/atm.png" alt="Location Icon">
                 Find Branches
             </a>
-            <a href="../html/currencyExchange.html" class="tooltip" tabindex="0" aria-label="Currency Exchange">
+            <a href="../html/currencyExchange.html">
                 <img src="../pics/exchange.png" alt="Location Icon">
                 Currency Exchange
             </a>
@@ -333,7 +332,7 @@
 
     <div class="AI-container">
         <!-- AI Assistant Button (Now placed right below the Walkthrough button) -->
-        <button id="ai-assistant-button" class="tooltip ai-btn" tabindex="0" aria-label="AI Assistant"
+        <button id="ai-assistant-button" class="ai-btn"
             onclick="window.location.href='assistant.html';">
             AI Assistant
         </button>
@@ -342,15 +341,13 @@
     <!-- Account Selection Page -->
     <section id="account-selection" class="account-selection">
         <div class="account-selection-note">
-            <p class="tooltip" data-position="top"
-                onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')"
-                tabindex="0" aria-label="Use the Tab key to navigate and press Enter to view">
+            <p onmouseover="speakText('Use the Tab key to navigate and press Enter to select an account for more details')">
                 <strong>Tip:</strong> Use the <strong>Tab</strong> key to navigate and press <strong>Enter</strong> to
                 view.
             </p>
         </div>
-        <h2 class="tooltip" tabindex="0" aria-label="Your bank accounts">Your Bank Accounts:</h2>
-        <p class="tooltip" tabindex="0" aria-label="Select an account below to view detailed information">Select an
+        <h2 >Your Bank Accounts:</h2>
+        <p >Select an
             account below to view detailed information.</p>
         <div id="accounts-list"></div>
     </section>
@@ -427,7 +424,8 @@
                     <br>
                     <video autoplay loop muted playsinline style="width: 400px; height: 300px; margin-top: 10px; border: 2px solid #ccc; border-radius: 10px;">
                         <source src="../pics/chinese..mp4" type="video/mp4">
-                    </video>`
+                    </video>`,
+                        position: "bottom",
                     },
                     {
                         element: document.querySelector(".logout .tooltip"),
@@ -435,7 +433,11 @@
                     },
                     {
                         element: document.querySelector(".navbar"),
-                        intro: "<span class='customIntroText'>Use the navigation bar to explore features like <b>viewing accounts</b>, <b>transferring money</b>, and <b>finding ATMs</b>.</span>",
+                        intro: `<span class='customIntroText'>Use the navigation bar to explore features such as <b>viewing your bank accounts</b>, <b>transferring money to other people</b>, and <b>finding bank branches</b>.</span>
+                        <br>
+                    <video autoplay loop muted playsinline style="width: 400px; height: 300px; margin-top: 10px; border: 2px solid #ccc; border-radius: 10px;">
+                        <source src="../pics/nav.mp4" type="video/mp4">
+                    </video>`
                     },
                     {
                         element: document.querySelector("#keyboard-shortcut-note"),
@@ -443,8 +445,12 @@
                     },
                     {
                         element: document.querySelector(".account-selection"),
-                        intro: "<span class='customIntroText'>This is where you can view the <b>details</b> of your different <b>bank accounts</b>. Click on each <b>account</b> to see more, including <b>transaction history</b>.</span>",
-                    }
+                        intro: `<span class='customIntroText'>This is where you can view the <b>details</b> of your different <b>bank accounts</b>. Click on each <b>account</b> to see more, including <b>transaction history</b>.</span>
+                        <br>
+                    <video autoplay loop muted playsinline style="width: 400px; height: 300px; margin-top: 10px; border: 2px solid #ccc; border-radius: 10px;">
+                        <source src="../pics/accounts.mp4" type="video/mp4">
+                    </video>`
+                    },
                 ],
                 showButtons: true,
                 tooltipClass: 'customTooltip', // Custom tooltip styling

@@ -66,7 +66,7 @@ app.use("/reminder", reminderRoutes); // Send Reminder (Zhizhong)
 // Spending over time API
 app.get("/api/spending-over-time/:user_id", transactionsController.getSpendingOverTime);
 
-// Function to get the response from the database
+// Function to get the response from the database (Zhizhong)
 async function getResponseFromDatabase(userMessage) {
   try {
     // Connect to the database
