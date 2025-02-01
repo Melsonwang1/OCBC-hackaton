@@ -82,7 +82,7 @@
             /* Centered text */
             display: block;
             /* Make it a block element */
-            margin-bottom: 10px;
+            margin-bottom: 50px;
             /* Space below the text */
             margin-top: 30px;
         }
@@ -432,7 +432,7 @@
                     },
                     {
                         element: document.querySelector(".navbar"),
-                        intro: "<span class='customIntroText'>Use the navigation bar to explore features like <b>viewing accounts</b>, <b>transferring money</b>, and <b>finding ATMs</b>.</span>",
+                        intro: "<span class='customIntroText'>Use the navigation bar to explore features such as <b>viewing your bank accounts</b>, <b>transferring money to other people</b>, and <b>finding bank branches</b>.</span>",
                     },
                     {
                         element: document.querySelector("#keyboard-shortcut-note"),
@@ -440,8 +440,12 @@
                     },
                     {
                         element: document.querySelector(".account-selection"),
-                        intro: "<span class='customIntroText'>This is where you can view the <b>details</b> of your different <b>bank accounts</b>. Click on each <b>account</b> to see more, including <b>transaction history</b>.</span>",
-                    }
+                        intro: `<span class='customIntroText'>This is where you can view the <b>details</b> of your different <b>bank accounts</b>. Click on each <b>account</b> to see more, including <b>transaction history</b>.</span>
+                        <br>
+                    <video autoplay loop muted playsinline style="width: 400px; height: 300px; margin-top: 10px; border: 2px solid #ccc; border-radius: 10px;">
+                        <source src="../pics/accounts.mp4" type="video/mp4">
+                    </video>`
+                    },
                 ],
                 showButtons: true,
                 tooltipClass: 'customTooltip', // Custom tooltip styling
