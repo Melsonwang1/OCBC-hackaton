@@ -50,9 +50,17 @@
             color: #888;
             margin-top: 20px;
         }
+        .overspent {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <button onclick="window.history.back();" class="back-button">
+        ← Back
+    </button>
+    
     <div class="container">
         <h1>Transaction History (Last 3 Months)</h1>
         <table id="transaction-table">
@@ -62,6 +70,7 @@
                     <th>Amount (SGD)</th>
                     <th>Recipient</th>
                     <th>Type</th>
+                    <th>Remarks</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,44 +81,48 @@
     </div>
 
     <script>
-        // Function to load and display transactions
         function loadTransactions() {
-            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const transactions = [
+                // December Transactions
+                { date: '2024-12-05', amount: 500, recipient: 'Ravikumar', type: 'Auto Deduct', remarks: 'Automatically sent' },
+                { date: '2024-12-15', amount: 120, recipient: 'Grocery Store', type: 'Groceries', remarks: '<span class="overspent">Exceeded limit</span>' },
+                { date: '2024-12-20', amount: 90, recipient: 'Restaurant', type: 'Food', remarks: '' },
+                
+                // January Transactions
+                { date: '2025-01-01', amount: 500, recipient: 'Ravikumar', type: 'Auto Deduct', remarks: 'Automatically sent' },
+                { date: '2025-01-05', amount: 100, recipient: 'Granddaughter', type: 'Auto Deduct', remarks: 'Annual gift' },
+                { date: '2025-01-10', amount: 120, recipient: 'Grocery Store', type: 'Groceries', remarks: '<span class="overspent">Exceeded limit</span>' },
+                { date: '2025-01-15', amount: 200, recipient: 'Clothing Store', type: 'Fashion', remarks: '' },
+                { date: '2025-01-28', amount: 75, recipient: 'Cinema', type: 'Entertainment', remarks: '' },
+
+                // February Transactions
+                { date: '2025-02-01', amount: 500, recipient: 'Ravikumar', type: 'Auto Deduct', remarks: 'Automatically sent' },
+                { date: '2025-02-05', amount: 130, recipient: 'Grocery Store', type: 'Groceries', remarks: '<span class="overspent">Exceeded limit</span>' },
+                { date: '2025-02-10', amount: 60, recipient: 'Cafe', type: 'Food', remarks: '' },
+                { date: '2025-02-15', amount: 180, recipient: 'Online Shopping', type: 'Fashion', remarks: '' },
+                { date: '2025-02-20', amount: 50, recipient: 'LTA', type: 'Transport', remarks: '' }
+            ];
+
             const tableBody = document.querySelector('#transaction-table tbody');
             const noTransactionsMessage = document.getElementById('no-transactions');
 
-            // Clear existing rows
             tableBody.innerHTML = '';
 
-            // Filter transactions for the last 3 months
-            const threeMonthsAgo = new Date();
-            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-
-            const filteredTransactions = transactions.filter(transaction => {
-                const transactionDate = new Date(transaction.date);
-                return transactionDate >= threeMonthsAgo;
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td>${transaction.amount}</td>
+                    <td>${transaction.recipient}</td>
+                    <td>${transaction.type}</td>
+                    <td>${transaction.remarks}</td>
+                `;
+                tableBody.appendChild(row);
             });
 
-            if (filteredTransactions.length === 0) {
-                noTransactionsMessage.style.display = 'block';
-            } else {
-                noTransactionsMessage.style.display = 'none';
-
-                // Add rows for each transaction
-                filteredTransactions.forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${transaction.date}</td>
-                        <td>${transaction.amount}</td>
-                        <td>${transaction.recipient}</td>
-                        <td>${transaction.type}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            }
+            noTransactionsMessage.style.display = transactions.length === 0 ? 'block' : 'none';
         }
 
-        // Load transactions when the page loads
         window.addEventListener('load', loadTransactions);
     </script>
 </body>

@@ -149,27 +149,27 @@
             <strong>Keyboard Shortcuts:</strong> <span id="dropdown-icon"></span>
         </p>
         <ul id="shortcut-list">
-            <li onmouseover="speakText('Press 1 to View Accounts')"><span class="shortcut-key">1</span> → View Accounts</li>
-            <li onmouseover="speakText('Press 2 to Transfer Money')"><span class="shortcut-key">2</span> → Transfer Money</li>
-            <li onmouseover="speakText('Press 3 for Investments')"><span class="shortcut-key">3</span> → Investments</li>
-            <li onmouseover="speakText('Press C for Chinese Translation')"><span class="shortcut-key">C</span> → Chinese Translation</li>
-            <li onmouseover="speakText('Press L to Log Out')"><span class="shortcut-key">L</span> → Log Out</li>
-            <li onmouseover="speakText('Press Left Arrow for Previous Page')"><span class="shortcut-key">←</span> → Previous Page</li>
-            <li onmouseover="speakText('Press Right Arrow for Next Page')"><span class="shortcut-key">→</span> → Next Page</li>
-            <li onmouseover="speakText('Press Up Arrow to Scroll Up')"><span class="shortcut-key">↑</span> → Scroll Up</li>
-            <li onmouseover="speakText('Press Down Arrow to Scroll Down')"><span class="shortcut-key">↓</span> → Scroll Down</li>
+            <li><span class="shortcut-key">1</span> → View Accounts</li>
+            <li><span class="shortcut-key">2</span> → Transfer Money</li>
+            <li><span class="shortcut-key">3</span> → Investments</li>
+            <li><span class="shortcut-key">C</span> → Chinese Translation</li>
+            <li><span class="shortcut-key">L</span> → Log Out</li>
+            <li><span class="shortcut-key">←</span> → Previous Page</li>
+            <li><span class="shortcut-key">→</span> → Next Page</li>
+            <li><span class="shortcut-key">↑</span> → Scroll Up</li>
+            <li><span class="shortcut-key">↓</span> → Scroll Down</li>
         </ul>
     </div>
 
-    <h2 class="welcome-message" onmouseover="speakText('What would you like to do today?')">What would you like to do today?</h2>
+    <h2 class="welcome-message">What would you like to do today?</h2>
     <div class="navbar">
         <a href="../html/accountseng.html" onmouseover="speakText('Click here to View Accounts')">
             <img src="../pics/view-account.png" alt="View Icon">
             View Accounts</a>
-        <a href="../html/transfer.html" onmouseover="speakText('Click here to Transfer Money')">
+        <a href="../html/transfer.html">
             <img src="../pics/transfer-money.png" alt="Transfer Money Icon">
             Transfer Money</a>
-        <a href="../html/investmenteng.html" onmouseover="speakText('Click here to view Investments')">
+        <a href="../html/investmenteng.html">
             <img src="../pics/investment.png" alt="Investments Icon">
             Investments</a> 
         <a href="../html/location.html" class="tooltip" tabindex="0" aria-label="Find ATMs">
@@ -301,111 +301,6 @@
 
   <!-- JavaScript to handle slider updates -->
   <script src="../js/spendinglimiter.js"></script>
-  <!-- <script>
-    // Populating the spending data dynamically
-    document.getElementById('food-jan').innerText = spendingData["January"].food;
-    document.getElementById('food-feb').innerText = spendingData["February"].food;
-    document.getElementById('food-mar').innerText = spendingData["March"].food;
-    
-    document.getElementById('fashion-jan').innerText = spendingData["January"].fashion;
-    document.getElementById('fashion-feb').innerText = spendingData["February"].fashion;
-    document.getElementById('fashion-mar').innerText = spendingData["March"].fashion;
-
-    document.getElementById('groceries-jan').innerText = spendingData["January"].groceries;
-    document.getElementById('groceries-feb').innerText = spendingData["February"].groceries;
-    document.getElementById('groceries-mar').innerText = spendingData["March"].groceries;
-
-    document.getElementById('entertainment-jan').innerText = spendingData["January"].entertainment;
-    document.getElementById('entertainment-feb').innerText = spendingData["February"].entertainment;
-    document.getElementById('entertainment-mar').innerText = spendingData["March"].entertainment;
-
-    document.getElementById('transport-jan').innerText = spendingData["January"].transport;
-    document.getElementById('transport-feb').innerText = spendingData["February"].transport;
-    document.getElementById('transport-mar').innerText = spendingData["March"].transport;
-
-    // Function to update the displayed limit value when the slider is moved
-    function updateSliderValue(sliderId, limitId) {
-      var slider = document.getElementById(sliderId);
-      var limit = document.getElementById(limitId);
-      limit.innerText = '$' + slider.value;
-    }
-
-    // Function to save the limit for a category
-    async function saveLimit(category) {
-      const newLimit = document.getElementById(`${category}-slider`).value;
-      const userPhone = '88696555'; // User's phone number for SMS
-
-      try {
-        const response = await fetch('/save-limit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ category, newLimit })
-        });
-        const data = await response.json();
-        alert(data.message);  // Confirmation that the limit has been updated
-
-        // After saving the new limit, send an SMS to confirm
-        await sendSMS(category, newLimit);
-
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to save limit.');
-      }
-    }
-
-    // Function to send an SMS to the user
-    async function sendSMS(category, newLimit) {
-      const excessAmount = 100; // Example excess amount
-      const userPhone = '88696555'; // User's phone number
-
-      try {
-        const response = await fetch('/send-sms', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userPhone, category, excessAmount })
-        });
-        const data = await response.json();
-        console.log('SMS sent:', data);
-      } catch (error) {
-        console.error('Error sending SMS:', error);
-      }
-    }
-
-    // Function to handle a transaction exceeding the limit
-    async function handleTransaction(category, amountSpent, limit) {
-      if (amountSpent > limit) {
-        const excessAmount = amountSpent - limit;
-        const userPhone = '88696555'; // User's phone number
-
-        // Send SMS to user
-        await sendSMS(category, excessAmount);
-
-        // Simulate user's response
-        let userResponse = prompt(`Exceeded limit by $${excessAmount}. Do you want to extend the limit? Reply 'YES' or 'NO'`);
-        await handleUserResponse(userResponse, category, excessAmount);
-      }
-    }
-
-    // Function to handle the user's response to exceeding the limit
-    async function handleUserResponse(userResponse, category, excessAmount) {
-      try {
-        const response = await fetch('/handle-response', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userResponse, category, excessAmount })
-        });
-        const data = await response.json();
-        alert(data.message);
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to process response.');
-      }
-    }
-
-    // Example: Simulate a transaction for the user
-    handleTransaction('Groceries', 120, 100);  // User exceeds the $100 limit for groceries
-    
-  </script> -->
 
 </body>
 </html>

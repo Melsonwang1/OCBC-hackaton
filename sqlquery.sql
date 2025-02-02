@@ -220,3 +220,10 @@ VALUES
 ('How do I contact customer service?', 'You can reach customer service by emailing support@example.com or calling our support hotline at "66789999".'),
 ('What is the Peer Support Forum?', 'The Peer Support Forum is a community space where you can ask financial questions, get advice, and help others by sharing your knowledge.'),
 ('I do not have a mouse with me currently, can I navigate the website using just my keyboard?', 'Yes! On the right-hand side of the webpage, there is a list of keyboard shortcuts to help you navigate without a mouse.')
+
+ALTER TABLE Users
+ADD food_limit DECIMAL(18, 2) DEFAULT 5000,
+    fashion_limit DECIMAL(18, 2) DEFAULT 5000,
+    groceries_limit DECIMAL(18, 2) DEFAULT 5000,
+    entertainment_limit DECIMAL(18, 2) DEFAULT 5000,
+    transport_limit DECIMAL(18, 2) DEFAULT 5000;

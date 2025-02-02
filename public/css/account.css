@@ -676,3 +676,22 @@ input:checked + .slider:before {
     background-color: #1e7e34;
     transform: scale(0.95); /* Slight shrink when clicked */
 }
+
+#transaction-history-button {
+    background-color: #ff9800;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 40px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px;
+}
+
+#transaction-history-button:hover {
+    background-color: #e68900;
+    transform: scale(1.05);
+}

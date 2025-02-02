@@ -13,14 +13,22 @@ document.addEventListener('DOMContentLoaded', function () {
     transport: 200 
 };
 
-fetch('http://127.0.0.1:3000/api/save-limits', { 
+/*console.log("Limits Data:", JSON.stringify(limits, null, 2)); // Pretty-print limits object
+console.log("Sending Data:", { phone: userPhone, limits: limits }); // Log the data before sending
+
+// Check for missing values before sending the request
+if (!userPhone || !limits) {
+    console.error("Error: Missing userPhone or limits");
+    return; // Stop execution if data is missing
+} 
+
+ fetch('http://127.0.0.1:3001/api/save-limits', { 
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ phone: userPhone, limits }) 
 })
 .then(response => response.json())
 .then(data => console.log('Success:', data))
-.catch(error => console.error('Error:', error));
+.catch(error => console.error('Error:', error)); */
 
 
   function updateSliderValue(sliderId) {
@@ -46,19 +54,22 @@ fetch('http://127.0.0.1:3000/api/save-limits', {
 
     // Get the current slider values
     categories.forEach(category => {
-      limits[category] = document.getElementById(`${category}-slider`).value;
+      limits[category] = parseInt(document.getElementById(`${category}-slider`).value, 10);  // 5000 (Number)
     });
 
+    console.log("Sending Data:", { phone: userPhone, limits }); // Debugging log
+
     try {
-      const response = await fetch('/api/save-limits', {
+      const response = await fetch('http://127.0.0.1:3000/api/save-limits', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: userPhone, limits }),
+        body: JSON.stringify({ phone: userPhone, limits }), // Send the full limits object
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
 
       const data = await response.json();
 
@@ -156,5 +167,57 @@ fetch('http://127.0.0.1:3000/api/save-limits', {
   }
 
   // Demo section: Simulate transaction button
-  document.getElementById('demo-button').addEventListener('click', simulateTransaction);
+  // Dummy spending limits (replace with dynamic fetching if needed)
+let spendingLimits = {
+  food: 5000,
+  fashion: 5000,
+  groceries: 5000,
+  entertainment: 5000,
+  transport: 5000
+};
+
+// Tracks total spending
+let currentSpending = {
+  food: 0,
+  fashion: 0,
+  groceries: 0,
+  entertainment: 0,
+  transport: 0
+};
+
+// Function to simulate a transaction
+function simulateTransaction() {
+  let category = document.getElementById("demo-category").value;
+  let amount = parseFloat(document.getElementById("demo-amount").value);
+
+  if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid amount!");
+      return;
+  }
+
+  // Check if spending exceeds limit
+  if (currentSpending[category] + amount > spendingLimits[category]) {
+      alert(`Transaction failed! You exceeded your limit for ${category}.`);
+      return;
+  }
+
+  // Update spending and show success message
+  currentSpending[category] += amount;
+  showSuccessMessage(`Transaction successful! You spent $${amount} on ${category}. Remaining limit: $${spendingLimits[category] - currentSpending[category]}`);
+}
+
+// Function to show success message
+function showSuccessMessage(message) {
+  let smsSection = document.getElementById("sms-section");
+  smsSection.innerHTML = `<p style="color: green;">${message}</p>`;
+
+  // Optional: Simulate a server response
+  setTimeout(() => {
+      alert("Server Success: Transaction recorded!");
+  }, 1000);
+}
+
+// Event listener for the button
+document.getElementById("demo-button").addEventListener("click", simulateTransaction);
+
 });

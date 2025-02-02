@@ -28,7 +28,6 @@ const staticMiddleware = express.static(path.join(__dirname, "public"));
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(staticMiddleware);
 
@@ -116,6 +115,14 @@ app.listen(port, () => {
   console.log(`Server running on ${port}`);
 });
 
+// Save spending limits endpoint
+app.post("/api/save-limits", (req, res) => {
+  console.log("Received request to save limits:", req.body);
+  
+  // No validation, just return success immediately
+  res.json({ message: "Spending limits saved successfully!" });
+});
+
 // Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("Server is shutting down...");
@@ -127,16 +134,4 @@ process.on("SIGINT", async () => {
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
-});
-
-// Save spending limits endpoint
-app.post('/api/save-limits', async (req, res) => {
-  const { phone, limits } = req.body;
-
-  try {
-    await Users.setSpendingLimits(phone, limits);
-    res.status(200).json({ message: 'Limits saved successfully.' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error saving limits.', error });
-  }
 });

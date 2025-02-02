@@ -203,8 +203,5 @@ class Users {
         await request.query(query);
         connection.close();
     }
-
-
 }    
-
 module.exports = Users;
