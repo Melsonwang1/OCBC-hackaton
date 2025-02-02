@@ -1,15 +1,15 @@
 const express = require("express");
+const app = express(); // Initialize express app
 const sql = require("mssql");
 const path = require("path");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const Users = require("./models/user");
 const authorize = require("./middlewares/authorize"); // Middleware Authorization for JWT (Zheng Bin)
-const spendingRoutes = require('./routes/spendingRoutes');
-app.use(express.json()); // Allows parsing JSON requests
-app.use('/api', spendingRoutes); // Prefix all spending routes with "/api"
 
 // Routes
+const spendingRoutes = require("./routes/spendingRoutes"); // Spending over Limit (Vaish)
 const reminderRoutes = require("./routes/reminderRoutes"); // Reminder (Zhizhong)
 
 // Middlewares
@@ -22,19 +22,19 @@ const userController = require("./controllers/userController"); // User Page (Zh
 const investmentController = require("./controllers/investmentController"); // Investment Page (Zhe Kai)
 const forumController = require("./controllers/forumController"); // Forum page (Zhe Kai)
 const replyController = require("./controllers/replyController"); // Forum page (Zhe Kai)
-const spendingController = require("./controllers/spendingController"); // Spending over Limit (Vaish)
-const spendingRoutes = require('./routes/spendingRoutes'); // Spending over Limit (Vaish)
 
-
-const app = express();
 const port = 3000;
 const staticMiddleware = express.static(path.join(__dirname, "public"));
 
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(staticMiddleware);
+
+// Now move this AFTER spendingRoutes is declared
+app.use('/api', spendingRoutes); // Prefix all spending routes with "/api"
+app.use("/reminder", reminderRoutes); // Send Reminder (Zhizhong)
 
 // Login Page (Zheng Bin)
 app.post("/user/register", userController.createUser);
@@ -43,7 +43,7 @@ app.post("/user/login", userController.loginUser);
 // Transaction Page (Melson)
 app.get("/transactions/:account_id", transactionsController.getTransactionsbyaccountid);
 app.post("/transactions", validateTransactions, transactionsController.createTransaction);
-app.delete("/transactions/:transaction_id", transactionsController.deleteTransactionByTransactionId); // Part of Zheng Bin's Feature
+app.delete("/transactions/:transaction_id", transactionsController.deleteTransactionByTransactionId);
 
 // Account Page (Zheng Bin)
 app.get("/accounts/user/:user_id", accountController.getAccountsById);
@@ -64,23 +64,17 @@ app.post("/posts", forumController.createPost);
 app.get("/posts/:post_id/replies", replyController.getRepliesByPostId);
 app.post("/replies", replyController.createReply);
 
-app.use("/reminder", reminderRoutes); // Send Reminder (Zhizhong)
-
 // Spending over time API
 app.get("/api/spending-over-time/:user_id", transactionsController.getSpendingOverTime);
 
 // Function to get the response from the database (Zhizhong)
 async function getResponseFromDatabase(userMessage) {
   try {
-    // Connect to the database
     await sql.connect(dbConfig);
-
-    // Query the database for the response based on the user's message
     const result = await sql.query`SELECT response FROM chatbot_responses WHERE LOWER(question) = ${userMessage.toLowerCase()}`;
 
-    // Check if result.recordset is not empty and contains the expected data
     if (result.recordset && result.recordset.length > 0) {
-      return result.recordset[0].response; // Return the response from the first record
+      return result.recordset[0].response;
     } else {
       console.log("No matching response found in the database.");
       return "Sorry, I didn't understand that. Can you please rephrase?";
@@ -91,17 +85,14 @@ async function getResponseFromDatabase(userMessage) {
   }
 }
 
-// Endpoint to handle user input
+// Chatbot API
 app.post("/api/chat", async (req, res) => {
   const userMessage = req.body.message;
-
-  // Get the response from the database
   const response = await getResponseFromDatabase(userMessage);
-
-  // Send the response back to the frontend
   res.json({ reply: response });
 });
 
+// Chatbot Suggestions API
 app.get("/api/suggestions", async (req, res) => {
   const query = req.query.query;
   if (!query) return res.json({ suggestions: [] });
@@ -111,7 +102,7 @@ app.get("/api/suggestions", async (req, res) => {
       const result = await sql.query`
           SELECT TOP 5 question FROM chatbot_responses
           WHERE LOWER(question) LIKE '%' + ${query.toLowerCase()} + '%'
-          ORDER BY LEN(question) ASC`;  // Show shorter questions first
+          ORDER BY LEN(question) ASC`;
 
       const suggestions = result.recordset.map(row => row.question);
       res.json({ suggestions });
@@ -121,15 +112,31 @@ app.get("/api/suggestions", async (req, res) => {
   }
 });
 
-
 app.listen(port, () => {
   console.log(`Server running on ${port}`);
 });
 
-// Graceful shutdown on SIGINT signal
+// Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("Server is shutting down...");
   await sql.close();
   console.log("Database connection closed");
   process.exit(0);
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found' });
+});
+
+// Save spending limits endpoint
+app.post('/api/save-limits', async (req, res) => {
+  const { phone, limits } = req.body;
+
+  try {
+    await Users.setSpendingLimits(phone, limits);
+    res.status(200).json({ message: 'Limits saved successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving limits.', error });
+  }
 });

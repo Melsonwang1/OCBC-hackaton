@@ -141,7 +141,7 @@
 </header>
 
 <div class="container"> 
-    <div class="welcome" id="welcome-message" onmouseover="speakText('Welcome to OCBC Digital Banking, ' + document.getElementById('user-name').innerText)">Welcome, <span id="user-name"></span></div>
+    <div class="welcome" id="welcome-message">Welcome, <span id="user-name"></span></div>
 
     <!-- Keyboard Shortcuts Note -->
     <div id="keyboard-shortcut-note" class="keyboard-note" role="complementary" aria-label="Keyboard Shortcuts">
@@ -274,46 +274,6 @@
         </button>
       </div>
 
-      <!-- Spending display for 3 months -->
-      <div id="spending-overview">
-        <h3>Spending Overview (Last 3 Months)</h3>
-        <div id="spending-categories">
-            <!-- Food & Beverage category -->
-            <div class="category" id="food-category">
-                <h4>Food & Beverage</h4>
-                <p>January: $<span id="food-jan"></span></p>
-                <p>February: $<span id="food-feb"></span></p>
-                <p>March: $<span id="food-mar"></span></p>
-            </div>
-            <!-- Fashion & Accessories category -->
-            <div class="category" id="fashion-accessories-category">
-                <h4>Fashion & Accessories</h4>
-                <p>January: $<span id="fashion-jan"></span></p>
-                <p>February: $<span id="fashion-feb"></span></p>
-                <p>March: $<span id="fashion-mar"></span></p>
-          </div>
-          <!-- Groceries category -->
-          <div class="category" id="groceries-category">
-                <h4>Groceries</h4>
-                <p>January: $<span id="groceries-jan"></span></p>
-                <p>February: $<span id="groceries-feb"></span></p>
-                <p>March: $<span id="groceries-mar"></span></p>
-          </div>
-          <!-- Entertainment category -->
-          <div class="category" id="entertainment-category">
-                <h4>Entertainment</h4>
-                <p>January: $<span id="entertainment-jan"></span></p>
-                <p>February: $<span id="entertainment-feb"></span></p>
-                <p>March: $<span id="entertainment-mar"></span></p>
-          </div>
-          <!-- Transport category -->
-          <div class="category" id="transport-category">
-                <h4>Transport</h4>
-                <p>January: $<span id="transport-jan"></span></p>
-                <p>February: $<span id="transport-feb"></span></p>
-                <p>March: $<span id="transport-mar"></span></p>
-          </div>
-        </div>
         <!-- Demo Section -->
         <div class="demo-section">
           <h3>Demo: Simulate Spending</h3>
@@ -335,11 +295,6 @@
             <!-- SMS messages will appear here -->
           </div>
         </div>
-
-        <!-- Transaction History Section -->
-        <div id="transaction-history">
-          <h3>Transaction History</h3>
-          <!-- Transactions will be added here -->
       </div>      
     </div>
   </div>

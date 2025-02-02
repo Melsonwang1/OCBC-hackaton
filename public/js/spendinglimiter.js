@@ -4,13 +4,24 @@ document.addEventListener('DOMContentLoaded', function () {
   const userPhone = '88696555'; // TODO: Replace with actual user phone dynamically
   const userId = 'T0673139I'; // TODO: Replace with actual user ID
 
-  // Fake spending data for the last 3 months
-  // spendinglimiter.js
-  const fakeSpendingData = {
-    January: { food: 1200, fashion: 800, groceries: 500, entertainment: 300, transport: 200 },
-    February: { food: 1500, fashion: 900, groceries: 600, entertainment: 400, transport: 250 },
-    March: { food: 1800, fashion: 1000, groceries: 700, entertainment: 500, transport: 300 },
-  };
+
+  const limits = { 
+    food: 1000, 
+    fashion: 500, 
+    groceries: 600, 
+    entertainment: 400, 
+    transport: 200 
+};
+
+fetch('http://127.0.0.1:3000/api/save-limits', { 
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ phone: userPhone, limits }) 
+})
+.then(response => response.json())
+.then(data => console.log('Success:', data))
+.catch(error => console.error('Error:', error));
+
 
   function updateSliderValue(sliderId) {
     const slider = document.getElementById(sliderId);
@@ -92,21 +103,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Load fake spending overview for the last 3 months
-  function loadFakeSpendingOverview() {
-    const categories = ['food', 'fashion', 'groceries', 'entertainment', 'transport'];
-    const months = ['jan', 'feb', 'mar'];
-
-    categories.forEach(category => {
-      months.forEach(month => {
-        const element = document.getElementById(`${category}-${month}`);
-        if (element) {
-          element.innerText = `$${fakeSpendingData[category][month] || 0}`;
-        }
-      });
-    });
-  }
-
   // Simulate a transaction (for demo)
   async function simulateTransaction() {
     const category = document.getElementById('demo-category').value;
@@ -158,13 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
       alert('Failed to process transaction.');
     }
   }
-
-  // Call function after DOM loads
-  document.addEventListener('DOMContentLoaded', function () {
-  loadFakeSpendingOverview();
-  });
-  // Load fake data when the page loads
-  // loadFakeSpendingOverview()
 
   // Demo section: Simulate transaction button
   document.getElementById('demo-button').addEventListener('click', simulateTransaction);

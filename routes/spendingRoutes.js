@@ -2,6 +2,10 @@ const express = require('express');
 const spendingController = require('../controllers/spendingController'); // Use "../" to go up a level
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
+const router = express.Router();
+
+module.exports = router;
+
 
 // Define API endpoints
 app.post('/api/save-limits', spendingController.saveLimits);
