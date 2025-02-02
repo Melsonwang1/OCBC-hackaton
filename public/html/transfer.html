@@ -641,13 +641,259 @@
                     <dotlottie-player src="https://lottie.host/3a0e448a-e059-491a-ba78-53734f104751/5XWEjdqtkJ.json" background="transparent" speed="0.7" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
                 </div>
             </div>
-            
+        </div>
+
+        <!-- Auto-Deduct Modal -->
+        <div id="auto-deduct-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeAutoDeductModal()">×</span>
+                <div class="layout-container flex h-full grow flex-col">
+                    <div class="px-40 flex flex-1 justify-center py-5">
+                        <div class="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
+                            <div class="flex flex-wrap justify-between gap-3 p-4">
+                                <div class="flex min-w-72 flex-col gap-3">
+                                    <p class="text-[#171111] tracking-light text-[32px] font-bold leading-tight">Set up automatic fund deductions</p>
+                                    <p class="text-[#876464] text-sm font-normal leading-normal">You can set up deductions to occur daily, weekly, monthly or yearly</p>
+                                </div>
+                            </div>
+                            
+                            <div id="recipient-name-display" class="px-4 py-2 text-[#171111] text-sm font-medium" style="display: none;">
+                                Recipient: <span id="recipient-name"></span>
+                            </div>
+                            <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                                <label class="flex flex-col min-w-40 flex-1">
+                                    <p class="text-[#171111] text-base font-medium leading-normal pb-2">Amount</p>
+                                    <input
+                                        id="auto-deduct-amount"
+                                        placeholder="$0.00"
+                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                                        value=""
+                                    />
+                                </label>
+                            </div>
+                            <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                                <label class="flex flex-col min-w-40 flex-1">
+                                    <p class="text-[#171111] text-base font-medium leading-normal pb-2">Start date</p>
+                                    <input
+                                        id="auto-deduct-start-date"
+                                        placeholder="MM/DD/YYYY"
+                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                                        value=""
+                                    />
+                                </label>
+                                <label class="flex flex-col min-w-40 flex-1">
+                                    <p class="text-[#171111] text-base font-medium leading-normal pb-2">End date</p>
+                                    <input
+                                        id="auto-deduct-end-date"
+                                        placeholder="MM/DD/YYYY"
+                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                                        value=""
+                                    />
+                                </label>
+                            </div>
+                            <h3 class="text-[#171111] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Frequency</h3>
+                            <div class="flex flex-col gap-3 p-4">
+                                <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                                    <input
+                                        type="radio"
+                                        class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                                        name="auto-deduct-frequency"
+                                        value="daily"
+                                    />
+                                    <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Daily</p></div>
+                                </label>
+                                <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                                    <input
+                                        type="radio"
+                                        class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                                        name="auto-deduct-frequency"
+                                        value="weekly"
+                                    />
+                                    <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Weekly</p></div>
+                                </label>
+                                <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                                    <input
+                                        type="radio"
+                                        class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                                        name="auto-deduct-frequency"
+                                        value="monthly"
+                                    />
+                                    <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Monthly</p></div>
+                                </label>
+                                <label class="flex items-center gap-4 rounded-xl border border-solid border-[#e5dcdc] p-[15px]">
+                                    <input
+                                        type="radio"
+                                        class="h-5 w-5 border-2 border-[#e5dcdc] bg-transparent text-transparent checked:border-[#171111] checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-0 focus:ring-offset-0 checked:focus:border-[#171111]"
+                                        name="auto-deduct-frequency"
+                                        value="yearly"
+                                    />
+                                    <div class="flex grow flex-col"><p class="text-[#171111] text-sm font-medium leading-normal">Yearly</p></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                                <label class="flex flex-col min-w-40 flex-1">
+                                    <p class="text-[#171111] text-base font-medium leading-normal pb-2">Recipient's Phone Number</p>
+                                    <input
+                                        id="auto-deduct-phone"
+                                        placeholder="Enter phone number"
+                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#171111] focus:outline-0 focus:ring-0 border border-[#e5dcdc] bg-white focus:border-[#e5dcdc] h-14 placeholder:text-[#876464] p-[15px] text-base font-normal leading-normal"
+                                        value=""
+                                    />
+                                </label>
+                            </div>
+
+                            <div class="flex px-4 py-3">
+                                <button
+                                    id="save-auto-deduct"
+                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#df2020] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+                                >
+                                    <span class="truncate">Set up automatic deductions</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="button" class="transfer-btn" onclick="openAutoDeductModal()">Set Up Auto-Deduct</button>
         </div>
     </main>
 
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
     <script src="../js/transferform.js"></script>
     <script>
+        const recipients = [
+            { name: "Alex Tan", phone: "87654321" },
+            { name: "Daniel Lee", phone: "93218765" },
+            { name: "Jane Smith", phone: "98765432" },
+            { name: "Ravikumar", phone: "91518577"},
+            { name: "Vaishnavi", phone: "82720233"}
+        ];
+
+        // Event listener for phone number input
+        document.getElementById('auto-deduct-phone').addEventListener('input', (event) => {
+            const phoneNumber = event.target.value.trim();
+            const recipient = recipients.find(recipient => recipient.phone === phoneNumber);
+
+            const recipientNameDisplay = document.getElementById('recipient-name-display');
+            const recipientNameSpan = document.getElementById('recipient-name');
+
+            if (recipient) {
+                // Display recipient's name
+                recipientNameSpan.textContent = recipient.name;
+                recipientNameDisplay.style.display = 'block';
+            } else {
+                // Hide recipient's name if no match is found
+                recipientNameDisplay.style.display = 'none';
+            }
+        });
+
+        // Open Auto-Deduct Modal
+        function openAutoDeductModal() {
+            document.getElementById('auto-deduct-modal').style.display = 'block';
+        }
+
+        // Close Auto-Deduct Modal
+        function closeAutoDeductModal() {
+            document.getElementById('auto-deduct-modal').style.display = 'none';
+        }
+
+        // Save Auto-Deduct Rule
+        document.getElementById('save-auto-deduct').addEventListener('click', () => {
+            const amount = document.getElementById('auto-deduct-amount').value;
+            const startDate = document.getElementById('auto-deduct-start-date').value;
+            const endDate = document.getElementById('auto-deduct-end-date').value;
+            const frequency = document.querySelector('input[name="auto-deduct-frequency"]:checked').value;
+            const phoneNumber = document.getElementById('auto-deduct-phone').value.trim();
+
+            // Find recipient by phone number
+            const recipient = recipients.find(recipient => recipient.phone === phoneNumber);
+
+            if (!amount || !startDate || !frequency || !phoneNumber || !recipient) {
+                alert('Please fill in all required fields and ensure the phone number is valid.');
+                return;
+            }
+
+            const rule = {
+                amount,
+                startDate,
+                endDate,
+                frequency,
+                recipient: recipient.name,
+                phoneNumber
+            };
+
+            // Save rule to localStorage
+            localStorage.setItem('autoDeductRule', JSON.stringify(rule));
+            alert('Auto-deduct rule saved successfully!');
+            closeAutoDeductModal();
+
+            // Start auto-deduct simulation
+            function startAutoDeductSimulation(rule) {
+                const startDate = new Date(rule.startDate);
+                const endDate = rule.endDate ? new Date(rule.endDate) : null;
+
+                // Map frequency to milliseconds
+                const intervalMap = {
+                    daily: 24 * 60 * 60 * 1000, // 1 day
+                    weekly: 7 * 24 * 60 * 60 * 1000, // 1 week
+                    monthly: 30 * 24 * 60 * 60 * 1000, // 1 month (approximate)
+                    yearly: 365 * 24 * 60 * 60 * 1000 // 1 year (approximate)
+                };
+
+                const interval = intervalMap[rule.frequency];
+
+                // Function to simulate deduction
+                const deductFunds = () => {
+                    const now = new Date();
+                    if (endDate && now > endDate) {
+                        clearInterval(intervalId); // Stop if end date is reached
+                        console.log('Auto-deduct ended.');
+                        return;
+                    }
+
+                    // Simulate deducting funds (for demonstration)
+                    console.log(`Deducting ${rule.amount} SGD from account to ${rule.recipient} (${rule.phoneNumber}) on ${now.toLocaleString()}`);
+                    alert(`Auto-deduct: ${rule.amount} SGD deducted from your account to ${rule.recipient} (${rule.phoneNumber}).`);
+                };
+
+                // Calculate time until the first deduction
+                const timeUntilStart = startDate - new Date();
+
+                // Start the first deduction at the start date
+                if (timeUntilStart > 0) {
+                    setTimeout(() => {
+                        deductFunds(); // First deduction
+                        const intervalId = setInterval(deductFunds, interval); // Subsequent deductions
+                    }, timeUntilStart);
+                } else {
+                    deductFunds(); // First deduction (if start date is in the past)
+                    const intervalId = setInterval(deductFunds, interval); // Subsequent deductions
+                }
+            }
+        });
+
+        // Event listener for phone number input
+        document.getElementById('auto-deduct-phone').addEventListener('input', (event) => {
+            const phoneNumber = event.target.value.trim();
+            const recipient = recipients.find(recipient => recipient.phone === phoneNumber);
+
+            const recipientNameDisplay = document.getElementById('recipient-name-display');
+            const recipientNameSpan = document.getElementById('recipient-name');
+
+            if (recipient) {
+                // Display recipient's name
+                recipientNameSpan.textContent = recipient.name;
+                recipientNameDisplay.style.display = 'block';
+            } else {
+                // Hide recipient's name if no match is found
+                recipientNameDisplay.style.display = 'none';
+            }
+        });
+
+        // zheng bin
         const videoElement = document.getElementById("webcam-video");
         const toggleWebcamButton = document.getElementById('toggle-webcam');
         let isWebcamActive = false;
