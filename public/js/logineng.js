@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     async function login(nric, password, rememberMe) {
         try {
-            const response = await fetch('http://localhost:3000/user/login', { // vaish changed this for a while. from /user/login to http://localhost:3000/user/login
+            const response = await fetch('/user/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', 
                 },
                 body: JSON.stringify({ nric, password, rememberMe }),
             });

@@ -13,12 +13,6 @@ app.post('/api/handle-transaction', spendingController.handleTransaction);
 app.post('/api/extend-limit', spendingController.extendLimit);
 app.post('/api/send-sms', spendingController.sendSMS);
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 router.post('/save-limits', spendingController.saveLimits); // This should match the frontend request
 router.post('/handle-transaction', spendingController.handleTransaction); // This should match the frontend request
 router.post('/extend-limit', spendingController.extendLimit); // This should match the frontend request

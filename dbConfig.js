@@ -1,7 +1,7 @@
 module.exports = {
-    user: "testing123", // Replace with your SQL Server login username (testing1234)
-    password: "testing123", // Replace with your SQL Server login password (testingtesting1234)
-    server: "localhost\\SQLEXPRESS", // vaish changed this from localhost to localhost\\SQLEXPRESS for a while
+    user: "fsdp", // Replace with your SQL Server login username (testing1234)
+    password: "fsdp", // Replace with your SQL Server login password (testingtesting1234)
+    server: "localhost", // vaish changed this from localhost to localhost\\SQLEXPRESS for a while
     database: "FSDP",
     trustServerCertificate: true,
     options: {
